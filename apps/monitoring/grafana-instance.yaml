@@ -1,0 +1,21 @@
+kind: Grafana
+apiVersion: grafana.integreatly.org/v1beta1
+metadata:
+  labels:
+    dashboards: grafana
+    folders: grafana
+  name: grafana
+  namespace: prometheus-operator
+spec:
+  ingress:
+    enabled: true
+  config:
+    auth:
+      disable_login_form: 'false'
+    log:
+      mode: console
+  admin:
+    existingSecret: grafana-admin-credentials
+    userKey: admin-user
+    passwordKey: admin-password
+
