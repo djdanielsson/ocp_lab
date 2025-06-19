@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-exporter
+  namespace: prometheus-operator
+  labels:
+    app: json-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: json-exporter
+  template:
+    metadata:
+      labels:
+        app: json-exporter
+    spec:
+      containers:
+        - name: json-exporter
+          image: quay.io/prometheuscommunity/json-exporter:latest
+          args:
+            - "--config.file=/config/config.yml"
+          ports:
+            - containerPort: 7979
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          env:
+            - name: BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: json-exporter-secret
+                  key: BEARER_TOKEN
+      volumes:
+        - name: config-volume
+          configMap:
+            name: json-exporter-config

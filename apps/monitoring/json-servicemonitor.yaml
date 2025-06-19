@@ -1,0 +1,52 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: json-exporter
+  namespace: prometheus-operator
+  labels:
+    k8s-app: json-exporter
+    app: json-exporter
+    team: frontend
+    release: prometheus-k8s
+spec:
+  endpoints:
+  - interval: 30s # You can adjust the scrape interval for each endpoint
+    port: http
+    path: /probe
+    params:
+      # NEW target for the gateway health endpoint, also using 'default' module
+      target: ["http://aap.aap.svc.cluster.local/api/gateway/v1/status/?format=json"] # <-- REPLACE WITH YOUR ACTUAL NEW GATEWAY URL
+      module:
+      - default
+  # The following new endpoint configurations are currently commented out.
+  # If you have more endpoints, uncomment and configure them here.
+  # - interval: 30s
+  #   port: http
+  #   path: /probe
+  #   params:
+  #     # Target for your first new JSON endpoint, using 'new_endpoint_1_module'
+  #     target:
+  #     - http://your-new-endpoint-1-url # <-- REPLACE WITH YOUR ACTUAL URL
+  #     module:
+  #     - new_endpoint_1_module
+  # - interval: 30s
+  #   port: http
+  #   path: /probe
+  #   params:
+  #     # Target for your second new JSON endpoint, using 'new_endpoint_2_module'
+  #     target:
+  #     - http://your-new-endpoint-2-url # <-- REPLACE WITH YOUR ACTUAL URL
+  #     module:
+  #     - new_endpoint_2_module
+  # - interval: 30s
+  #   port: http
+  #   path: /probe
+  #   params:
+  #     # Target for your third new JSON endpoint, using 'new_endpoint_3_module'
+  #     target:
+  #     - http://your-new-endpoint-3-url # <-- REPLACE WITH YOUR ACTUAL URL
+  #     module:
+  #     - new_endpoint_3_module
+  selector:
+    matchLabels:
+      app: json-exporter

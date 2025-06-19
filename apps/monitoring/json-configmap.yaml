@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: json-exporter-config
+  namespace: prometheus-operator
+  labels:
+    app: json-exporter
+data:
+  config.yml: |
+    modules:
+      default:
+        headers:
+          Authorization: "Bearer ${BEARER_TOKEN}"    
+        metrics:
+        # Overall service status
+        - name: aap_health_status
+          path: "$.services.*"
+          labels:
+            service: "$.service_name"
+          type: "value"
+          # Convert 'good' to 1 and other statuses to 0
+          values:
+            status: 'if .status == "good" then 1 else 0 end'
+
+        # Hub component versions
+        - name: aap_health_hub_component_version
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response.versions.*"
+          labels:
+            component: "$.component"
+            version: "$.version"
+          type: "value"
+          help: "Version of Hub components"
+          values:
+            value: 1
+
+        # Hub worker counts
+        - name: aap_health_hub_online_workers
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
+          type: "value"
+          values:
+            value: 'len(.online_workers)'
+        - name: aap_health_hub_online_api_apps
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
+          type: "value"
+          values:
+            value: 'len(.online_api_apps)'
+        - name: aap_health_hub_online_content_apps
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
+          type: "value"
+          values:
+            value: 'len(.online_content_apps)'
+
+        # Hub storage
+        - name: aap_health_hub_storage_total_bytes
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response.storage"
+          type: "value"
+          values:
+            value: '.total'
+        - name: aap_health_hub_storage_used_bytes
+          path: "$.services[?(@.service_name=='hub')].nodes.*.response.storage"
+          type: "value"
+          values:
+            value: '.used'
+
+        # Redis Cluster Status
+        - name: aap_health_redis_cluster_state
+          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
+          type: "value"
+          values:
+            cluster_state: 'if .cluster_state == "ok" then 1 else 0 end'
+        - name: aap_health_redis_cluster_known_nodes
+          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
+          type: "value"
+          values:
+            value: '.cluster_known_nodes'
+        - name: aap_health_redis_cluster_size
+          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
+          type: "value"
+          values:
+            value: '.cluster_size'
+        - name: aap_health_redis_cluster_slots_ok
+          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
+          type: "value"
+          values:
+            value: '.cluster_slots_ok'
+
+      # The following new modules are currently commented out as they are not needed for the current request.
+      # new_endpoint_1_module:
+      #   metrics:
+      #     # Define metrics for your first new JSON endpoint here.
+      # new_endpoint_2_module:
+      #   metrics:
+      #     # Define metrics for your second new JSON endpoint here.
+      # new_endpoint_3_module:
+      #   metrics:
+      #     # Define metrics for your third new JSON endpoint here.
