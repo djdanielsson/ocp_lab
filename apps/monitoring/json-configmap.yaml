@@ -12,170 +12,169 @@ data:
         headers:
           Authorization: "Bearer ${BEARER_TOKEN}"    
         metrics:
-          # Metric 1: Overall platform status
           - name: aap_overall_status
-            # type: gauge
-            help: "Overall status of the AAP deployment. Value is 1."
-            path: '{. }'
+            type: object
+            help: Overall status of the AAP deployment.
+            path: '{ $ }'
             labels:
               status: '{.status}'
             values:
               value: 1
 
-          # Metric 2: Status of each individual service
+          # Metric for the status of each major service
           - name: aap_service_status
-            # type: gauge
-            help: "Status of individual AAP services. Value is 1."
-            path: '{.services[*] }'
+            type: object
+            help: Status of individual AAP services.
+            path: '{.services[*]}'
             labels:
-              service_name: '{.service_name}'
+              service: '{.service_name}'
               status: '{.status}'
             values:
               value: 1
 
-          # --- Controller Metrics ---
-          - name: aap_controller_instance_info
-            # type: gauge
-            help: "Information about an AAP controller instance. Value is 1."
-            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instances[*] }'
+          # Metrics for the status of each node within the 'controller' service
+          - name: aap_service_node_status
+            type: object
+            help: Status of individual AAP service nodes.
+            path: '{.services[?(@.service_name=="controller")].nodes.*}'
             labels:
-              node: '{.node}'
-              node_type: '{.node_type}'
-              uuid: '{.uuid}'
-              version: '{.version}'
+              service: 'controller'
+              node: '{.url}'
+              status: '{.status}'
             values:
               value: 1
-          - name: aap_controller_instance_capacity
-            # type: gauge
-            help: "Capacity of an AAP controller instance."
-            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instances[*] }'
+
+          # Metrics for the status of each node within the 'hub' service
+          - name: aap_service_node_status
+            type: object
+            help: Status of individual AAP service nodes.
+            path: '{.services[?(@.service_name=="hub")].nodes.*}'
             labels:
-              node: '{.node}'
-              uuid: '{.uuid}'
+              service: 'hub'
+              node: '{.url}'
+              status: '{.status}'
             values:
-              capacity: '{.capacity}'
-          - name: aap_controller_instance_group_capacity
-            # type: gauge
-            help: "Capacity of an AAP controller instance group."
-            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instance_groups[*] }'
+              value: 1
+
+          # Metrics for the status of each node within the 'eda' service
+          - name: aap_service_node_status
+            type: object
+            help: Status of individual AAP service nodes.
+            path: '{.services[?(@.service_name=="eda")].nodes.*}'
             labels:
-              instance_group: '{.name}'
+              service: 'eda'
+              node: '{.url}'
+              status: '{.status}'
             values:
+              value: 1
+
+          # Metric for the connection status of each redis node
+          - name: aap_redis_node_connected
+            type: object
+            help: Connection status of individual Redis nodes.
+            path: '{.services[?(@.service_name=="redis")].nodes.*}'
+            labels:
+              # FIX: Relying on 'node_id' as the unique identifier
+              node_id: '{.node_id}'
+              flags: '{.flags}'
+              connected: '{.connected}'
+            values:
+              value: 1
+
+          # Metric for running controller instances
+          - name: aap_controller_instance_running
+            type: object
+            help: Running status of AAP controller instances. Value is 1 if present in the list.
+            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instances[*]}'
+            labels:
+              instance_node: '{.node}'
+              instance_uuid: '{.uuid}'
+              instance_type: '{.node_type}'
+            values:
+              value: 1
               capacity: '{.capacity}'
 
-          # --- Hub Metrics ---
-          - name: aap_hub_component_version_info
-            # type: gauge
-            help: "Version information for AAP Hub components. Value is 1."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.versions[*] }'
+          # Metric for Hub database connection status
+          - name: aap_hub_database_connection_status
+            type: object
+            help: Status of the hub''s database connection.
+            path: '{.services[?(@.service_name=="hub")].nodes.*}'
+            labels:
+              node: '{.url}'
+              connected: '{.response.database_connection.connected}'
+            values:
+              value: 1
+
+          # Metric for Hub Redis connection status
+          - name: aap_hub_redis_connection_status
+            type: object
+            help: Status of the hub''s redis connection.
+            path: '{.services[?(@.service_name=="hub")].nodes.*}'
+            labels:
+              node: '{.url}'
+              connected: '{.response.redis_connection.connected}'
+            values:
+              value: 1
+
+          # Informational metric for Hub component versions
+          - name: aap_hub_component_info
+            type: object
+            help: Version information for hub components.
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.versions[*]}'
             labels:
               component: '{.component}'
               version: '{.version}'
               package: '{.package}'
             values:
               value: 1
-          - name: aap_hub_process_status
-            # type: gauge
-            help: "Status of an online AAP Hub process. Value is 1."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_workers[*] }'
-            labels:
-              process_name: '{.name}'
-              type: "worker"
-            values:
-              value: 1
-          - name: aap_hub_process_status
-            # type: gauge
-            help: "Status of an online AAP Hub process. Value is 1."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_api_apps[*] }'
-            labels:
-              process_name: '{.name}'
-              type: "api_app"
-            values:
-              value: 1
-          - name: aap_hub_process_status
-            # type: gauge
-            help: "Status of an online AAP Hub process. Value is 1."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_content_apps[*] }'
-            labels:
-              process_name: '{.name}'
-              type: "content_app"
-            values:
-              value: 1
-          - name: aap_hub_connection_status
-            # type: gauge
-            help: "Connection status for Hub dependencies (database, redis). 1 for connected."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response }'
-            labels:
-              component: "database"
-            values:
-              connected: '{.database_connection.connected}'
-          - name: aap_hub_connection_status
-            # type: gauge
-            help: "Connection status for Hub dependencies (database, redis). 1 for connected."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response }'
-            labels:
-              component: "redis"
-            values:
-              connected: '{.redis_connection.connected}'
-          - name: aap_hub_storage_bytes_total
-            # type: gauge
-            help: "Total storage available to the Hub in bytes."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
-            values:
-              value: '{.total}'
-          - name: aap_hub_storage_bytes_used
-            # type: gauge
-            help: "Storage used by the Hub in bytes."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
-            values:
-              value: '{.used}'
-          - name: aap_hub_storage_bytes_free
-            # type: gauge
-            help: "Free storage available to the Hub in bytes."
-            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
-            values:
-              value: '{.free}'
 
-          # --- Redis Metrics ---
-          - name: aap_redis_node_info
-            # type: gauge
-            help: "Information for each Redis node. Value is 1 if connected."
-            path: '{.services[?(@.service_name=="redis")].nodes.* }'
+          # Metrics for online Hub workers and apps
+          - name: aap_hub_online_worker_status
+            type: object
+            help: Status of online hub workers. Value is 1 if online.
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_workers[*]}'
             labels:
-              node_id: '{.node_id}'
-              flags: '{.flags}'
-              master_id: '{.master_id}'
-            values:
-              connected: '{.connected}'
-          - name: aap_redis_cluster_status
-            # type: gauge
-            help: "The state of the Redis cluster. Value is 1."
-            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
-            labels:
-              cluster_state: '{.cluster_state}'
+              worker_name: '{.name}'
             values:
               value: 1
-          - name: aap_redis_cluster_slots_assigned
-            # type: gauge
-            help: "Assigned slots in the Redis cluster."
-            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+
+          - name: aap_hub_online_api_app_status
+            type: object
+            help: Status of online hub API apps. Value is 1 if online.
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_api_apps[*]}'
+            labels:
+              api_app_name: '{.name}'
             values:
-              value: '{.cluster_slots_assigned}'
-          - name: aap_redis_cluster_slots_ok
-            # type: gauge
-            help: "OK slots in the Redis cluster."
-            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+              value: 1
+
+          - name: aap_hub_online_content_app_status
+            type: object
+            help: Status of online hub content apps. Value is 1 if online.
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_content_apps[*]}'
+            labels:
+              content_app_name: '{.name}'
             values:
-              value: '{.cluster_slots_ok}'
-          - name: aap_redis_cluster_known_nodes
-            # type: gauge
-            help: "Known nodes in the Redis cluster."
-            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+              value: 1
+
+          # Metrics for the overall Redis Cluster
+          - name: aap_redis_cluster_status
+            type: object
+            help: Overall status of the Redis cluster.
+            path: '{.services[?(@.service_name=="redis")].response}'
+            labels:
+              cluster_state: '{.cluster_info.cluster_state}'
             values:
-              value: '{.cluster_known_nodes}'
-          - name: aap_redis_cluster_size
-            # type: gauge
-            help: "Size of the Redis cluster."
-            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+              value: 1
+
+          # Numeric metrics from the Redis cluster info
+          - name: aap_redis_cluster_info
+            type: object
+            help: Numeric statistics for the Redis cluster.
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info}'
+            labels: {}
             values:
-              value: '{.cluster_size}'
+              slots_assigned: '{.cluster_slots_assigned}'
+              slots_ok: '{.cluster_slots_ok}'
+              slots_fail: '{.cluster_slots_fail}'
+              known_nodes: '{.cluster_known_nodes}'
+              size: '{.cluster_size}'
