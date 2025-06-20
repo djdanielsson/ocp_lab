@@ -12,85 +12,170 @@ data:
         headers:
           Authorization: "Bearer ${BEARER_TOKEN}"    
         metrics:
-        # Overall service status
-        - name: aap_health_status
-          path: "$.services.*"
-          labels:
-            service: "$.service_name"
-          type: "value"
-          # Convert 'good' to 1 and other statuses to 0
-          values:
-            status: 'if .status == "good" then 1 else 0 end'
+          # Metric 1: Overall platform status
+          - name: aap_overall_status
+            # type: gauge
+            help: "Overall status of the AAP deployment. Value is 1."
+            path: '{. }'
+            labels:
+              status: '{.status}'
+            values:
+              value: 1
 
-        # Hub component versions
-        - name: aap_health_hub_component_version
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response.versions.*"
-          labels:
-            component: "$.component"
-            version: "$.version"
-          type: "value"
-          help: "Version of Hub components"
-          values:
-            value: 1
+          # Metric 2: Status of each individual service
+          - name: aap_service_status
+            # type: gauge
+            help: "Status of individual AAP services. Value is 1."
+            path: '{.services[*] }'
+            labels:
+              service_name: '{.service_name}'
+              status: '{.status}'
+            values:
+              value: 1
 
-        # Hub worker counts
-        - name: aap_health_hub_online_workers
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
-          type: "value"
-          values:
-            value: 'len(.online_workers)'
-        - name: aap_health_hub_online_api_apps
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
-          type: "value"
-          values:
-            value: 'len(.online_api_apps)'
-        - name: aap_health_hub_online_content_apps
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response"
-          type: "value"
-          values:
-            value: 'len(.online_content_apps)'
+          # --- Controller Metrics ---
+          - name: aap_controller_instance_info
+            # type: gauge
+            help: "Information about an AAP controller instance. Value is 1."
+            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instances[*] }'
+            labels:
+              node: '{.node}'
+              node_type: '{.node_type}'
+              uuid: '{.uuid}'
+              version: '{.version}'
+            values:
+              value: 1
+          - name: aap_controller_instance_capacity
+            # type: gauge
+            help: "Capacity of an AAP controller instance."
+            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instances[*] }'
+            labels:
+              node: '{.node}'
+              uuid: '{.uuid}'
+            values:
+              capacity: '{.capacity}'
+          - name: aap_controller_instance_group_capacity
+            # type: gauge
+            help: "Capacity of an AAP controller instance group."
+            path: '{.services[?(@.service_name=="controller")].nodes.*.response.instance_groups[*] }'
+            labels:
+              instance_group: '{.name}'
+            values:
+              capacity: '{.capacity}'
 
-        # Hub storage
-        - name: aap_health_hub_storage_total_bytes
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response.storage"
-          type: "value"
-          values:
-            value: '.total'
-        - name: aap_health_hub_storage_used_bytes
-          path: "$.services[?(@.service_name=='hub')].nodes.*.response.storage"
-          type: "value"
-          values:
-            value: '.used'
+          # --- Hub Metrics ---
+          - name: aap_hub_component_version_info
+            # type: gauge
+            help: "Version information for AAP Hub components. Value is 1."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.versions[*] }'
+            labels:
+              component: '{.component}'
+              version: '{.version}'
+              package: '{.package}'
+            values:
+              value: 1
+          - name: aap_hub_process_status
+            # type: gauge
+            help: "Status of an online AAP Hub process. Value is 1."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_workers[*] }'
+            labels:
+              process_name: '{.name}'
+              type: "worker"
+            values:
+              value: 1
+          - name: aap_hub_process_status
+            # type: gauge
+            help: "Status of an online AAP Hub process. Value is 1."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_api_apps[*] }'
+            labels:
+              process_name: '{.name}'
+              type: "api_app"
+            values:
+              value: 1
+          - name: aap_hub_process_status
+            # type: gauge
+            help: "Status of an online AAP Hub process. Value is 1."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.online_content_apps[*] }'
+            labels:
+              process_name: '{.name}'
+              type: "content_app"
+            values:
+              value: 1
+          - name: aap_hub_connection_status
+            # type: gauge
+            help: "Connection status for Hub dependencies (database, redis). 1 for connected."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response }'
+            labels:
+              component: "database"
+            values:
+              connected: '{.database_connection.connected}'
+          - name: aap_hub_connection_status
+            # type: gauge
+            help: "Connection status for Hub dependencies (database, redis). 1 for connected."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response }'
+            labels:
+              component: "redis"
+            values:
+              connected: '{.redis_connection.connected}'
+          - name: aap_hub_storage_bytes_total
+            # type: gauge
+            help: "Total storage available to the Hub in bytes."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
+            values:
+              value: '{.total}'
+          - name: aap_hub_storage_bytes_used
+            # type: gauge
+            help: "Storage used by the Hub in bytes."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
+            values:
+              value: '{.used}'
+          - name: aap_hub_storage_bytes_free
+            # type: gauge
+            help: "Free storage available to the Hub in bytes."
+            path: '{.services[?(@.service_name=="hub")].nodes.*.response.storage }'
+            values:
+              value: '{.free}'
 
-        # Redis Cluster Status
-        - name: aap_health_redis_cluster_state
-          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
-          type: "value"
-          values:
-            cluster_state: 'if .cluster_state == "ok" then 1 else 0 end'
-        - name: aap_health_redis_cluster_known_nodes
-          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
-          type: "value"
-          values:
-            value: '.cluster_known_nodes'
-        - name: aap_health_redis_cluster_size
-          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
-          type: "value"
-          values:
-            value: '.cluster_size'
-        - name: aap_health_redis_cluster_slots_ok
-          path: "$.services[?(@.service_name=='redis')].response.cluster_info"
-          type: "value"
-          values:
-            value: '.cluster_slots_ok'
-
-      # The following new modules are currently commented out as they are not needed for the current request.
-      # new_endpoint_1_module:
-      #   metrics:
-      #     # Define metrics for your first new JSON endpoint here.
-      # new_endpoint_2_module:
-      #   metrics:
-      #     # Define metrics for your second new JSON endpoint here.
-      # new_endpoint_3_module:
-      #   metrics:
-      #     # Define metrics for your third new JSON endpoint here.
+          # --- Redis Metrics ---
+          - name: aap_redis_node_info
+            # type: gauge
+            help: "Information for each Redis node. Value is 1 if connected."
+            path: '{.services[?(@.service_name=="redis")].nodes.* }'
+            labels:
+              node_id: '{.node_id}'
+              flags: '{.flags}'
+              master_id: '{.master_id}'
+            values:
+              connected: '{.connected}'
+          - name: aap_redis_cluster_status
+            # type: gauge
+            help: "The state of the Redis cluster. Value is 1."
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+            labels:
+              cluster_state: '{.cluster_state}'
+            values:
+              value: 1
+          - name: aap_redis_cluster_slots_assigned
+            # type: gauge
+            help: "Assigned slots in the Redis cluster."
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+            values:
+              value: '{.cluster_slots_assigned}'
+          - name: aap_redis_cluster_slots_ok
+            # type: gauge
+            help: "OK slots in the Redis cluster."
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+            values:
+              value: '{.cluster_slots_ok}'
+          - name: aap_redis_cluster_known_nodes
+            # type: gauge
+            help: "Known nodes in the Redis cluster."
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+            values:
+              value: '{.cluster_known_nodes}'
+          - name: aap_redis_cluster_size
+            # type: gauge
+            help: "Size of the Redis cluster."
+            path: '{.services[?(@.service_name=="redis")].response.cluster_info }'
+            values:
+              value: '{.cluster_size}'
