@@ -10,12 +10,11 @@ metadata:
     release: prometheus-k8s
 spec:
   endpoints:
-  - interval: 30s # You can adjust the scrape interval for each endpoint
+  - interval: 15s
     port: http
     path: /probe
     params:
-      # NEW target for the gateway health endpoint, also using 'default' module
-      target: ["http://aap.aap.svc.cluster.local/api/gateway/v1/status/?format=json"] # <-- REPLACE WITH YOUR ACTUAL NEW GATEWAY URL
+      target: ["http://aap.aap.svc.cluster.local/api/gateway/v1/status/?format=json"]
       module:
       - default
   # The following new endpoint configurations are currently commented out.

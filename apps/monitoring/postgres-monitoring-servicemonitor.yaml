@@ -1,0 +1,20 @@
+# This ServiceMonitor tells Prometheus where to find the metrics service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-exporters-monitor
+  namespace: prometheus-operator
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      app: postgres-exporters
+  namespaceSelector:
+    matchNames:
+      - aap
+  endpoints:
+    - port: metrics-gateway
+    - port: metrics-ctrl
+    - port: metrics-hub
+    - port: metrics-eda

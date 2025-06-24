@@ -1,0 +1,24 @@
+# This Service exposes the METRICS ports of our exporter pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-exporters-metrics
+  namespace: aap
+  labels:
+    app: postgres-exporters
+spec:
+  ports:
+    - name: metrics-gateway
+      port: 9186
+      targetPort: 9186
+    - name: metrics-ctrl
+      port: 9187
+      targetPort: 9187
+    - name: metrics-hub
+      port: 9188
+      targetPort: 9188
+    - name: metrics-eda
+      port: 9189
+      targetPort: 9189
+  selector:
+    app: postgres-exporters

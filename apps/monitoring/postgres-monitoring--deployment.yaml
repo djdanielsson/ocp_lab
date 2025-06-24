@@ -1,0 +1,138 @@
+# This Deployment creates a stateless Pod with just the exporters.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-exporters
+  namespace: aap
+  labels:
+    app: postgres-exporters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-exporters
+  template:
+    metadata:
+      labels:
+        app: postgres-exporters
+    spec:
+      containers:
+        # --- Container 1: exporter-gateway ---
+        - name: exporter-gateway
+          image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+          command:
+            - "postgres_exporter"
+            - "--web.listen-address=:9186"
+          ports:
+            - containerPort: 9186
+              name: metrics-gateway
+          env:
+            - name: POSTGRES_HOST
+              value: "aap-postgres-15.aap.svc.cluster.local" 
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aap-gateway-postgres-configuration
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: aap-gateway-postgres-configuration
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aap-gateway-postgres-configuration
+                  key: database
+            - name: DATA_SOURCE_NAME
+              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+
+        # --- Container 2: exporter-controller ---
+        - name: exporter-controller
+          image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+          command:
+            - "postgres_exporter"
+            - "--web.listen-address=:9187"
+          ports:
+            - containerPort: 9187
+              name: metrics-ctrl
+          env:
+            - name: POSTGRES_HOST
+              value: "aap-postgres-15.aap.svc.cluster.local"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aap-controller-postgres-configuration
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: aap-controller-postgres-configuration
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aap-controller-postgres-configuration
+                  key: database
+            - name: DATA_SOURCE_NAME
+              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+
+        # --- Container 3: exporter-hub ---
+        - name: exporter-hub
+          image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+          command:
+            - "postgres_exporter"
+            - "--web.listen-address=:9188"
+          ports:
+            - containerPort: 9188
+              name: metrics-hub
+          env:
+            - name: POSTGRES_HOST
+              value: "aap-postgres-15.aap.svc.cluster.local"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aap-hub-postgres-configuration
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: aap-hub-postgres-configuration
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aap-hub-postgres-configuration
+                  key: database
+            - name: DATA_SOURCE_NAME
+              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+              
+        # --- Container 4: exporter-eda ---
+        - name: exporter-eda
+          image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+          command:
+            - "postgres_exporter"
+            - "--web.listen-address=:9189"
+          ports:
+            - containerPort: 9189
+              name: metrics-eda
+          env:
+            - name: POSTGRES_HOST
+              value: "aap-postgres-15.aap.svc.cluster.local"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aap-eda-postgres-configuration
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: aap-eda-postgres-configuration
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aap-eda-postgres-configuration
+                  key: database
+            - name: DATA_SOURCE_NAME
+              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
