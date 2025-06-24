@@ -15,6 +15,10 @@ spec:
       - aap
   endpoints:
     - port: metrics-gateway
+      interval: 15s
     - port: metrics-ctrl
+      interval: 15s
     - port: metrics-hub
+      interval: 15s
     - port: metrics-eda
+      interval: 15s
