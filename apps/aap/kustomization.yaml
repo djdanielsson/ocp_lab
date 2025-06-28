@@ -5,4 +5,4 @@ resources:
   - operator/operator.yaml
   - app/deploy.yaml
 
-namespace: aap
+namespace: deploy-aap
