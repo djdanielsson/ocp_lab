@@ -13,7 +13,7 @@ metadata:
   namespace: aap
 spec:
   targetNamespaces:
-    - ansible-automation-platform
+    - aap
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
