@@ -3,6 +3,6 @@ kind: Kustomization
 
 resources:
   - operator/operator.yaml
-  - aap/deploy.yaml
+  - app/deploy.yaml
 
 namespace: aap
