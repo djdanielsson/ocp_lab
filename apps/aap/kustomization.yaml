@@ -4,5 +4,3 @@ kind: Kustomization
 resources:
   - operator/operator.yaml
   - app/deploy.yaml
-
-namespace: deploy-aap
