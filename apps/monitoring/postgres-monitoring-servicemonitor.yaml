@@ -5,7 +5,7 @@ metadata:
   name: postgres-exporters-monitor
   namespace: prometheus-operator
   labels:
-    team: frontend
+    openshift.io/cluster-monitoring: 'true'
 spec:
   selector:
     matchLabels:

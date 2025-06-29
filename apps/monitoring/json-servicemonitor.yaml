@@ -6,7 +6,7 @@ metadata:
   labels:
     k8s-app: json-exporter
     app: json-exporter
-    team: frontend
+    openshift.io/cluster-monitoring: 'true'
     release: prometheus-k8s
 spec:
   endpoints:
@@ -46,6 +46,9 @@ spec:
   #     - http://your-new-endpoint-3-url # <-- REPLACE WITH YOUR ACTUAL URL
   #     module:
   #     - new_endpoint_3_module
+  namespaceSelector:
+    matchNames:
+      - prometheus-operator
   selector:
     matchLabels:
       app: json-exporter

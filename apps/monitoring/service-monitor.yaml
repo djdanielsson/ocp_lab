@@ -3,7 +3,7 @@ kind: ServiceMonitor
 metadata:
   name: ansiblecontroller-monitor
   labels:
-    team: frontend
+    openshift.io/cluster-monitoring: 'true'
   namespace: prometheus-operator
 spec:
   namespaceSelector:
