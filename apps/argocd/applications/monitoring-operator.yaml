@@ -1,7 +1,8 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring-stack
+  name: monitoring-operator
   namespace: openshift-gitops
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,15 +11,13 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     targetRevision: HEAD
-    path: apps/monitoring/components/
+    path: components/monitoring-operator
   destination:
     server: https://kubernetes.default.svc
-    namespace: prometheus-operator
+    namespace: openshift-operators
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true # Automatically create the 'monitoring' namespace
   dependsOn:
-    - monitoring-operator
+    - aap-instance
