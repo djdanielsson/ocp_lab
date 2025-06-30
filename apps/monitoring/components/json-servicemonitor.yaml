@@ -2,7 +2,6 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: json-exporter
-  namespace: prometheus-operator
   labels:
     k8s-app: json-exporter
     app: json-exporter

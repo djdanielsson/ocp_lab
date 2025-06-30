@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: json-exporter
-  namespace: prometheus-operator
   labels:
     app: json-exporter
 spec:

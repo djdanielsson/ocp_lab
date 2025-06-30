@@ -5,7 +5,6 @@ metadata:
     dashboards: grafana
     folders: grafana
   name: grafana
-  namespace: prometheus-operator
 spec:
   ingress:
     enabled: true

@@ -4,7 +4,6 @@ metadata:
   name: ansiblecontroller-monitor
   labels:
     openshift.io/cluster-monitoring: 'true'
-  namespace: prometheus-operator
 spec:
   namespaceSelector:
     matchNames:

@@ -3,7 +3,6 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: postgres-exporters-monitor
-  namespace: prometheus-operator
   labels:
     openshift.io/cluster-monitoring: 'true'
 spec:
