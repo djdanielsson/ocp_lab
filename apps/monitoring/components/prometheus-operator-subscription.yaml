@@ -26,6 +26,6 @@ metadata:
 spec:
   channel: beta
   installPlanApproval: Automatic
-  name: prometheusoperator
+  name: prometheus-operator
   source: community-operators
   sourceNamespace: openshift-marketplace
