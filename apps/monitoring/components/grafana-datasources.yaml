@@ -21,17 +21,20 @@
 kind: GrafanaDatasource
 apiVersion: grafana.integreatly.org/v1beta1
 metadata:
-  name: grafana-datasource-prometheus
+  name: grafana-datasource
 spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
   datasource:
-    name: Prometheus
-    type: prometheus
     access: proxy
     isDefault: true
-    url: 'https://thanos-querier.openshift-monitoring.svc:9091'
     jsonData:
+      timeInterval: 5s
       tlsSkipVerify: true
-      timeInterval: "5s"
+    name: prometheus
+    type: prometheus
+    url: 'http://prometheus:9090'
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  plugins:
+    - name: grafana-clock-panel
+      version: 1.3.0
