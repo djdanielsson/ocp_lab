@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: openshift-gitops-operator
   labels:
-    openshift.io/cluster-monitoring: 'true'
+    team: frontend

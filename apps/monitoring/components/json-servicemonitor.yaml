@@ -5,7 +5,7 @@ metadata:
   labels:
     k8s-app: json-exporter
     app: json-exporter
-    openshift.io/cluster-monitoring: 'true'
+    team: frontend
     release: prometheus-k8s
 spec:
   endpoints:
