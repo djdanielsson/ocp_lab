@@ -16,7 +16,9 @@ spec:
       path: /api/controller/v2/metrics
       scheme: http
       basicAuth:
-        username: admin
+        username:
+          name: aap-admin
+          key: username
         password:
           name: aap-admin-password
           key: password
