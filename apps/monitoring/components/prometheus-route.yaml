@@ -10,7 +10,7 @@ spec:
     name: prometheus
     weight: 100
   port:
-    targetPort: 3000
+    targetPort: 9090
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
