@@ -11,7 +11,7 @@
 #       tlsSkipVerify: true
 #     name: prometheus
 #     type: prometheus
-#     url: 'https://prometheus-k8s.openshift-monitoring.svc.cluster.local:9091' # 'https://thanos-querier.openshift-monitoring.svc:9091'
+#     url: 'https://thanos-querier.openshift-monitoring.svc:9091'
 #   instanceSelector:
 #     matchLabels:
 #       dashboards: grafana
@@ -31,7 +31,7 @@ spec:
     type: prometheus
     access: proxy
     isDefault: true
-    url: http://prometheus-k8s.openshift-monitoring.svc.cluster.local:9091
+    url: http:/prometheus-operated.openshift-monitoring.svc.cluster.locall:9090
     jsonData:
       tlsSkipVerify: true
       timeInterval: "5s"
