@@ -31,7 +31,7 @@ spec:
     type: prometheus
     access: proxy
     isDefault: true
-    url: http:/prometheus-operated.openshift-monitoring.svc.cluster.locall:9090
+    url: http:/prometheus-operated.openshift-monitoring.svc.cluster.local:9090
     jsonData:
       tlsSkipVerify: true
       timeInterval: "5s"
