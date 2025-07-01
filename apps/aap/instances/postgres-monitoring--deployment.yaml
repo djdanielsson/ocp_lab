@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-exporters
-  namespace: aap
   labels:
     app: postgres-exporters
 spec:

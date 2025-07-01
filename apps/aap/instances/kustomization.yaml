@@ -3,5 +3,7 @@ kind: Kustomization
 
 resources:
   - deploy.yaml
+  - postgres-monitoring--deployment.yaml
+  - postgres-monitoring-service.yaml
 
 namespace: aap
