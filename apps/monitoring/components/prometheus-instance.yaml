@@ -4,7 +4,6 @@ metadata:
   name: prometheus
   labels:
     prometheus: k8s
-  namespace: monitoring
 spec:
   replicas: 2
   serviceAccountName: prometheus
