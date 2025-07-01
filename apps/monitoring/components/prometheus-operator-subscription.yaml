@@ -1,12 +1,12 @@
-# ---
-# apiVersion: operators.coreos.com/v1
-# kind: OperatorGroup
-# metadata:
-#   name: grafana-operator
-#   namespace: grafana-operator
-# spec:
-#   targetNamespaces:
-#   - grafana-operator
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: monitoring-operator-group
+  namespace: monitoring
+spec:
+  targetNamespaces:
+  - monitoring
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -14,8 +14,8 @@ metadata:
   name: prometheus-operator-subscription
   namespace: monitoring
 spec:
-  channel: beta
-  name: rhods-prometheus-operator
+  channel: 'beta'
   installPlanApproval: Automatic
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  name: 'prometheus'
+  source: 'redhat-operators'
+  sourceNamespace: 'openshift-marketplace'
