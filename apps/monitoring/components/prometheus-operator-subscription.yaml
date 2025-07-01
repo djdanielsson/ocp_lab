@@ -15,7 +15,7 @@ metadata:
   namespace: monitoring
 spec:
   channel: beta
-  name: prometheus-operator
+  name: rhods-prometheus-operator
   installPlanApproval: Automatic
   source: redhat-operators
   sourceNamespace: openshift-marketplace
