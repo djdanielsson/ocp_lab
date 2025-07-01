@@ -11,19 +11,19 @@ spec:
       disable_login_form: 'false'
     log:
       mode: console
-  ingress:
-    spec:
-      rules:
-        - host: grafana-monitoring.apps.ocp.lab.danielsson.us.com 
-          http:
-            paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: grafana-service
-                    port:
-                      number: 3000
+  # ingress:
+  #   spec:
+  #     rules:
+  #       - host: grafana-monitoring.apps.ocp.lab.danielsson.us.com 
+  #         http:
+  #           paths:
+  #             - path: /
+  #               pathType: Prefix
+  #               backend:
+  #                 service:
+  #                   name: grafana-service
+  #                   port:
+  #                     number: 3000
   # admin:
   #   existingSecret: grafana-admin-credentials
   #   userKey: admin-user
