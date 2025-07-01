@@ -1,6 +1,6 @@
 # https://raw.githubusercontent.com/leoaaraujo/articles/master/aap-nodeexporter-grafana/files/aap-metrics.json
-apiVersion: integreatly.org/v1beta1
 kind: GrafanaDashboard
+apiVersion: grafana.integreatly.org/v1beta1
 metadata:
   name: aap-metrics-dashboard
   labels:
