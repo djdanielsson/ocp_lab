@@ -10,5 +10,6 @@ resources:
   - json-deployment.yaml
   - json-service.yaml
   - json-servicemonitor.yaml
+  - aap-admin-secret.yaml
 
 namespace: aap
