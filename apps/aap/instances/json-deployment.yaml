@@ -24,12 +24,12 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /config
-          # env:
-          #   - name: BEARER_TOKEN
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: json-exporter-secret
-          #         key: BEARER_TOKEN
+          env:
+            - name: ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: aap-admin-password
+                  key: password
       volumes:
         - name: config-volume
           configMap:

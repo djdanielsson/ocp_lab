@@ -6,5 +6,9 @@ resources:
   - postgres-monitoring--deployment.yaml
   - postgres-monitoring-service.yaml
   - service-monitor.yaml
+  - json-configmap.yaml
+  - json-deployment.yaml
+  - json-service.yaml
+  - json-servicemonitor.yaml
 
 namespace: aap

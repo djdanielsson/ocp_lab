@@ -8,8 +8,12 @@ data:
   config.yml: |
     modules:
       default:
-        headers:
-          Authorization: "Bearer ${BEARER_TOKEN}"    
+        http_client_config:
+          tls_config:
+            insecure_skip_verify: true
+          basic_auth:
+            username: admin
+            password: ${ADMIN_PASS}
         metrics:
           - name: aap_overall_status
             type: object
