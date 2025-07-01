@@ -18,14 +18,26 @@ spec:
 #   name: rhods-prometheus-operator
 #   source: 'redhat-operators'
 #   sourceNamespace: 'openshift-marketplace'
+# ---
+# apiVersion: operators.coreos.com/v1alpha1
+# kind: Subscription
+# metadata:
+#   name: prometheus-operator-subscription
+# spec:
+#   channel: beta
+#   installPlanApproval: Automatic
+#   name: prometheus-operator
+#   source: community-operators
+#   sourceNamespace: openshift-marketplace
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: prometheus-operator-subscription
+  name: prometheus
+  # namespace: openshift-operators
 spec:
-  channel: beta
+  channel: beta # stable
   installPlanApproval: Automatic
-  name: prometheus-operator
+  name: prometheus
   source: community-operators
   sourceNamespace: openshift-marketplace
