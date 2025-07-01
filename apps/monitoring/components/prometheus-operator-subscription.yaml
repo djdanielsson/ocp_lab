@@ -6,6 +6,18 @@ metadata:
 spec:
   targetNamespaces:
   - monitoring
+# ---
+# apiVersion: operators.coreos.com/v1alpha1
+# kind: Subscription
+# metadata:
+#   name: prometheus-operator-subscription
+#   namespace: monitoring
+# spec:
+#   channel: 'beta'
+#   installPlanApproval: Automatic
+#   name: rhods-prometheus-operator
+#   source: 'redhat-operators'
+#   sourceNamespace: 'openshift-marketplace'
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -13,8 +25,8 @@ metadata:
   name: prometheus-operator-subscription
   namespace: monitoring
 spec:
-  channel: 'beta'
+  channel: beta
   installPlanApproval: Automatic
-  name: rhods-prometheus-operator
-  source: 'redhat-operators'
-  sourceNamespace: 'openshift-marketplace'
+  name: prometheus-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
