@@ -31,13 +31,6 @@ spec:
     type: prometheus
     access: proxy
     isDefault: true
-    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    url: http://thanos-querier.openshift-monitoring.svc.cluster.local:9091
     jsonData:
-      # This tells Grafana to add an 'Authorization' header to its requests.
-      httpHeaderName1: "Authorization"
-      # This tells Grafana to trust the in-cluster CA for the TLS certificate.
       tlsSkipVerify: true
-    secureJsonData:
-      # The '$__token' variable is a special placeholder that the Grafana
-      # operator replaces with the pod's actual service account token.
-      httpHeaderValue1: "Bearer $__token"
