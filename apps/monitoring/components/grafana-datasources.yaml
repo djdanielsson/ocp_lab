@@ -31,6 +31,7 @@ spec:
     type: prometheus
     access: proxy
     isDefault: true
-    url: http://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    url: http://prometheus-operated:9090
     jsonData:
       tlsSkipVerify: true
+      timeInterval: "5s"
