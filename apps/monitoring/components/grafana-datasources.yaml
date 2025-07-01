@@ -1,20 +1,43 @@
+# kind: GrafanaDatasource
+# apiVersion: grafana.integreatly.org/v1beta1
+# metadata:
+#   name: grafana-datasource
+# spec:
+#   datasource:
+#     access: proxy
+#     isDefault: true
+#     jsonData:
+#       timeInterval: 5s
+#       tlsSkipVerify: true
+#     name: prometheus
+#     type: prometheus
+#     url: 'https://prometheus-k8s.openshift-monitoring.svc.cluster.local:9091' # 'https://thanos-querier.openshift-monitoring.svc:9091'
+#   instanceSelector:
+#     matchLabels:
+#       dashboards: grafana
+#   plugins:
+#     - name: grafana-clock-panel
+#       version: 1.3.0
 kind: GrafanaDatasource
 apiVersion: grafana.integreatly.org/v1beta1
 metadata:
-  name: grafana-datasource
+  name: grafana-datasource-prometheus
 spec:
-  datasource:
-    access: proxy
-    isDefault: true
-    jsonData:
-      timeInterval: 5s
-      tlsSkipVerify: true
-    name: prometheus
-    type: prometheus
-    url: 'https://thanos-querier.openshift-monitoring.svc:9091'
   instanceSelector:
     matchLabels:
-      dashboards: grafana
-  plugins:
-    - name: grafana-clock-panel
-      version: 1.3.0
+      dashboards: "grafana"
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    isDefault: true
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    jsonData:
+      # This tells Grafana to add an 'Authorization' header to its requests.
+      httpHeaderName1: "Authorization"
+      # This tells Grafana to trust the in-cluster CA for the TLS certificate.
+      tlsSkipVerify: true
+    secureJsonData:
+      # The '$__token' variable is a special placeholder that the Grafana
+      # operator replaces with the pod's actual service account token.
+      httpHeaderValue1: "Bearer $__token"
