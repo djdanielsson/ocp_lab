@@ -1,3 +1,4 @@
+---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -7,7 +8,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: prometheus
+    name: prometheus-operated
     weight: 100
   port:
     targetPort: 9090
