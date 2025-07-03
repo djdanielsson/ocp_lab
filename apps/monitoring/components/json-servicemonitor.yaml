@@ -47,7 +47,7 @@ spec:
   #     - new_endpoint_3_module
   namespaceSelector:
     matchNames:
-      - prometheus-operator
+      - aap
   selector:
     matchLabels:
       app: json-exporter
