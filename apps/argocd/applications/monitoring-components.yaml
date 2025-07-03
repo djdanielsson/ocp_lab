@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     targetRevision: test
-    path: apps/monitoring/
+    path: apps/monitoring/components/
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
