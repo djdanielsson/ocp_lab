@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - components/aap-admin-secret.yaml
+  - components/json-service.yaml
+  - components/postgres-monitoring--deployment.yaml
+  - components/service-monitor.yaml
+  - components/json-configmap.yaml
+  - components/json-servicemonitor.yaml
+  - components/postgres-monitoring-service.yaml
+  - components/json-deployment.yaml
+  - components/kustomization.yaml
+  - components/postgres-monitoring-servicemonitor.yaml
+  - grafana/aap-gateway-dashboard.yaml
+  - grafana/aap-metrics-dashboard.yaml
+  - grafana/grafana-datasources.yaml
+  - grafana/grafana-rbac.yaml
+  - grafana/grafana-secret.yaml
+  - grafana/aap-grafana-dashboard.yaml
+  - grafana/aap-psql-metrics-dashboard.yaml
+  - grafana/grafana-instance.yaml
+  - grafana/grafana-route.yaml
+  - prometheus/prometheus-instance.yaml
+  - prometheus/prometheus-route.yaml
+  - prometheus/prometheus-operator-subscription.yaml
+  - prometheus/prometheus-service-account.yaml
