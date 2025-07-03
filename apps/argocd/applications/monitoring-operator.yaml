@@ -16,7 +16,7 @@ spec:
     path: apps/monitoring/operator/
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-operators
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
