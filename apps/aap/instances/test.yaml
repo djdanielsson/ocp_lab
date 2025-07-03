@@ -1,0 +1,8 @@
+# your-app/patch-replicate-annotation.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aap-admin-password
+  annotations:
+    # This annotation tells the replicator to copy this secret to the 'production' namespace
+    replicator.v1.mittwald.de/replicate-to: "monitoring"

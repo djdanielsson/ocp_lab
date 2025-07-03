@@ -1,0 +1,18 @@
+# app-replicator.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-replicator
+spec:
+  project: default
+  source:
+    repoURL: 'https://mittwald.github.io/kubernetes-replicator/'
+    chart: kubernetes-replicator
+    targetRevision: 2.0.0 # Use the version you need
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system # You can deploy it to any management namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
