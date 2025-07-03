@@ -5,3 +5,9 @@ resources:
   - deploy.yaml
 
 namespace: aap
+
+patches:
+- path: patch-replicate-annotation.yaml
+  target:
+    kind: Secret
+    name: aap-admin-password
