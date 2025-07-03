@@ -6,3 +6,4 @@ resources:
   - applications/aap-instance.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
+  - applications/app-replicator.yaml
