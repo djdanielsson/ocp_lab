@@ -9,7 +9,7 @@ metadata:
     # release: prometheus-k8s
 spec:
   endpoints:
-  - interval: 15s
+  - interval: 5s
     port: http
     path: /probe
     params:
