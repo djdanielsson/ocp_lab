@@ -8,7 +8,7 @@ spec:
   replicas: 2
   serviceAccountName: prometheus
   securityContext: {}
-  serviceMonitorNamespaceSelector: {}
+  # serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector:
     matchLabels:
       team: frontend
