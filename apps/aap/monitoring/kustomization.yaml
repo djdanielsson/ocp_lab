@@ -7,11 +7,12 @@ resources:
   - json-configmap.yaml
   - json-deployment.yaml
   - json-service.yaml
+  - patch-replicate-annotation.yaml
 
 namespace: aap
 
-patches:
-- path: patch-replicate-annotation.yaml
-  target:
-    kind: Secret
-    name: aap-admin-password
+# patches:
+# - path: patch-replicate-annotation.yaml
+#   target:
+#     kind: Secret
+#     name: aap-admin-password
