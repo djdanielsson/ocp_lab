@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
+  - applications/aap-monitoring.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
   - applications/app-replicator.yaml
