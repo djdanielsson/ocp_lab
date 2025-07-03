@@ -6,11 +6,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://mittwald.github.io/kubernetes-replicator/'
+    repoURL: 'https://helm.mittwald.de'
     chart: kubernetes-replicator
-    targetRevision: 2.0.0 # Use the version you need
+    targetRevision: 2.11.1
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: https://kubernetes.default.svc
     namespace: default # You can deploy it to any management namespace
   syncPolicy:
     automated:
