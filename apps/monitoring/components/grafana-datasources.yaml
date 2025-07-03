@@ -22,7 +22,7 @@
 kind: GrafanaDatasource
 apiVersion: grafana.integreatly.org/v1beta1
 metadata:
-  name: grafana-datasource2
+  name: grafana-datasource
 spec:
   datasource:
     access: proxy
@@ -30,7 +30,7 @@ spec:
     jsonData:
       timeInterval: 5s
       tlsSkipVerify: true
-    name: prometheus2
+    name: prometheus
     type: prometheus
     url: 'http://prometheus:9090'
   instanceSelector:
