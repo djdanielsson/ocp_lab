@@ -12,7 +12,11 @@ resources:
 namespace: aap
 
 patches:
-- path: patch-replicate-annotation.yaml
-  target:
-    kind: Secret
-    name: aap-admin-password
+  - path: patch-replicate-annotation.yaml
+    target:
+      kind: Secret
+      name: aap-admin-password
+  - path: patch-service-label.yaml
+    target:
+      kind: Service
+      name: aap

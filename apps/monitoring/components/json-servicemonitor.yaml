@@ -3,10 +3,10 @@ kind: ServiceMonitor
 metadata:
   name: json-exporter
   labels:
-    k8s-app: json-exporter
-    app: json-exporter
+    # k8s-app: json-exporter
+    # app: json-exporter
     team: frontend
-    release: prometheus-k8s
+    # release: prometheus-k8s
 spec:
   endpoints:
   - interval: 15s
