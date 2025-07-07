@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: aap-instance
   namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   destination:
     namespace: aap
@@ -11,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/aap/instances/
-    targetRevision: HEAD
+    targetRevision: test
   syncPolicy:
     automated:
       prune: true

@@ -12,11 +12,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    targetRevision: HEAD
+    targetRevision: test
     path: apps/monitoring/operator/
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-operators
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
