@@ -22,15 +22,23 @@ spec:
           ports:
             - containerPort: 7979
           volumeMounts:
+            # This volume for the ConfigMap remains unchanged
             - name: config-volume
               mountPath: /config
-          env:
-            - name: ADMIN_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: aap-admin-password
-                  key: password
+            # This new volumeMount makes the secret file available inside the container
+            - name: secret-password-volume
+              mountPath: "/etc/json-exporter/secrets"
+              readOnly: true
+          # The 'env' section for the password has been removed
       volumes:
+        # This volume for the ConfigMap remains unchanged
         - name: config-volume
           configMap:
             name: json-exporter-config
+        # This new volume links to your secret
+        - name: secret-password-volume
+          secret:
+            secretName: aap-admin-password # The secret holding your password
+            items:
+              - key: password # The key within the secret
+                path: admin-password # The filename the password will have inside the pod

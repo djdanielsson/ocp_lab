@@ -8,8 +8,13 @@ data:
   config.yml: |
     modules:
       default:
-        headers:
-          Authorization: "Bearer K0wlnc3fy3BTzOQFDlviivnR8I8RUu" # notsecret
+        http_client_config:
+          tls_config:
+            insecure_skip_verify: true
+          basic_auth:
+            username: admin
+            # The password is now read from a file mounted from a secret
+            password_file: /etc/json-exporter/secrets/admin-password
         metrics:
           - name: aap_overall_status
             type: object
