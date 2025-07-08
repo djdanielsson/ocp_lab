@@ -8,3 +8,5 @@ resources:
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
   - applications/app-replicator.yaml
+  - applications/devspaces-operator.yaml
+  - applications/devspaces-instance.yaml

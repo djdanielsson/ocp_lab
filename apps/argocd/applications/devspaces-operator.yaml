@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devspaces-operator
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  destination:
+    namespace: openshift-devspaces
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/devspaces/operator/
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
