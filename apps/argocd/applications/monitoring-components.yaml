@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    targetRevision: test
+    targetRevision: main
     path: apps/monitoring/components/
   destination:
     server: https://kubernetes.default.svc
