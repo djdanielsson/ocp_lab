@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    path: apps/devspaces/instance/
+    path: apps/devspaces/instances/
     targetRevision: main
   syncPolicy:
     automated:
