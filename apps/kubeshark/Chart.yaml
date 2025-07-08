@@ -1,0 +1,16 @@
+---
+name: kubeshark
+apiVersion: v2
+version: 1.0.0
+dependencies:
+  - name: kubeshark
+    version: 52.3.84
+    repository: https://helm.kubeshark.co
+    # spec:
+    #   source:
+    #     helm:
+    #       values: |
+    #         tap:
+    #           ingress:
+    #             enabled: true
+    #             host: kubeshark.lab.danielsson.us.com
