@@ -5,8 +5,8 @@ metadata:
   name: devspaces-operator-group
   namespace: openshift-devspaces
 spec:
-  targetNamespaces:
-  - openshift-devspaces
+  # targetNamespaces:
+  # - openshift-devspaces
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
