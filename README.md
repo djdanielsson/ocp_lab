@@ -15,9 +15,9 @@ oc adm policy add-cluster-role-to-user cluster-admin -z openshift-gitops-argocd-
 Required to run after adding applications of apps (at least until I can figure out how to make Argo apply them)
 
 ```bash
-oc patch secret aap-admin-password -p '{"metadata": {"annotations": {"replicator.v1.mittwald.de/replicate-to": "monitoring"}}}'
+oc patch secret aap-admin-password -n aap -p '{"metadata": {"annotations": {"replicator.v1.mittwald.de/replicate-to": "monitoring"}}}'
 ```
 
 ```bash
-oc patch service aap -p '{"metadata": {"label": {"monitor": "metrics"}}}'
+oc label service aap -n aap monitor=metrics
 ```
