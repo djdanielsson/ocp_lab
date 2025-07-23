@@ -8,8 +8,8 @@ metadata:
 spec:
   ports:
   - name: metrics
-    port: 19999
-    targetPort: 19999
+    port: 20489
+    targetPort: 20489
   clusterIP: None
 ---
 apiVersion: v1
@@ -21,7 +21,7 @@ subsets:
   - addresses:
       - ip: 192.168.2.237
     ports:
-      - port: 19999
+      - port: 20489
         name: metrics
 ---
 apiVersion: discovery.k8s.io/v1
@@ -37,7 +37,7 @@ ports:
   - name: metrics # should match with the name of the service port defined above
 #    appProtocol: http
     protocol: TCP
-    port: 19999
+    port: 20489
 endpoints:
   - addresses:
       - "192.168.2.237"
