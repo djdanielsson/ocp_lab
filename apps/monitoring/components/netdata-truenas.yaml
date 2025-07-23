@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: external-monitor-truenas
   labels:
-    monitoring: external
+    monitoring: external-truenas
 spec:
   ports:
   - name: metrics
@@ -52,7 +52,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      monitoring: external
+      monitoring: external-truenas
   namespaceSelector:
     matchNames:
       - default
