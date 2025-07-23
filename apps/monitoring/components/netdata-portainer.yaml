@@ -1,0 +1,63 @@
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-monitor-portainer
+  labels:
+    monitoring: external
+spec:
+  ports:
+  - name: metrics
+    port: 19999
+    targetPort: 19999
+  clusterIP: None
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: external-monitor-portainer
+  namespace: default
+subsets:
+  - addresses:
+      - ip: 192.168.2.213
+    ports:
+      - port: 19999
+        name: metrics
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: external-monitor-portainer
+  labels:
+    kubernetes.io/service-name: external-monitor-portainer
+    service-name: external-monitor-portainer
+    service: external-monitor-portainer
+addressType: IPv4
+ports:
+  - name: metrics # should match with the name of the service port defined above
+#    appProtocol: http
+    protocol: TCP
+    port: 19999
+endpoints:
+  - addresses:
+      - "192.168.2.213"
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: external-monitor-portainer
+  namespace: monitoring
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      monitoring: external
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /api/v1/allmetrics?format=prometheus
+
