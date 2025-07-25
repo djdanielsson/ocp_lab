@@ -13,6 +13,9 @@ spec:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/kubeshark/
     targetRevision: main
+    helm:
+      valueFiles:
+        - values.yaml
   syncPolicy:
     automated:
       prune: true
