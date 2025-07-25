@@ -1,0 +1,10 @@
+resources:
+  - route.yaml
+
+helmCharts:
+  - name: kubeshark
+    repo: https://helm.kubeshark.co
+    version: 52.3.84
+    releaseName: kubeshark
+    namespace: kubeshark
+
