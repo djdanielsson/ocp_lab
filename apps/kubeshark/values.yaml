@@ -1,5 +1,0 @@
----
-tap:
-  ingress:
-    enabled: true
-    host: kubeshark.apps.ocp.lab.danielsson.us.com

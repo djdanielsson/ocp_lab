@@ -17,16 +17,6 @@ spec:
           value: "true"
         - name: tap.ingress.host
           value: kubeshark.apps.ocp.lab.danielsson.us.com
-        # - name: tap.ingress.className
-        #   value: openshift-default
-        # - name: tap.ingress.tls[0].hosts[0]
-        #   value: kubeshark.lab.danielsson.us.com
-        # - name: tap.ingress.tls[0].secretName
-        #   value: kubeshark-tls
-        # - name: tap.tls
-        #   value: "true"
-        # - name: tap.serviceMesh
-        #   value: "false"
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeshark
