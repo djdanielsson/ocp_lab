@@ -2,20 +2,34 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kubeshark
+  namespace: openshift-gitops
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  destination:
-    namespace: kubeshark
-    server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/djdanielsson/ocp_lab.git
-    path: apps/kubeshark/
-    targetRevision: main
+    repoURL: https://helm.kubeshark.co
+    chart: kubeshark
+    targetRevision: 52.7.8
     helm:
-      valueFiles:
-        - values.yaml
+      parameters:
+        - name: tap.ingress.enabled
+          value: "true"
+        - name: tap.ingress.host
+          value: kubeshark.lab.danielsson.us.com
+        # - name: tap.ingress.className
+        #   value: openshift-default
+        # - name: tap.ingress.tls[0].hosts[0]
+        #   value: kubeshark.lab.danielsson.us.com
+        # - name: tap.ingress.tls[0].secretName
+        #   value: kubeshark-tls
+        # - name: tap.tls
+        #   value: "true"
+        # - name: tap.serviceMesh
+        #   value: "false"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeshark
   syncPolicy:
     automated:
       prune: true
