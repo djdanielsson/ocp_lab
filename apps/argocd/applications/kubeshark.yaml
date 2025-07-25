@@ -16,7 +16,7 @@ spec:
         - name: tap.ingress.enabled
           value: "true"
         - name: tap.ingress.host
-          value: kubeshark.lab.danielsson.us.com
+          value: kubeshark.apps.ocp.lab.danielsson.us.com
         # - name: tap.ingress.className
         #   value: openshift-default
         # - name: tap.ingress.tls[0].hosts[0]
