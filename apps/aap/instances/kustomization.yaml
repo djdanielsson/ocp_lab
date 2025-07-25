@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
   - deploy.yaml
+  - metrics-utility-configmap.yaml
 
 namespace: aap
