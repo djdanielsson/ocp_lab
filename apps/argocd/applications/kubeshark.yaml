@@ -17,6 +17,10 @@ spec:
           value: "true"
         - name: tap.ingress.host
           value: kubeshark.apps.ocp.lab.danielsson.us.com
+        - name: tap.telemetry.enabled
+          value: false
+        - name: tap.gitops.enabled
+          value: true
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeshark
