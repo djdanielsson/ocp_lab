@@ -1,0 +1,21 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: kubeshark-front
+  namespace: kubeshark
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: kubeshark.apps.ocp.lab.danielsson.us.com
+  to:
+    kind: Service
+    name: kubeshark-front
+    weight: 100
+  port:
+    targetPort: kubeshark-front
+  wildcardPolicy: None
+status:
+  ingress:
+    - host: kubeshark.apps.ocp.lab.danielsson.us.com
+      routerName: default
