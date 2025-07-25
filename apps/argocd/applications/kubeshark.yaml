@@ -14,6 +14,8 @@ spec:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/kubeshark/
     targetRevision: main
+    kustomize:
+      buildOptions: ["--enable-helm"]
   syncPolicy:
     automated:
       prune: true
