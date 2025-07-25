@@ -6,19 +6,20 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  destination:
-    namespace: kubeshark
-    server: https://kubernetes.default.svc
-  project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/kubeshark/
     targetRevision: main
     kustomize:
       buildOptions: ["--enable-helm"]
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeshark
+  project: default
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
