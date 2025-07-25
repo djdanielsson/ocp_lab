@@ -23,5 +23,5 @@ oc label service aap -n aap monitor=metrics
 ```
 
 ```bash
-oc patch AutomationController aap-controller -n aap -p '{"spec": {"extra_settings": {"metrics_utility_enabled": "true"}}}'
+oc patch AutomationController aap-controller -n aap --type=merge -p '{"spec": {"extra_settings": [{"metrics_utility_enabled": "true"}]}}'
 ```
