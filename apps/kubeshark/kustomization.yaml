@@ -1,5 +1,5 @@
 resources:
-  - route.yaml
+  - kubeshark-route.yaml
 
 helmCharts:
   - name: kubeshark
