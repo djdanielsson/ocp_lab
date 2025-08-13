@@ -33,7 +33,7 @@ spec:
           value: ocp
         volumeMounts:
         - name: runner-home
-          mountPath: /home/github
+          mountPath: /actions-runner
       volumes:
       - name: runner-home
         emptyDir: {}
