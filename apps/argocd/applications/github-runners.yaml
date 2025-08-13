@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/djdanielsson/ocp_lab.git'
-    path: 'apps/gitrunners/github-runners.yaml'
+    path: 'apps/gitrunners/'
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
