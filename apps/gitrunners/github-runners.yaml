@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: runner
-        image: myoung34/github-runner:latest
+        image: ghcr.io/summerwind/actions-runner:latest # myoung34/github-runner:latest
         env:
         - name: RUNNER_NAME
           value: "ocp-runner-01"
