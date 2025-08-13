@@ -34,8 +34,9 @@ spec:
           value: "false"
         volumeMounts:
         - name: runner-home
-          mountPath: /actions-runner
+          mountPath: /home/github
       volumes:
       - name: runner-home
         emptyDir: {}
+
 
