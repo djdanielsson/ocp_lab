@@ -1,8 +1,47 @@
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: github-runner
+#  namespace: gitrunners
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: github-runner
+#  template:
+#    metadata:
+#      labels:
+#        app: github-runner
+#    spec:
+#      securityContext:
+#        runAsNonRoot: true
+#      containers:
+#      - name: runner
+#        image: myoung34/github-runner:latest
+#        env:
+#        - name: REPO_URL
+#          value: "djdanielsson/config_as_code"
+#        - name: RUNNER_NAME
+#          value: ocp-runner
+#        - name: ACCESS_TOKEN
+#          valueFrom:
+#            secretKeyRef:
+#              name: github-runner-token
+#              key: token
+#        - name: LABELS
+#          value: ocp
+#        - name: RUN_AS_ROOT
+#          value: "false"
+#        volumeMounts:
+#        - name: runner-home
+#          mountPath: /home/github
+#      volumes:
+#      - name: runner-home
+#        emptyDir: {}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: github-runner
-  namespace: gitrunners
 spec:
   replicas: 1
   selector:
@@ -17,26 +56,24 @@ spec:
         runAsNonRoot: true
       containers:
       - name: runner
-        image: myoung34/github-runner:latest
+        image: ghcr.io/actions/actions-runner:latest
         env:
-        - name: REPO_URL
-          value: "djdanielsson/config_as_code"
         - name: RUNNER_NAME
-          value: ocp-runner
-        - name: ACCESS_TOKEN
+          value: "ocp-runner"
+        - name: RUNNER_REPO
+          value: "djdanielsson/config_as_code"
+        - name: RUNNER_TOKEN
           valueFrom:
             secretKeyRef:
               name: github-runner-token
               key: token
-        - name: LABELS
-          value: ocp
-        - name: RUN_AS_ROOT
-          value: "false"
+        - name: RUNNER_WORKDIR
+          value: /runner/_work
         volumeMounts:
-        - name: runner-home
-          mountPath: /home/github
+        - name: runner-work
+          mountPath: /runner/_work
       volumes:
-      - name: runner-home
+      - name: runner-work
         emptyDir: {}
 
 
