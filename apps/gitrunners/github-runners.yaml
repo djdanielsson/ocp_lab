@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+  namespace: gitrunners
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+      - name: runner
+        image: myoung34/github-runner:latest
+        env:
+        - name: RUNNER_NAME
+          value: "ocp-runner-01"
+        - name: RUNNER_REPO
+          value: "djdanielsson/config_as_code"
+        - name: RUNNER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-runner-token
+              key: token
+        - name: RUNNER_WORKDIR
+          value: /tmp/github-runner
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/github-runner
+      volumes:
+      - name: workdir
+        emptyDir: {}
+
