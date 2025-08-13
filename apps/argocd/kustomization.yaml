@@ -11,4 +11,4 @@ resources:
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
   - applications/kubeshark.yaml
-  - applications/github-runners.yaml
+#  - applications/github-runners.yaml
