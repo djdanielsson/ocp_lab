@@ -27,7 +27,7 @@ spec:
         - name: ACCESS_TOKEN
           valueFrom:
             secretKeyRef:
-              name: github-runner-secret
+              name: github-runner-token
               key: token
         - name: LABELS
           value: ocp
