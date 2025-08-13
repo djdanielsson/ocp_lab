@@ -4,6 +4,7 @@ metadata:
   name: github-runner
   namespace: gitrunners
 spec:
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -13,25 +14,28 @@ spec:
       labels:
         app: github-runner
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: runner
-        image: ghcr.io/summerwind/actions-runner:latest # myoung34/github-runner:latest
+        image: myoung34/github-runner:latest
         env:
-        - name: RUNNER_NAME
-          value: "ocp-runner-01"
-        - name: RUNNER_REPO
+        - name: REPO_URL
           value: "djdanielsson/config_as_code"
-        - name: RUNNER_TOKEN
+        - name: RUNNER_NAME
+          value: ocp-runner
+        - name: ACCESS_TOKEN
           valueFrom:
             secretKeyRef:
-              name: github-runner-token
+              name: github-runner-secret
               key: token
-        - name: RUNNER_WORKDIR
-          value: /tmp/github-runner
+        - name: LABELS
+          value: ocp
         volumeMounts:
-        - name: workdir
-          mountPath: /tmp/github-runner
+        - name: runner-home
+          mountPath: /home/github
       volumes:
-      - name: workdir
+      - name: runner-home
         emptyDir: {}
+
 
