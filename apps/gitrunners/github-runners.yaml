@@ -4,7 +4,6 @@ metadata:
   name: github-runner
   namespace: gitrunners
 spec:
-spec:
   replicas: 1
   selector:
     matchLabels:
@@ -31,11 +30,12 @@ spec:
               key: token
         - name: LABELS
           value: ocp
+        - name: RUN_AS_ROOT
+          value: "false"
         volumeMounts:
         - name: runner-home
           mountPath: /actions-runner
       volumes:
       - name: runner-home
         emptyDir: {}
-
 
