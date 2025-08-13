@@ -56,7 +56,7 @@ spec:
         runAsNonRoot: true
       containers:
       - name: runner
-        image: ghcr.io/actions/actions-runner:latest
+        image: ghcr.io/summerwind/actions-runner:latest
         env:
         - name: RUNNER_NAME
           value: "ocp-runner"
@@ -75,5 +75,4 @@ spec:
       volumes:
       - name: runner-work
         emptyDir: {}
-
 
