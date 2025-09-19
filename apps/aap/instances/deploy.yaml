@@ -8,13 +8,20 @@ spec:
   service_type: ClusterIP
   ingress_type: Route
   no_log: true
-  redis_mode: standalone
+  redis_mode: cluster
   image_pull_policy: Always
   hostname: aap.apps.ocp.lab.danielsson.us.com
   admin_password_secret: aap-admin-password
   api:
     log_level: INFO
     replicas: 1
+    resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 100m
+  # redis:
+  #   resource_requirements:
+  #     requests:
   database:
     postgres_data_volume_init: false
     database_secret: external-postgres-configuration-gateway
