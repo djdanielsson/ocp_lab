@@ -7,7 +7,6 @@ resources:
   - applications/aap-monitoring.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
-  - applications/app-replicator.yaml
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
 #  - applications/kubeshark.yaml
