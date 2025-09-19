@@ -10,7 +10,7 @@ spec:
       - aap
   selector:
     matchLabels:
-      monitor: metrics
+      app.kubernetes.io/component: aap-api
   endpoints:
     - interval: 5s
       path: /api/controller/v2/metrics

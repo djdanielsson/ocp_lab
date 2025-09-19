@@ -1,0 +1,10 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: eda-database
+spec:
+  cluster:
+    name: aap-postgres
+  name: eda
+  owner: eda

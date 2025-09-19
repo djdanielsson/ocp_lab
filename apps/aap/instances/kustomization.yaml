@@ -4,5 +4,14 @@ kind: Kustomization
 resources:
   - deploy.yaml
   - metrics-utility-configmap.yaml
+  - aap-postgres-cluster.yaml
+  - controller-database.yml
+  - eda-database.yml
+  - hub-database.yml
+  - gateway-database.yml
+  - external-postgres-configuration-eda-secret.yaml
+  - external-postgres-configuration-hub-secret.yaml
+  - external-postgres-configuration-gateway-secret.yaml
+  - external-postgres-configuration-controller-secret.yaml
 
 namespace: aap

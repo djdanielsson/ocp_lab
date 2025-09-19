@@ -1,1 +1,0 @@
-trying this way because for the life of me I cannot get stupid prometheus to see my other service monitors from another namespace atm. thus need a replicator to copy the secrets from other namespaces to authenticate with to monitor them.
