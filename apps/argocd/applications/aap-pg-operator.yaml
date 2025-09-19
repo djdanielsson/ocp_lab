@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
   destination:
-    namespace: aap
+    namespace: openshift-operators
     server: https://kubernetes.default.svc
   project: default
   source:
