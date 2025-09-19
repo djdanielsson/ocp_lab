@@ -29,7 +29,7 @@ spec:
         passwordSecret:
           name: external-postgres-configuration-eda
         login: true
-  instances: 5
+  instances: 3
   switchoverDelay: 5
   replicationSlots:
     highAvailability:
@@ -39,9 +39,9 @@ spec:
   postgresql:
     synchronous:
       method: any
-      number: 3
+      number: 2
       dataDurability: preferred
   storage:
-    size: 20Gi
+    size: 100Gi
   walStorage:
     size: 20Gi
