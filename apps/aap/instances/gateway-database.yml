@@ -1,0 +1,10 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: gateway-database
+spec:
+  cluster:
+    name: aap-postgres
+  name: gateway
+  owner: gateway

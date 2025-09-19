@@ -1,8 +1,8 @@
+---
 apiVersion: aap.ansible.com/v1alpha1
 kind: AnsibleAutomationPlatform
 metadata:
   name: aap
-  namespace: aap
 spec:
   route_tls_termination_mechanism: Edge
   service_type: ClusterIP
@@ -11,11 +11,26 @@ spec:
   redis_mode: cluster
   image_pull_policy: Always
   hostname: aap.apps.ocp.lab.danielsson.us.com
-  hub:
-    file_storage_access_mode: ReadWriteOnce
+  admin_password_secret: aap-admin-password
   api:
     log_level: INFO
     replicas: 1
+    resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 100m
+  # redis:
+  #   resource_requirements:
+  #     requests:
   database:
     postgres_data_volume_init: false
+    database_secret: external-postgres-configuration-gateway
   route_host: aap.apps.ocp.lab.danielsson.us.com
+  hub:
+    file_storage_access_mode: ReadWriteOnce
+    postgres_configuration_secret: external-postgres-configuration-hub
+  controller:
+    postgres_configuration_secret: external-postgres-configuration-controller
+  eda:
+    database:
+        database_secret: external-postgres-configuration-eda
