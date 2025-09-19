@@ -6,7 +6,7 @@
 #   namespace: openshift-operators
 # spec:
 #   targetNamespaces:
-#     - aap-test
+#     - aap
 # ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription

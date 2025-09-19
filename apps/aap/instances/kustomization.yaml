@@ -15,4 +15,4 @@ resources:
   - external-postgres-configuration-controller-secret.yaml
   - deploy.yaml
 
-namespace: aap-test
+namespace: aap

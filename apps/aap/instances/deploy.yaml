@@ -10,7 +10,7 @@ spec:
   no_log: true
   redis_mode: standalone
   image_pull_policy: Always
-  hostname: aap-test.apps.ocp.lab.danielsson.us.com
+  hostname: aap.apps.ocp.lab.danielsson.us.com
   admin_password_secret: aap-admin-password
   api:
     log_level: INFO
@@ -18,7 +18,7 @@ spec:
   database:
     postgres_data_volume_init: false
     database_secret: external-postgres-configuration-gateway
-  route_host: aap-test.apps.ocp.lab.danielsson.us.com
+  route_host: aap.apps.ocp.lab.danielsson.us.com
   hub:
     file_storage_access_mode: ReadWriteOnce
     postgres_configuration_secret: external-postgres-configuration-hub
