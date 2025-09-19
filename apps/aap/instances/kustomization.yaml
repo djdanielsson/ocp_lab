@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - deploy.yaml
+  - aap-admin-password-secret.yaml
   - metrics-utility-configmap.yaml
   - aap-postgres-cluster.yaml
   - controller-database.yml
