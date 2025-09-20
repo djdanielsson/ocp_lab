@@ -27,21 +27,24 @@ spec:
               name: metrics-gateway
           env:
             - name: POSTGRES_HOST
-              value: "aap-postgres-15.aap.svc.cluster.local" 
+              valueFrom:
+                secretKeyRef:
+                  name: external-postgres-configuration-gateway
+                  key: host
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: aap-gateway-postgres-configuration
+                  name: external-postgres-configuration-gateway
                   key: username
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: aap-gateway-postgres-configuration
+                  name: external-postgres-configuration-gateway
                   key: password
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: aap-gateway-postgres-configuration
+                  name: external-postgres-configuration-gateway
                   key: database
             - name: DATA_SOURCE_NAME
               value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
@@ -57,21 +60,24 @@ spec:
               name: metrics-ctrl
           env:
             - name: POSTGRES_HOST
-              value: "aap-postgres-15.aap.svc.cluster.local"
+              valueFrom:
+                secretKeyRef:
+                  name: external-postgres-configuration-controller
+                  key: host
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: aap-controller-postgres-configuration
+                  name: external-postgres-configuration-controller
                   key: username
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: aap-controller-postgres-configuration
+                  name: external-postgres-configuration-controller
                   key: password
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: aap-controller-postgres-configuration
+                  name: external-postgres-configuration-controller
                   key: database
             - name: DATA_SOURCE_NAME
               value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
@@ -87,21 +93,24 @@ spec:
               name: metrics-hub
           env:
             - name: POSTGRES_HOST
-              value: "aap-postgres-15.aap.svc.cluster.local"
+              valueFrom:
+                secretKeyRef:
+                  name: external-postgres-configuration-hub
+                  key: host
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: aap-hub-postgres-configuration
+                  name: external-postgres-configuration-hub
                   key: username
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: aap-hub-postgres-configuration
+                  name: external-postgres-configuration-hub
                   key: password
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: aap-hub-postgres-configuration
+                  name: external-postgres-configuration-hub
                   key: database
             - name: DATA_SOURCE_NAME
               value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
@@ -117,21 +126,24 @@ spec:
               name: metrics-eda
           env:
             - name: POSTGRES_HOST
-              value: "aap-postgres-15.aap.svc.cluster.local"
+              valueFrom:
+                secretKeyRef:
+                  name: external-postgres-configuration-eda
+                  key: host
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: aap-eda-postgres-configuration
+                  name: external-postgres-configuration-eda
                   key: username
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: aap-eda-postgres-configuration
+                  name: external-postgres-configuration-eda
                   key: password
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: aap-eda-postgres-configuration
+                  name: external-postgres-configuration-eda
                   key: database
             - name: DATA_SOURCE_NAME
               value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
