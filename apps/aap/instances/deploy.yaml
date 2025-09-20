@@ -18,7 +18,7 @@ spec:
     resource_requirements:
       requests:
         cpu: 5m
-        memory: 100m
+        memory: 100Mi
   # redis:
   #   resource_requirements:
   #     requests:
@@ -34,15 +34,15 @@ spec:
     ee_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100m
+        memory: 100Mi
     task_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100m
+        memory: 100Mi
     web_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100m
+        memory: 100Mi
   eda:
     database:
         database_secret: external-postgres-configuration-eda
