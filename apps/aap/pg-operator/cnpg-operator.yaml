@@ -11,10 +11,10 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: CloudNativePG
+  name: cloudnativepg
 spec:
   channel: 'stable-v1'
   installPlanApproval: Automatic
-  name: cloudnativepg-operator
+  name: CloudNativePG
   source: redhat-operators
   sourceNamespace: openshift-marketplace
