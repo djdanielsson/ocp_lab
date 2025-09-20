@@ -43,10 +43,6 @@ spec:
       requests:
         cpu: 5m
         memory: 100Mi
-    resource_requirements:
-      requests:
-        cpu: 5m
-        memory: 100Mi
   eda:
     database:
         database_secret: external-postgres-configuration-eda
