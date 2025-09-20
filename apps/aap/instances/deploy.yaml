@@ -31,6 +31,18 @@ spec:
     postgres_configuration_secret: external-postgres-configuration-hub
   controller:
     postgres_configuration_secret: external-postgres-configuration-controller
+    ee_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 100m
+    task_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 100m
+    web_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 100m
   eda:
     database:
         database_secret: external-postgres-configuration-eda
