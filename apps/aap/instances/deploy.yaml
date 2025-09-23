@@ -24,9 +24,6 @@ spec:
       requests:
         cpu: 5m
         memory: 50Mi
-  # redis:
-  #   resource_requirements:
-  #     requests:
   database:
     postgres_data_volume_init: false
     database_secret: external-postgres-configuration-gateway
@@ -39,6 +36,26 @@ spec:
         cpu: 5m
         memory: 50Mi
     resource_manager:
+      resource_requirements:
+        requests:
+          cpu: 50m
+          memory: 250Mi
+    api:
+      resource_requirements:
+        requests:
+          cpu: 50m
+          memory: 250Mi
+    content:
+      resource_requirements:
+        requests:
+          cpu: 50m
+          memory: 250Mi
+    web:
+      resource_requirements:
+        requests:
+          cpu: 50m
+          memory: 250Mi
+    worker:
       resource_requirements:
         requests:
           cpu: 50m
