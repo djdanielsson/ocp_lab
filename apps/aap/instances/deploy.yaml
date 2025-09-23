@@ -12,6 +12,8 @@ spec:
   image_pull_policy: Always
   hostname: aap.apps.ocp.lab.danielsson.us.com
   admin_password_secret: aap-admin-password
+  lightspeed:
+    enabled: false
   api:
     log_level: INFO
     replicas: 1
