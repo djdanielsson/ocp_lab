@@ -18,7 +18,12 @@ spec:
     resource_requirements:
       requests:
         cpu: 5m
-        memory: 100Mi
+        memory: 50Mi
+  redis:
+    resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 50Mi
   # redis:
   #   resource_requirements:
   #     requests:
@@ -29,20 +34,72 @@ spec:
   hub:
     file_storage_access_mode: ReadWriteOnce
     postgres_configuration_secret: external-postgres-configuration-hub
+    redis_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 50Mi
+    resource_manager:
+      resource_requirements:
+        requests:
+          cpu: 50m
+          memory: 250Mi
   controller:
     postgres_configuration_secret: external-postgres-configuration-controller
     ee_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100Mi
+        memory: 50Mi
     task_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100Mi
+        memory: 50Mi
     web_resource_requirements:
       requests:
         cpu: 5m
-        memory: 100Mi
+        memory: 50Mi
+    redis_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 50Mi
+    rsyslog_resource_requirements:
+      requests:
+        cpu: 5m
+        memory: 50Mi
   eda:
     database:
         database_secret: external-postgres-configuration-eda
+    activation_worker:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    api:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    default_worker:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    event_stream: 
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    redis:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    scheduler:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+    ui:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
