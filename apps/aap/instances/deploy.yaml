@@ -31,10 +31,11 @@ spec:
   hub:
     file_storage_access_mode: ReadWriteOnce
     postgres_configuration_secret: external-postgres-configuration-hub
-    redis_resource_requirements:
-      requests:
-        cpu: 5m
-        memory: 50Mi
+    redis:
+      resource_requirements:
+        requests:
+          cpu: 5m
+          memory: 50Mi
     resource_manager:
       resource_requirements:
         requests:
