@@ -8,4 +8,5 @@ spec:
     name: aap-postgres
   name: gateway
   owner: gateway
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageCatalogRef:
+    major: 17
