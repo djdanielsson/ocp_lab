@@ -9,4 +9,7 @@ spec:
   name: gateway
   owner: gateway
   imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ClusterImageCatalog
+    name: postgresql-minimal-trixie
     major: 17
