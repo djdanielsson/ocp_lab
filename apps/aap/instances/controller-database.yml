@@ -8,3 +8,4 @@ spec:
     name: aap-postgres
   name: controller
   owner: controller
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
