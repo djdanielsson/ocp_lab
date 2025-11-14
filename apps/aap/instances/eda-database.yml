@@ -8,8 +8,3 @@ spec:
     name: aap-postgres
   name: eda
   owner: eda
-  imageCatalogRef:
-    apiGroup: postgresql.cnpg.io
-    kind: ClusterImageCatalog
-    name: postgresql-minimal-trixie
-    major: 17
