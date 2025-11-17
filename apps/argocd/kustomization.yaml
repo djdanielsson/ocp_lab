@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - applications/sealed-secrets-operator.yaml
-  - applications/sealed-secrets.yaml
   - applications/aap-pg-operator.yaml
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
