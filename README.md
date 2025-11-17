@@ -19,9 +19,5 @@ oc patch secret aap-admin-password -n aap -p '{"metadata": {"annotations": {"rep
 ```
 
 ```bash
-oc label service aap -n aap monitor=metrics
-```
-
-```bash
 oc patch AutomationController aap-controller -n aap --type=merge -p '{"spec": {"extra_settings": [{"metrics_utility_enabled": "true"}]}}'
 ```

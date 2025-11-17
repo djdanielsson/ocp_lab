@@ -10,6 +10,7 @@ spec:
       - aap
   selector:
     matchLabels:
+      # app.kubernetes.io/component=aap
       app.kubernetes.io/component: aap-api
   endpoints:
     - interval: 5s

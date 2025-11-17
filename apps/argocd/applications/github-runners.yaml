@@ -3,12 +3,16 @@ kind: Application
 metadata:
   name: github-runners
   namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
     repoURL: 'https://github.com/djdanielsson/ocp_lab.git'
     path: 'apps/gitrunners/'
-    targetRevision: HEAD
+    targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: gitrunners
@@ -16,4 +20,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 

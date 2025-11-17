@@ -24,7 +24,7 @@ spec:
   #                   name: grafana-service
   #                   port:
   #                     number: 3000
-  # admin:
-  #   existingSecret: grafana-admin-credentials
-  #   userKey: admin-user
-  #   passwordKey: admin-password
+  admin:
+    existingSecret: grafana-admin-credentials
+    userKey: admin-user
+    passwordKey: admin-password
