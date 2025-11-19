@@ -10,16 +10,6 @@ spec:
       dashboards: "grafana"
   json: >
     {
-      "__inputs": [
-        {
-          "name": "DS_PROMETHEUS",
-          "label": "Prometheus",
-          "description": "Select your Prometheus datasource",
-          "type": "datasource",
-          "pluginId": "prometheus",
-          "pluginName": "Prometheus"
-        }
-      ],
       "annotations": {
         "list": [
           {
@@ -59,7 +49,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -128,7 +118,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "aap_overall_status_value",
               "format": "table",
@@ -153,7 +143,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -222,7 +212,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "min by (exported_service) ((aap_service_node_status_value{status=\"good\", exported_service=\"controller\"}) or (0 - aap_service_node_status_value{status=\"failed\", exported_service=\"controller\"}) or (aap_service_node_status_value{status=\"degraded\", exported_service=\"controller\"} * 0))",
               "instant": true,
@@ -235,7 +225,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -304,7 +294,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "min by (exported_service) ((aap_service_node_status_value{status=\"good\", exported_service=\"hub\"}) or (0 - aap_service_node_status_value{status=\"failed\", exported_service=\"hub\"}) or (aap_service_node_status_value{status=\"degraded\", exported_service=\"hub\"} * 0))",
               "instant": true,
@@ -317,7 +307,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -386,7 +376,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "min by (exported_service) ((aap_service_node_status_value{status=\"good\", exported_service=\"eda\"}) or (0 - aap_service_node_status_value{status=\"failed\", exported_service=\"eda\"}) or (aap_service_node_status_value{status=\"degraded\", exported_service=\"eda\"} * 0))",
               "instant": true,
@@ -399,7 +389,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -464,7 +454,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "aap_redis_cluster_status_value",
               "legendFormat": "{{cluster_state}}",
@@ -487,7 +477,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -549,7 +539,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "pg_up{endpoint=\"metrics-gateway\"}",
@@ -563,7 +553,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -625,7 +615,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "max by(connected) (aap_hub_redis_connection_status_value)",
@@ -640,7 +630,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -702,7 +692,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "pg_up{endpoint=\"metrics-ctrl\",}",
@@ -716,7 +706,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -778,7 +768,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "aap_hub_database_connection_status_value",
               "legendFormat": "{{connected}}",
@@ -791,7 +781,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -853,7 +843,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "pg_up{endpoint=\"metrics-hub\"}",
@@ -867,7 +857,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -929,7 +919,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "pg_up{endpoint=\"metrics-eda\"}",
@@ -956,7 +946,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1004,7 +994,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_instance_info{instance=~'.+'}",
               "format": "table",
@@ -1018,7 +1008,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1074,7 +1064,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_system_info{instance=~'.+'}",
               "format": "table",
@@ -1088,7 +1078,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1136,7 +1126,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_license_instance_total{instance=~'.+'}",
               "refId": "A"
@@ -1148,7 +1138,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1197,7 +1187,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_license_instance_free{instance=~'.+'}",
               "legendFormat": "Available",
@@ -1210,7 +1200,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1268,7 +1258,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "100 - ( awx_license_instance_free{instance=~'.+'} / awx_license_instance_total{instance=~'.+'} * 100 )",
               "legendFormat": "Used",
@@ -1281,7 +1271,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1329,7 +1319,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_system_info{instance=~'.+'}",
               "format": "table",
@@ -1343,7 +1333,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1406,7 +1396,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_system_info{instance=~'.+'}",
               "format": "table",
@@ -1420,7 +1410,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1497,7 +1487,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": false,
@@ -1516,7 +1506,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1564,7 +1554,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1577,7 +1567,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1591,7 +1581,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1605,7 +1595,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "sum(awx_sessions_total{instance=~'.+',type=\"all\"})",
@@ -1621,7 +1611,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1699,7 +1689,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1712,7 +1702,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1726,7 +1716,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1740,7 +1730,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1754,7 +1744,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1768,7 +1758,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1796,7 +1786,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1858,7 +1848,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1872,7 +1862,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1886,7 +1876,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1904,7 +1894,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1951,7 +1941,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_running_jobs_total",
               "refId": "A"
@@ -1963,7 +1953,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2010,7 +2000,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_pending_jobs_total",
               "refId": "A"
@@ -2035,7 +2025,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2117,7 +2107,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"running\"})",
               "legendFormat": "Running",
@@ -2126,7 +2116,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"error\"})",
               "legendFormat": "Error",
@@ -2135,7 +2125,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"canceled\"})",
               "legendFormat": "Canceled",
@@ -2144,7 +2134,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"failed\"})",
               "legendFormat": "Failed",
@@ -2153,7 +2143,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"successful\"})",
               "legendFormat": "Successful",
@@ -2162,7 +2152,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"waiting\"})",
               "legendFormat": "Waiting",
@@ -2171,7 +2161,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"pending\"})",
               "legendFormat": "Pending",
@@ -2184,7 +2174,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2237,7 +2227,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total) by (status)",
               "instant": true,
@@ -2251,7 +2241,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2353,7 +2343,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(awx_status_total{instance=~'.+',status=\"successful\"})",
               "legendFormat": "Successful",
@@ -2362,7 +2352,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(sum(awx_status_total{instance=~'.+',status=\"failed\"}) + sum(awx_status_total{instance=~'.+',status=\"error\"}))",
               "legendFormat": "Failed",
@@ -2375,7 +2365,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2458,7 +2448,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(irate(task_manager_get_tasks_seconds{instance=~'.+'}[$__interval]))",
               "legendFormat": "Loading Tasks",
@@ -2467,7 +2457,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(irate(task_manager_start_task_seconds{instance=~'.+'}[$__interval]))",
               "legendFormat": "Starting Tasks",
@@ -2476,7 +2466,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(irate(task_manager_process_running_tasks_seconds{instance=~'.+'}[$__interval]))",
               "legendFormat": "Processing Running Tasks",
@@ -2485,7 +2475,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(irate(task_manager_process_pending_tasks_seconds{instance=~'.+'}[$__interval]))",
               "legendFormat": "Processing Pending Tasks",
@@ -2498,7 +2488,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2583,7 +2573,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2596,7 +2586,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2610,7 +2600,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2624,7 +2614,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -2646,7 +2636,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2729,7 +2719,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2742,7 +2732,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2756,7 +2746,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2770,7 +2760,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2784,7 +2774,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -2815,7 +2805,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2873,7 +2863,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "editorMode": "code",
               "expr": "awx_instance_info",
@@ -2913,7 +2903,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2998,7 +2988,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "aap_redis_node_connected_value",
               "format": "table",
@@ -3030,7 +3020,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3111,7 +3101,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "100 - (awx_instance_remaining_capacity / awx_instance_capacity * 100)",
               "legendFormat": "{{hostname}}",
@@ -3124,7 +3114,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3204,7 +3194,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_instance_cpu",
               "legendFormat": "{{hostname}}",
@@ -3217,7 +3207,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3298,7 +3288,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "awx_instance_memory",
               "legendFormat": "{{hostname}}",
@@ -3324,7 +3314,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3384,7 +3374,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_static{instance=\"$instance\"}",
               "instant": true,
@@ -3398,7 +3388,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3454,7 +3444,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "SUM(pg_stat_database_tup_fetched{datname=~\"$datname\", instance=~\"$instance\"})",
               "refId": "A"
@@ -3466,7 +3456,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3522,7 +3512,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "SUM(pg_stat_database_tup_updated{datname=~\"$datname\", instance=~\"$instance\"})",
               "refId": "A"
@@ -3534,7 +3524,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3593,7 +3583,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(pg_stat_database_numbackends)/sum(pg_settings_max_connections)",
               "refId": "A"
@@ -3605,7 +3595,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3663,7 +3653,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(pg_settings_max_connections)-sum(pg_stat_database_numbackends)",
               "refId": "A"
@@ -3675,7 +3665,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3751,7 +3741,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_up{instance=~\"$instance\"}",
               "instant": true,
@@ -3765,7 +3755,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3821,7 +3811,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "SUM(pg_stat_database_tup_inserted{datname=~\"$datname\", instance=~\"$instance\"})",
               "refId": "A"
@@ -3833,7 +3823,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -3889,7 +3879,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_max_connections{instance=\"$instance\"}",
               "refId": "A"
@@ -3901,7 +3891,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Average user and system CPU time spent in seconds.",
           "fieldConfig": {
@@ -3988,7 +3978,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(rate(process_cpu_seconds_total{instance=\"$instance\"}[5m]) * 1000)",
               "legendFormat": "CPU Time",
@@ -4001,7 +3991,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Virtual and Resident memory size in bytes, averages over 5 min interval",
           "fieldConfig": {
@@ -4091,7 +4081,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(rate(process_resident_memory_bytes{instance=\"$instance\"}[5m]))",
               "legendFormat": "Resident Mem",
@@ -4100,7 +4090,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "avg(rate(process_virtual_memory_bytes{instance=\"$instance\"}[5m]))",
               "legendFormat": "Virtual Mem",
@@ -4113,7 +4103,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Number of open file descriptors",
           "fieldConfig": {
@@ -4200,7 +4190,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "process_open_fds{instance=\"$instance\"}",
               "legendFormat": "Open FD",
@@ -4213,7 +4203,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4280,7 +4270,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_shared_buffers_bytes{instance=\"$instance\"}",
               "refId": "A"
@@ -4292,7 +4282,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4359,7 +4349,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum(pg_stat_database_blks_hit{instance=~\"$instance\"})/(sum(pg_stat_database_blks_hit{instance=~\"$instance\"})+sum(pg_stat_database_blks_read{instance=~\"$instance\"}))*100",
               "refId": "A"
@@ -4371,7 +4361,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4427,7 +4417,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_maintenance_work_mem_bytes{instance=\"$instance\"}",
               "refId": "A"
@@ -4439,7 +4429,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4495,7 +4485,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_effective_cache_size_bytes{instance=\"$instance\"}",
               "refId": "A"
@@ -4507,7 +4497,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4563,7 +4553,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_work_mem_bytes{instance=\"$instance\"}",
               "refId": "A"
@@ -4575,7 +4565,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4632,7 +4622,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_max_wal_size_bytes{instance=\"$instance\"}",
               "refId": "A"
@@ -4644,7 +4634,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4700,7 +4690,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_seq_page_cost",
               "refId": "A"
@@ -4712,7 +4702,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4768,7 +4758,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_settings_max_worker_processes{instance=\"$instance\"}",
               "refId": "A"
@@ -4780,7 +4770,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4871,7 +4861,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum by (state) (pg_stat_activity_count{instance=~\"$instance\", datname=~\"$datname\"})",
               "legendFormat": "{{state}}",
@@ -4884,7 +4874,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -4969,7 +4959,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_database_xact_commit{instance=\"$instance\", datname=~\"$datname\"}[5m])",
               "legendFormat": "{{datname}} commits",
@@ -4978,7 +4968,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_database_xact_rollback{instance=\"$instance\", datname=~\"$datname\"}[5m])",
               "legendFormat": "{{datname}} rollbacks",
@@ -4991,7 +4981,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5078,7 +5068,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_locks_count{datname=~\"$datname\", instance=~\"$instance\", mode=~\"$mode\"} != 0",
               "legendFormat": "{{datname}},{{mode}}",
@@ -5091,7 +5081,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5171,7 +5161,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_database_size_bytes{instance=~\"$instance\",datname=~\"$datname\"}",
               "format": "table",
@@ -5186,7 +5176,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5271,7 +5261,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_tup_inserted{datname=~\"$datname\", instance=~\"$instance\"} != 0",
               "legendFormat": "{{datname}}",
@@ -5284,7 +5274,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5371,7 +5361,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_tup_updated{datname=~\"$datname\", instance=~\"$instance\"} != 0",
               "legendFormat": "{{datname}}",
@@ -5384,7 +5374,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5469,7 +5459,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_tup_returned{datname=~\"$datname\", instance=~\"$instance\"} != 0",
               "legendFormat": "{{datname}}",
@@ -5482,7 +5472,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5567,7 +5557,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_tup_deleted{datname=~\"$datname\", instance=~\"$instance\"} != 0",
               "legendFormat": "{{datname}}",
@@ -5580,7 +5570,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5665,7 +5655,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_tup_fetched{datname=~\"$datname\", instance=~\"$instance\"} != 0",
               "legendFormat": "{{datname}}",
@@ -5678,7 +5668,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5764,7 +5754,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_bgwriter_checkpoint_write_time_total{instance=\"$instance\"}[5m])",
               "legendFormat": "write_time - Time spent processing the verification of files that are written to disk.",
@@ -5773,7 +5763,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_bgwriter_checkpoint_sync_time_total{instance=\"$instance\"}[5m])",
               "legendFormat": "sync_time - Time spent processing the verification of files that are synchronized to disk.",
@@ -5786,7 +5776,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5871,7 +5861,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "pg_stat_database_blks_hit{instance=\"$instance\", datname=~\"$datname\"} / (pg_stat_database_blks_read{instance=\"$instance\", datname=~\"$datname\"} + pg_stat_database_blks_hit{instance=\"$instance\", datname=~\"$datname\"})",
               "legendFormat": "{{ datname }}",
@@ -5884,7 +5874,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -5970,7 +5960,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_database_conflicts{instance=\"$instance\", datname=~\"$datname\"}[5m])",
               "legendFormat": "{{datname}} conflicts",
@@ -5979,7 +5969,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "irate(pg_stat_database_deadlocks{instance=\"$instance\", datname=~\"$datname\"}[5m])",
               "legendFormat": "{{datname}} deadlocks",
@@ -6021,7 +6011,7 @@ spec:
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "${DS_PROMETHEUS}"
+              "uid": "prometheus"
             },
             "definition": "query_result(pg_up{})",
             "includeAll": false,
@@ -6042,7 +6032,7 @@ spec:
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "${DS_PROMETHEUS}"
+              "uid": "prometheus"
             },
             "definition": "label_values(datname)",
             "includeAll": true,
@@ -6059,7 +6049,7 @@ spec:
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "${DS_PROMETHEUS}"
+              "uid": "prometheus"
             },
             "definition": "label_values({mode=~\"accessexclusivelock|accesssharelock|exclusivelock|rowexclusivelock|rowsharelock|sharelock|sharerowexclusivelock|shareupdateexclusivelock\"}, mode)",
             "hide": 2,
