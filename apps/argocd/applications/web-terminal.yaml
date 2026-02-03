@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-terminal
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/djdanielsson/ocp_lab.git'
+    path: 'apps/web-terminal/'
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: openshift-operators
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
