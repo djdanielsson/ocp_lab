@@ -6,6 +6,9 @@ metadata:
 spec:
   feature_flags:
     FEATURE_DISPATCHERD_ENABLED: True
+  mcp:
+    disabled: true
+    allow_write_operations: true
   route_tls_termination_mechanism: Edge
   service_type: ClusterIP
   ingress_type: Route
