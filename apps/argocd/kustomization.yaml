@@ -10,5 +10,7 @@ resources:
   - applications/monitoring-components.yaml
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
+  - applications/pipelines.yaml
+  - applications/web-terminal.yaml
 #  - applications/kubeshark.yaml
 #  - applications/github-runners.yaml
