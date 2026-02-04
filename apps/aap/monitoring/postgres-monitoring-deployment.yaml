@@ -1,3 +1,4 @@
+---
 # This Deployment creates a stateless Pod with just the exporters.
 apiVersion: apps/v1
 kind: Deployment

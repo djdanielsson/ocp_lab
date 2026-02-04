@@ -1,3 +1,4 @@
+---
 kind: CheCluster
 apiVersion: org.eclipse.che/v2
 metadata:

@@ -1,3 +1,4 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -5,10 +6,10 @@ resources:
   - aap-admin-password-secret.yaml
   - metrics-utility-configmap.yaml
   - aap-postgres-cluster.yaml
-  - controller-database.yml
-  - eda-database.yml
-  - hub-database.yml
-  - gateway-database.yml
+  - controller-database.yaml
+  - eda-database.yaml
+  - hub-database.yaml
+  - gateway-database.yaml
   - external-postgres-configuration-eda-secret.yaml
   - external-postgres-configuration-hub-secret.yaml
   - external-postgres-configuration-gateway-secret.yaml
