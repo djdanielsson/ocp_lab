@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: quay-ephemeral
+data:
+  # Shell script to install extension
+  init_extension.sh: |
+    #!/bin/bash
+    echo "Initializing pg_trgm extension for Quay..."
+    psql -d quay -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+    echo "Extension initialized."

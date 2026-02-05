@@ -1,0 +1,96 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quay-ephemeral
+  namespace: quay-ephemeral
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quay-ephemeral
+  template:
+    metadata:
+      labels:
+        app: quay-ephemeral
+    spec:
+      containers:
+        # --- QUAY CONTAINER ---
+        - name: quay
+          image: quay.io/projectquay/quay:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Postgres..."
+              # Wait loop
+              while ! python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_STREAM); result=s.connect_ex(('localhost', 5432)); exit(result)"; do
+                sleep 2
+              done
+              echo "Postgres is UP! Starting Quay..."
+              /quay-registry/quay-entrypoint.sh
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config
+              mountPath: /conf/stack
+            - name: storage
+              mountPath: /datastorage
+          readinessProbe:
+            httpGet:
+              path: /health/instance
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            
+        # --- REDIS SIDECAR ---
+        - name: redis
+          image: quay.io/sclorg/redis-6-c9s:latest
+          ports:
+            - containerPort: 6379
+
+        # --- POSTGRES SIDECAR ---
+        - name: postgres
+          image: quay.io/sclorg/postgresql-13-c9s:latest
+          env:
+            - name: POSTGRESQL_USER
+              value: "quay"
+            - name: POSTGRESQL_PASSWORD
+              value: "quay"
+            - name: POSTGRESQL_DATABASE
+              value: "quay"
+            - name: POSTGRESQL_ADMIN_PASSWORD
+              value: "quay"
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/pgsql/data
+            - name: db-init
+              mountPath: /usr/share/container-scripts/postgresql/start/init_extension.sh
+              subPath: init_extension.sh
+
+      # --- VOLUMES SECTION (Critical Fix) ---
+      volumes:
+        - name: config
+          secret:
+            secretName: quay-config
+        - name: db-init
+          configMap:
+            name: postgres-init
+            defaultMode: 0755
+        - name: storage
+          emptyDir: {} 
+        - name: db-data
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quay-ephemeral
+  namespace: quay-ephemeral
+spec:
+  selector:
+    app: quay-ephemeral
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP

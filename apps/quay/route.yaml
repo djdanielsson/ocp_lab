@@ -1,0 +1,15 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: quay-ephemeral
+  namespace: quay-ephemeral
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: quay-ephemeral
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
