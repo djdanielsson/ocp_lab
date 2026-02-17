@@ -43,6 +43,10 @@ spec:
           value: "vault.apps.ocp.lab.danielsson.us.com"
         - name: ui.enabled
           value: "true"
+        - name: server.image.repository
+          value: "registry.connect.redhat.com/hashicorp/vault"
+        - name: server.image.tag
+          value: "1.18.1-ubi"
         - name: injector.enabled
           value: "false"
   destination:
