@@ -1,0 +1,56 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: default
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: 0.29.1
+    helm:
+      parameters:
+        - name: global.openshift
+          value: "true"
+        - name: server.ha.enabled
+          value: "false"
+        - name: server.standalone.enabled
+          value: "true"
+        - name: server.standalone.config
+          value: |
+            ui = true
+            listener "tcp" {
+              tls_disable = 1
+              address = "[::]:8200"
+              cluster_address = "[::]:8201"
+            }
+            storage "file" {
+              path = "/vault/data"
+            }
+        - name: server.dataStorage.enabled
+          value: "true"
+        - name: server.dataStorage.size
+          value: "10Gi"
+        - name: server.dataStorage.storageClass
+          value: "lvms-vg1"
+        - name: server.route.enabled
+          value: "true"
+        - name: server.route.host
+          value: "vault.apps.ocp.lab.danielsson.us.com"
+        - name: ui.enabled
+          value: "true"
+        - name: injector.enabled
+          value: "false"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

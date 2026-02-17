@@ -2,5 +2,6 @@
   description = "Global Allowlist"
 
   paths = [
-    '''apps/**/*.yaml''',
+    '''apps/argocd/**/*.yaml''',
+    '''apps/external-secrets/**/*.yaml''',
   ]

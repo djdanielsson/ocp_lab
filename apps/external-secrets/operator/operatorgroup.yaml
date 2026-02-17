@@ -1,0 +1,9 @@
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: external-secrets-operator
+  namespace: openshift-external-secrets-operator
+spec:
+  targetNamespaces:
+    - openshift-external-secrets-operator
