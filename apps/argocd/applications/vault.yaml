@@ -41,6 +41,8 @@ spec:
           value: "true"
         - name: server.route.host
           value: "vault.apps.ocp.lab.danielsson.us.com"
+        - name: server.route.tls.termination
+          value: "edge"
         - name: ui.enabled
           value: "true"
         - name: server.image.repository
