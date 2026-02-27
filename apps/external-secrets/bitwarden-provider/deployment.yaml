@@ -20,29 +20,23 @@ spec:
     spec:
       containers:
         - name: bitwarden-cli
-          image: ghcr.io/larivierec/bitwarden-cli:2025.1.0
-          command:
-            - /bin/sh
-            - -c
-          args:
-            - |
-              bw config server ${BW_HOST}
-              export BW_SESSION=$(bw login ${BW_USER} --passwordenv BW_PASSWORD --raw)
-              bw unlock --check
-              echo "Logged in and unlocked"
-              bw sync
-              bw serve --hostname 0.0.0.0 --port 8087 --disable-origin-protection
+          image: ghcr.io/morey-tech/bitwarden-cli:latest
           env:
             - name: BW_HOST
               valueFrom:
                 secretKeyRef:
                   name: bitwarden-cli
                   key: BW_HOST
-            - name: BW_USER
+            - name: BW_CLIENTID
               valueFrom:
                 secretKeyRef:
                   name: bitwarden-cli
-                  key: BW_USERNAME
+                  key: BW_CLIENTID
+            - name: BW_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bitwarden-cli
+                  key: BW_CLIENTSECRET
             - name: BW_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -53,19 +47,16 @@ spec:
               containerPort: 8087
               protocol: TCP
           livenessProbe:
-            exec:
-              command:
-                - wget
-                - -q
-                - --spider
-                - http://127.0.0.1:8087/#/sync
-            initialDelaySeconds: 30
-            periodSeconds: 120
-            failureThreshold: 3
-          readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /health
               port: 8087
             initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8087
+            initialDelaySeconds: 10
             periodSeconds: 10
           resources:
             requests:

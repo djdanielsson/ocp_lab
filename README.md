@@ -34,17 +34,21 @@ Before deploying the ArgoCD applications, you must:
    | `ocp-lab/postgres-eda` | Login | username: `eda`, password: (strong password) |
    | `ocp-lab/quay-config` | Secure Note | Custom fields: `SECRET_KEY`, `DATABASE_SECRET_KEY`, `DB_PASSWORD` |
 
-2. **Create the bootstrap secret** on the cluster (this is the only secret not managed by ESO):
+2. **Generate API keys** in Vaultwarden: Log in to the web vault, go to
+   Settings > Security > Keys, and generate an API key (Client ID + Client Secret).
+
+3. **Create the bootstrap secret** on the cluster (this is the only secret not managed by ESO):
 
    ```bash
    oc create namespace external-secrets
    oc create secret generic bitwarden-cli -n external-secrets \
      --from-literal=BW_HOST=https://your-vaultwarden-url \
-     --from-literal=BW_USERNAME=your-email \
+     --from-literal=BW_CLIENTID=your-api-client-id \
+     --from-literal=BW_CLIENTSECRET=your-api-client-secret \
      --from-literal=BW_PASSWORD=your-master-password
    ```
 
-3. **Apply the ArgoCD kustomization** -- sync-wave ordering ensures ESO operator (-2) and
+4. **Apply the ArgoCD kustomization** -- sync-wave ordering ensures ESO operator (-2) and
    bitwarden provider (-1) deploy before any ExternalSecret CRs are synced.
 
 ### Post-Install Steps
