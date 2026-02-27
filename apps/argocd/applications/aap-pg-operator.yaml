@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/aap/pg-operator/
-    targetRevision: main
+    targetRevision: vaultwarden
   syncPolicy:
     automated:
       prune: true
