@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitwarden-cli
+  namespace: external-secrets
+  labels:
+    app.kubernetes.io/name: bitwarden-cli
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bitwarden-cli
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bitwarden-cli
+    spec:
+      containers:
+        - name: bitwarden-cli
+          image: ghcr.io/larivierec/bitwarden-cli:2025.1.0
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              bw config server ${BW_HOST}
+              export BW_SESSION=$(bw login ${BW_USER} --passwordenv BW_PASSWORD --raw)
+              bw unlock --check
+              echo "Logged in and unlocked"
+              bw sync
+              bw serve --hostname 0.0.0.0 --port 8087 --disable-origin-protection
+          env:
+            - name: BW_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: bitwarden-cli
+                  key: BW_HOST
+            - name: BW_USER
+              valueFrom:
+                secretKeyRef:
+                  name: bitwarden-cli
+                  key: BW_USERNAME
+            - name: BW_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bitwarden-cli
+                  key: BW_PASSWORD
+          ports:
+            - name: http
+              containerPort: 8087
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - wget
+                - -q
+                - --spider
+                - http://127.0.0.1:8087/#/sync
+            initialDelaySeconds: 30
+            periodSeconds: 120
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8087
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
