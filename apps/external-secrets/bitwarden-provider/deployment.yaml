@@ -26,6 +26,8 @@ spec:
         - name: bitwarden-cli
           image: ghcr.io/morey-tech/bitwarden-cli:latest
           env:
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "0"
             - name: BW_HOST
               valueFrom:
                 secretKeyRef:
