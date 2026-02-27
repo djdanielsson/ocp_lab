@@ -53,16 +53,14 @@ spec:
               containerPort: 8087
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: 8087
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: 8087
-            initialDelaySeconds: 10
+            initialDelaySeconds: 15
             periodSeconds: 10
           resources:
             requests:
