@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bitwarden-cli-allow-eso
+  namespace: external-secrets
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: bitwarden-cli
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: external-secrets
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: external-secrets
+      ports:
+        - port: 8087
+          protocol: TCP
