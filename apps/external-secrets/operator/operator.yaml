@@ -4,9 +4,7 @@ kind: OperatorGroup
 metadata:
   name: external-secrets-operator
   namespace: external-secrets
-spec:
-  targetNamespaces:
-    - external-secrets
+spec: {}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
