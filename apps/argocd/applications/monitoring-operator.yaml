@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    targetRevision: vaultwarden
+    targetRevision: main
     path: apps/monitoring/operator/
   destination:
     server: https://kubernetes.default.svc

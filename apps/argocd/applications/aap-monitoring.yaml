@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/aap/monitoring/
-    targetRevision: vaultwarden
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true

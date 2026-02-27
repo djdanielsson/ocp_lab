@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/aap/operator/
-    targetRevision: vaultwarden
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true
