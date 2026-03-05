@@ -1,21 +1,55 @@
 # ocp_lab
 
-## Prerequisites
+## Quick Start
 
-### Storage Class
-
-Required to run before installing OpenShift GitOps Operator
+After a fresh OCP cluster install, apply the bootstrap file to install the GitOps operator,
+grant ArgoCD cluster-admin, and deploy the app-of-apps:
 
 ```bash
-oc patch storageclass lvms-vg1 -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
+oc apply -f bootstrap.yaml
 ```
 
-### GitOps Permissions
-
-Required to run after installing OpenShift GitOps Operator
+The GitOps operator takes a minute or two to install. Once the `openshift-gitops` namespace
+is ready and the ArgoCD CRDs exist, the `app-of-apps` Application will be picked up
+automatically. If you applied the bootstrap before the operator was ready, simply re-apply:
 
 ```bash
-oc adm policy add-cluster-role-to-user cluster-admin -z openshift-gitops-argocd-application-controller -n openshift-gitops
+oc apply -f bootstrap.yaml
+```
+
+ArgoCD will then sync all applications in the configured order via sync waves.
+
+## What Gets Deployed
+
+| Sync Wave | Application | Description |
+|-----------|-------------|-------------|
+| -5 | lvms-operator | LVM Storage operator |
+| -4 | lvms-instance | LVMCluster + default StorageClass |
+| -3 | external-secrets-operator | External Secrets operator |
+| -2 | external-secrets-bitwarden | Bitwarden provider for ESO |
+| -2 | ocp-virt-operator | OpenShift Virtualization operator |
+| -1 | aap-pg-operator | CloudNativePG operator |
+| -1 | aap-operator | Ansible Automation Platform operator |
+| -1 | devspaces-operator | Dev Spaces operator |
+| -1 | monitoring-operator | Grafana + Prometheus operators |
+| 0 | aap-instance | AAP deployment |
+| 0 | devspaces-instance | Dev Spaces instance |
+| 0 | ocp-virt-instance | HyperConverged CR |
+| 1 | aap-monitoring | AAP monitoring components |
+| 1 | ollama | Ollama + Open WebUI |
+| 1 | ocp-mcp-server | Kubernetes MCP Server |
+| 5 | monitoring-components | Grafana dashboards, Prometheus, ServiceMonitors |
+| -- | pipelines | OpenShift Pipelines operator |
+| -- | web-terminal | Web Terminal operator |
+
+## Prerequisites
+
+### Data Partition (Optional)
+
+If your cluster uses a data partition for LVM storage, apply the MachineConfig before bootstrap:
+
+```bash
+oc apply -f data-storage.yaml
 ```
 
 ### Secrets Management (Vaultwarden + External Secrets Operator)
@@ -48,15 +82,12 @@ Before deploying the ArgoCD applications, you must:
      --from-literal=BW_PASSWORD=your-master-password
    ```
 
-4. **Apply the ArgoCD kustomization** -- sync-wave ordering ensures ESO operator (-2) and
-   bitwarden provider (-1) deploy before any ExternalSecret CRs are synced.
-
-### Post-Install Steps
+## Post-Install Steps
 
 ```bash
 oc label service aap -n aap monitor=metrics
 ```
 
 ```bash
-oc patch AutomationController aap-controller -n aap --type=merge -p '{"spec": {"extra_settings": [{"metrics_utility_enabled": "true"}]}}'
+oc patch AutomationController aap -n aap --type=merge -p '{"spec": {"extra_settings": [{"metrics_utility_enabled": "true"}]}}'
 ```

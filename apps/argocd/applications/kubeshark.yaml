@@ -17,7 +17,7 @@ spec:
         - name: tap.ingress.enabled
           value: "true"
         - name: tap.ingress.host
-          value: kubeshark.apps.ocp.lab.danielsson.us.com
+          value: kubeshark.apps.ocp.new.lab.danielsson.us.com
         - name: tap.telemetry.enabled
           value: "false"
         - name: tap.gitops.enabled

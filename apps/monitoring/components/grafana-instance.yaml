@@ -15,7 +15,7 @@ spec:
   # ingress:
   #   spec:
   #     rules:
-  #       - host: grafana-monitoring.apps.ocp.lab.danielsson.us.com 
+  #       - host: grafana-monitoring.apps.ocp.new.lab.danielsson.us.com 
   #         http:
   #           paths:
   #             - path: /

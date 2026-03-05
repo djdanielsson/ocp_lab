@@ -1,0 +1,20 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ocp-mcp-server
+  namespace: ocp-mcp-server
+  labels:
+    app: ocp-mcp-server
+spec:
+  host: ocp-mcp.apps.ocp.new.lab.danielsson.us.com
+  to:
+    kind: Service
+    name: ocp-mcp-server
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

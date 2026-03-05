@@ -2,20 +2,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aap-pg-operator
+  name: ollama
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   destination:
-    namespace: openshift-operators
+    namespace: ollama
     server: https://kubernetes.default.svc
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    path: apps/aap/pg-operator/
+    path: apps/ollama/
     targetRevision: new
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

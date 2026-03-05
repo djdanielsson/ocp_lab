@@ -1,0 +1,66 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-model-pull
+  namespace: ollama
+  labels:
+    app: ollama
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 7200
+  template:
+    metadata:
+      labels:
+        app: ollama-model-pull
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      restartPolicy: OnFailure
+      containers:
+        - name: model-pull
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              OLLAMA_URL="http://ollama.ollama.svc.cluster.local:11434"
+              MODELS="ministral-3:14b gpt-oss:20b qwen3:14b"
+
+              echo "Waiting for Ollama to be ready..."
+              until curl -sf "$OLLAMA_URL" > /dev/null 2>&1; do
+                echo "  Ollama not ready, retrying in 5s..."
+                sleep 5
+              done
+              echo "Ollama is ready."
+
+              for model in $MODELS; do
+                echo ""
+                echo "========================================"
+                echo "Pulling model: $model"
+                echo "========================================"
+                curl -sf "$OLLAMA_URL/api/pull" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"name\": \"$model\", \"stream\": false}"
+                if [ $? -eq 0 ]; then
+                  echo ""
+                  echo "Successfully pulled: $model"
+                else
+                  echo ""
+                  echo "FAILED to pull: $model"
+                  exit 1
+                fi
+              done
+
+              echo ""
+              echo "All models pulled successfully."
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL

@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocp-mcp-server
+  namespace: ocp-mcp-server
+  labels:
+    app: ocp-mcp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocp-mcp-server
+  template:
+    metadata:
+      labels:
+        app: ocp-mcp-server
+    spec:
+      serviceAccountName: ocp-mcp-server
+      containers:
+        - name: ocp-mcp-server
+          image: ghcr.io/containers/kubernetes-mcp-server:latest
+          args:
+            - --port
+            - "8080"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL

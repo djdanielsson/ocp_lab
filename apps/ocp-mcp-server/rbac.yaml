@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ocp-mcp-server
+  namespace: ocp-mcp-server
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ocp-mcp-server-cluster-reader
+subjects:
+  - kind: ServiceAccount
+    name: ocp-mcp-server
+    namespace: ocp-mcp-server
+roleRef:
+  kind: ClusterRole
+  name: cluster-reader
+  apiGroup: rbac.authorization.k8s.io
