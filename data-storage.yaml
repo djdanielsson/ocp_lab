@@ -4,6 +4,7 @@ kind: MachineConfig
 metadata:
   labels:
     machineconfiguration.openshift.io/role: master
+  # this is really root, need to look into if this name matters or if it can be changed
   name: 98-data-partition
 spec:
   config:
@@ -13,7 +14,8 @@ spec:
       disks:
         - device: /dev/nvme0n1
           partitions:
+              # this is really root, need to look into if this label matters or if it can be changed
             - label: data
               sizeMiB: 0
-              startMiB: 900000
+              startMiB: 200000
               typeGuid: E6D6D379-F507-44C2-A23C-238F2A3DF928
