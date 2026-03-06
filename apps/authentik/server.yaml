@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: ghcr.io/goauthentik/server:2024.12
+        image: ghcr.io/goauthentik/server:2026.2.1
         args:
         - server
         env:

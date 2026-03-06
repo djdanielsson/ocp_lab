@@ -1,0 +1,36 @@
+---
+apiVersion: flows.netobserv.io/v1beta2
+kind: FlowCollector
+metadata:
+  name: cluster
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  namespace: netobserv
+  deploymentModel: Direct
+  agent:
+    type: eBPF
+    ebpf:
+      sampling: 50
+      privileged: true
+  processor:
+    logTypes: Flows
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        memory: 800Mi
+  loki:
+    mode: LokiStack
+    lokiStack:
+      name: loki
+      namespace: loki
+  consolePlugin:
+    register: true
+    portNaming:
+      enable: true
+  prometheus:
+    querier:
+      enable: true

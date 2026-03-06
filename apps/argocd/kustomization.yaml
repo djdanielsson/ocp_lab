@@ -27,6 +27,10 @@ resources:
   - applications/web-terminal.yaml
   - applications/ollama.yaml
   - applications/ocp-mcp-server.yaml
-  - applications/kubeshark.yaml
+  # - applications/kubeshark.yaml
+  - applications/netobserv-operator.yaml
+  - applications/netobserv-instance.yaml
   - applications/privatebin.yaml
+  - applications/graylog-mongodb-operator.yaml
+  - applications/graylog.yaml
 #  - applications/github-runners.yaml

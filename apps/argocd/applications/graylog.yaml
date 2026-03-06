@@ -1,0 +1,32 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: graylog
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  destination:
+    namespace: graylog
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://graylog2.github.io/graylog-helm
+    chart: graylog
+    targetRevision: "1.0.0"
+    helm:
+      parameters:
+        - name: global.storageClass
+          value: lvms-lvm-local-storage
+        - name: graylog.replicas
+          value: "1"
+        - name: datanode.replicas
+          value: "1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

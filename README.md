@@ -73,7 +73,10 @@ oc apply -f bootstrap.yaml
 | 1          | ocp-mcp-server             | Kubernetes MCP Server                                              |
 | 2          | aap-portal                 | AAP Self-Service Automation Portal (Helm)                          |
 | 5          | monitoring-components      | Grafana dashboards, Prometheus, AlertManager, ServiceMonitors, external monitors |
-| 0          | kubeshark                  | Kubeshark network observability                                    |
+| -1         | netobserv-operator         | Network Observability operator (eBPF-based)                        |
+| 1          | netobserv-instance         | FlowCollector CR for network flow capture                          |
+| -1         | graylog-mongodb-operator   | MongoDB Kubernetes Operator (for Graylog)                          |
+| 1          | graylog                    | Graylog log management (Helm chart)                                |
 | --         | pipelines                  | OpenShift Pipelines operator                                       |
 | --         | web-terminal               | Web Terminal operator                                              |
 
