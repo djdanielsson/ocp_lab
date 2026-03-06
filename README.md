@@ -45,15 +45,6 @@ automatically. If you applied the bootstrap before the operator was ready, re-ap
 oc apply -f bootstrap.yaml
 ```
 
-### Optional: Data Partition
-
-If your cluster uses a data partition for LVM storage, apply the MachineConfig before
-the storage bootstrap:
-
-```bash
-oc apply -f data-storage.yaml
-```
-
 ## What Gets Deployed
 
 
