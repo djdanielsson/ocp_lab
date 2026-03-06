@@ -16,7 +16,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: sync
-            image: docker.io/curlimages/curl:latest
+            image: quay.io/curl/curl:latest
             command:
             - /bin/sh
             - -c
