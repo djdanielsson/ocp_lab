@@ -1,4 +1,3 @@
----
 kind: GrafanaDashboard
 apiVersion: grafana.integreatly.org/v1beta1
 metadata:
@@ -31,7 +30,6 @@ spec:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 0,
       "links": [],
       "panels": [
         {
@@ -1209,10 +1207,7 @@ spec:
       "templating": {
         "list": [
           {
-            "current": {
-              "text": "prometheus",
-              "value": "058ce77a-5e9d-42b2-a293-391dc8d7ed3b"
-            },
+            "current": {},
             "includeAll": false,
             "label": "Datasource",
             "name": "datasource",
@@ -1230,7 +1225,5 @@ spec:
       },
       "timepicker": {},
       "timezone": "browser",
-      "title": "Supermicro IPMI/BMC",
-      "uid": "a93449ad-01b2-4fb5-910d-8e992b4c4ee6",
-      "version": 7
+      "title": "Supermicro IPMI/BMC"
     }
