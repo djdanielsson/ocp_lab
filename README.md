@@ -81,7 +81,8 @@ oc apply -f data-storage.yaml
 | 1          | ollama                     | Ollama + Open WebUI                                                |
 | 1          | ocp-mcp-server             | Kubernetes MCP Server                                              |
 | 2          | aap-portal                 | AAP Self-Service Automation Portal (Helm)                          |
-| 5          | monitoring-components      | Grafana dashboards, Prometheus, ServiceMonitors, external monitors |
+| 5          | monitoring-components      | Grafana dashboards, Prometheus, AlertManager, ServiceMonitors, external monitors |
+| 0          | kubeshark                  | Kubeshark network observability                                    |
 | --         | pipelines                  | OpenShift Pipelines operator                                       |
 | --         | web-terminal               | Web Terminal operator                                              |
 
@@ -109,6 +110,7 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/ipmi-bmc` | Login | username: (BMC/IPMI username), password: (BMC/IPMI password) |
   | `ocp-lab/tailscale` | Secure Note | Custom field: `authkey` = (Tailscale auth key with subnet-router + exit-node tags) |
   | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.new.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `registry-auth-b64` = (base64-encoded `username:password` for registry.redhat.io service account) |
+  | `ocp-lab/telegram-alertmanager` | Secure Note | Custom fields: `bot_token` = (Telegram bot token from BotFather), `chat_id` = (Telegram chat/group ID for alerts) |
 
 2. **Generate API keys** in Vaultwarden: Log in to the web vault, go to
   Settings > Security > Keys, and generate an API key (Client ID + Client Secret).
@@ -131,9 +133,20 @@ The following external (non-cluster) services are monitored via Prometheus Servi
 | ------------------- | ------------------ | ------------------- | -------------------------------------- |
 | TrueNAS (Netdata)   | 192.168.2.82       | 20489               | `/api/v1/allmetrics?format=prometheus` |
 | Portainer (Netdata) | 192.168.2.213      | 19999               | `/api/v1/allmetrics?format=prometheus` |
-| Klipper/Moonraker   | 192.168.2.105      | 7125                | `/server/prometheus/metrics`           |
-| Supermicro BMC/IPMI | 192.168.2.80       | 9290 (via exporter) | `/metrics`                             |
+| Klipper/Moonraker   | 192.168.2.105      | 7125 (via klipper-exporter) | `/probe` (multi-target pattern)  |
+| Supermicro BMC/IPMI | 192.168.2.80       | 9290 (via ipmi-exporter)   | `/ipmi` (remote IPMI-over-LAN)   |
 
+
+## Viewing Logs (Loki)
+
+Loki does not have its own UI. To view logs, use Grafana:
+
+1. Open Grafana at `https://grafana-monitoring.apps.ocp.new.lab.danielsson.us.com`
+2. Navigate to **Explore** (compass icon in the sidebar)
+3. Select the **loki** datasource from the dropdown
+4. Use LogQL queries, e.g. `{kubernetes_namespace_name="default"}`
+
+The Loki Route (`loki-loki.apps.ocp.new.lab.danielsson.us.com`) is the API gateway for log ingestion, not a web UI.
 
 ## AAP Self-Service Portal Setup
 

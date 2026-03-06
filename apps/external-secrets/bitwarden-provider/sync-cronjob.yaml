@@ -12,15 +12,24 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: bitwarden-cli-sync
         spec:
           restartPolicy: OnFailure
           containers:
           - name: sync
             image: quay.io/curl/curl:latest
             command:
-            - /bin/sh
-            - -c
-            - 'curl -sf -X POST http://bitwarden-cli.external-secrets.svc.cluster.local:8087/sync'
+            - curl
+            - --silent
+            - --show-error
+            - --fail
+            - --max-time
+            - "30"
+            - -X
+            - POST
+            - http://bitwarden-cli.external-secrets.svc.cluster.local:8087/sync
             resources:
               requests:
                 cpu: 5m

@@ -179,7 +179,7 @@ spec:
                 "type": "prometheus",
                 "uid": "${datasource}"
               },
-              "expr": "100 * (1 - netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"free\",job=\"external-truenas-netdata\"} / (netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"used\",job=\"external-truenas-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"free\",job=\"external-truenas-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"cached\",job=\"external-truenas-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"buffers\",job=\"external-truenas-netdata\"}))",
+              "expr": "100 * (1 - netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"free\",job=\"external-truenas-netdata\"} / scalar(sum(netdata_system_ram_MiB_average{chart=\"system.ram\",job=\"external-truenas-netdata\"})))",
               "legendFormat": "RAM",
               "refId": "A"
             }

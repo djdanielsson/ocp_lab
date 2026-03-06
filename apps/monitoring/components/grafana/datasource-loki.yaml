@@ -14,7 +14,7 @@ spec:
       httpHeaderValue1: application
     name: loki
     type: loki
-    url: 'http://loki-gateway.loki.svc.cluster.local:8080'
+    url: 'http://loki-query-frontend-http.loki.svc.cluster.local:3100'
   instanceSelector:
     matchLabels:
       dashboards: grafana

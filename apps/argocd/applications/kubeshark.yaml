@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://helm.kubeshark.co
     chart: kubeshark
-    targetRevision: 52.7.8
+    targetRevision: 53.1.0
     helm:
       parameters:
         - name: tap.ingress.enabled
