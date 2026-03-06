@@ -17,6 +17,10 @@ spec:
       targetRevision: 0.23.3
       helm:
         values: |
+          controller:
+            kind: StatefulSet
+            pvc:
+              requests: 1Gi
           ingress:
             enabled: true
             annotations:
