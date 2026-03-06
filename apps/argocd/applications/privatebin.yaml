@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: privatebin
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://privatebin.github.io/helm-chart
+    chart: privatebin/privatebin
+    targetRevision: 0.23.3
+    helm:
+      parameters:
+        - name: ingress.enabled
+          value: "true"
+        - name: ingress.hosts.host
+          value: privatebin.apps.ocp.new.lab.danielsson.us.com
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: privatebin
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
