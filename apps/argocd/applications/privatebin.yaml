@@ -17,6 +17,9 @@ spec:
       targetRevision: 0.23.3
       helm:
         values: |
+          service:
+            port: 443
+
           ingress:
             enabled: true
             annotations:
