@@ -13,7 +13,7 @@ spec:
       targetRevision: new
 
     - repoURL: https://privatebin.github.io/helm-chart
-      path: privatebin
+      chart: privatebin
       targetRevision: 0.23.3
       helm:
         values: |
@@ -24,7 +24,7 @@ spec:
                 paths:
                   - path: /
                     pathType: ImplementationSpecific
-          
+
   destination:
     server: https://kubernetes.default.svc
     namespace: privatebin
