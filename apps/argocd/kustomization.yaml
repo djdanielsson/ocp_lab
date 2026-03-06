@@ -29,5 +29,4 @@ resources:
   - applications/ocp-mcp-server.yaml
   - applications/kubeshark.yaml
   - applications/privatebin.yaml
-  - ../privatebin/rbac.yaml
 #  - applications/github-runners.yaml

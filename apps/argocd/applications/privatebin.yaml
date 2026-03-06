@@ -20,24 +20,6 @@ spec:
               paths:
                 - path: /
                   pathType: ImplementationSpecific
-        
-        # Scrub all hardcoded Pod-level Alpine UIDs/GIDs
-        podSecurityContext:
-          fsGroup: null
-          runAsUser: null
-          runAsGroup: null
-          seccompProfile:
-            type: RuntimeDefault
-
-        # Scrub Container-level UIDs and enforce OCP strict standards
-        securityContext:
-          runAsUser: null
-          runAsGroup: null
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
           
   destination:
     server: https://kubernetes.default.svc
@@ -48,3 +30,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
+resources:
+  - ../privatebin/rbac.yaml
