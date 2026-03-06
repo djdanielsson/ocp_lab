@@ -7,19 +7,23 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
-  source:
-    repoURL: https://privatebin.github.io/helm-chart
-    chart: privatebin
-    targetRevision: 0.23.3
-    helm:
-      values: |
-        ingress:
-          enabled: true
-          hosts:
-            - host: privatebin.apps.ocp.new.lab.danielsson.us.com
-              paths:
-                - path: /
-                  pathType: ImplementationSpecific
+  sources:
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      path: apps/privatebin/
+      targetRevision: new
+
+    - repoURL: https://privatebin.github.io/helm-chart
+      path: privatebin
+      targetRevision: 0.23.3
+      helm:
+        values: |
+          ingress:
+            enabled: true
+            hosts:
+              - host: privatebin.apps.ocp.new.lab.danielsson.us.com
+                paths:
+                  - path: /
+                    pathType: ImplementationSpecific
           
   destination:
     server: https://kubernetes.default.svc
@@ -30,6 +34,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-
-resources:
-  - ../privatebin/rbac.yaml
