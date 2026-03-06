@@ -7,7 +7,6 @@ metadata:
 spec:
   channel: stable
   name: cert-manager
-  startingCSV: cert-manager.v1.16.5
   installPlanApproval: Automatic
   source: community-operators
   sourceNamespace: openshift-marketplace

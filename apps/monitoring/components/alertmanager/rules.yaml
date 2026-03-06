@@ -19,6 +19,14 @@ spec:
           annotations:
             summary: "High CPU usage on {{ $labels.instance }}"
             description: "CPU usage is above 85% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: CriticalCPUUsage
+          expr: (1 - avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 95
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical CPU usage on {{ $labels.instance }}"
+            description: "CPU usage is above 95% (current: {{ $value | printf \"%.1f\" }}%)"
         - alert: HighMemoryUsage
           expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
           for: 5m
@@ -27,6 +35,14 @@ spec:
           annotations:
             summary: "High memory usage on {{ $labels.instance }}"
             description: "Memory usage is above 90% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: CriticalMemoryUsage
+          expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 95
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical memory usage on {{ $labels.instance }}"
+            description: "Memory usage is above 95% (current: {{ $value | printf \"%.1f\" }}%)"
         - alert: DiskSpaceLow
           expr: (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) * 100 > 85
           for: 10m
@@ -35,6 +51,38 @@ spec:
           annotations:
             summary: "Low disk space on {{ $labels.instance }} mount {{ $labels.mountpoint }}"
             description: "Disk usage is above 85% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: DiskSpaceCritical
+          expr: (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) * 100 > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical disk space on {{ $labels.instance }} mount {{ $labels.mountpoint }}"
+            description: "Disk usage is above 95% (current: {{ $value | printf \"%.1f\" }}%). Immediate action required."
+        - alert: HighLoadAverage
+          expr: node_load15 / count without(cpu, mode) (node_cpu_seconds_total{mode="idle"}) > 2
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High load average on {{ $labels.instance }}"
+            description: "15-minute load average per CPU is {{ $value | printf \"%.2f\" }}"
+        - alert: HighNetworkErrors
+          expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High network errors on {{ $labels.instance }} interface {{ $labels.device }}"
+            description: "Network errors rate is {{ $value | printf \"%.1f\" }}/s"
+        - alert: ClockSkew
+          expr: abs(node_timex_offset_seconds) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Clock skew detected on {{ $labels.instance }}"
+            description: "Clock is {{ $value | printf \"%.3f\" }}s out of sync"
     - name: pod-alerts
       rules:
         - alert: PodCrashLooping
@@ -47,12 +95,68 @@ spec:
             description: "Container {{ $labels.container }} has restarted {{ $value | printf \"%.0f\" }} times in the last 15 minutes"
         - alert: PodNotReady
           expr: kube_pod_status_ready{condition="true"} == 0
-          for: 5m
+          for: 10m
           labels:
             severity: warning
           annotations:
             summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is not ready"
-            description: "Pod has been in a non-ready state for more than 5 minutes"
+            description: "Pod has been in a non-ready state for more than 10 minutes"
+        - alert: PodOOMKilled
+          expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled"} == 1
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Container OOMKilled in {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "Container {{ $labels.container }} was killed due to Out Of Memory"
+        - alert: ContainerHighCPUThrottling
+          expr: rate(container_cpu_cfs_throttled_seconds_total[5m]) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Container CPU throttling in {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "Container {{ $labels.container }} is being throttled ({{ $value | printf \"%.2f\" }}s/s)"
+        - alert: PVCAlmostFull
+          expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is almost full"
+            description: "PVC usage is at {{ $value | printf \"%.1f\" }}%"
+        - alert: PVCCriticallyFull
+          expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 95
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is critically full"
+            description: "PVC usage is at {{ $value | printf \"%.1f\" }}%. Data loss may occur."
+        - alert: DeploymentReplicasMismatch
+          expr: kube_deployment_spec_replicas != kube_deployment_status_available_replicas
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} replica mismatch"
+            description: "Desired: {{ $labels.spec_replicas }}, Available: {{ $value }}"
+        - alert: StatefulSetReplicasMismatch
+          expr: kube_statefulset_replicas != kube_statefulset_status_replicas_ready
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} replica mismatch"
+            description: "Not all replicas are ready"
+        - alert: JobFailed
+          expr: kube_job_status_failed > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Job {{ $labels.namespace }}/{{ $labels.job_name }} failed"
+            description: "Job has {{ $value }} failed execution(s)"
     - name: target-alerts
       rules:
         - alert: TargetDown
@@ -63,7 +167,31 @@ spec:
           annotations:
             summary: "Scrape target {{ $labels.job }} is down"
             description: "Target {{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes"
-    - name: external-alerts
+        - alert: PrometheusTSDBCompactionsFailing
+          expr: increase(prometheus_tsdb_compactions_failed_total[3h]) > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Prometheus TSDB compactions are failing"
+            description: "TSDB compactions have failed {{ $value }} times in the last 3 hours"
+        - alert: PrometheusRuleEvaluationFailures
+          expr: increase(prometheus_rule_evaluation_failures_total[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Prometheus rule evaluation failures"
+            description: "Rule group {{ $labels.rule_group }} is failing"
+        - alert: AlertmanagerFailedNotifications
+          expr: rate(alertmanager_notifications_failed_total[5m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Alertmanager is failing to send notifications"
+            description: "Integration {{ $labels.integration }} has failed notifications"
+    - name: external-truenas-alerts
       rules:
         - alert: TrueNASHighCPU
           expr: 100 - netdata_system_cpu_percentage_average{chart="system.cpu",dimension="idle",job="external-truenas-netdata"} > 80
@@ -73,6 +201,55 @@ spec:
           annotations:
             summary: "TrueNAS CPU usage is high"
             description: "TrueNAS CPU usage is above 80% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: TrueNASHighMemory
+          expr: >-
+            100 * (1 - netdata_system_ram_MiB_average{chart="system.ram",dimension="free",job="external-truenas-netdata"}
+            / scalar(sum(netdata_system_ram_MiB_average{chart="system.ram",job="external-truenas-netdata"}))) > 90
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS memory usage is high"
+            description: "TrueNAS memory usage is above 90% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: TrueNASDiskIOHigh
+          expr: >-
+            abs(netdata_disk_io_KiB_persec_average{job="external-truenas-netdata",dimension="reads"})
+            + abs(netdata_disk_io_KiB_persec_average{job="external-truenas-netdata",dimension="writes"}) > 500000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS disk I/O is high"
+            description: "TrueNAS disk I/O is above 500 MiB/s"
+        - alert: TrueNASZFSArcLow
+          expr: >-
+            netdata_zfs_arc_size_MiB_average{chart="zfs.arc_size",dimension="size",job="external-truenas-netdata"}
+            < 1024
+          for: 30m
+          labels:
+            severity: info
+          annotations:
+            summary: "TrueNAS ZFS ARC size is low"
+            description: "ZFS ARC size is {{ $value | printf \"%.0f\" }} MiB, may indicate memory pressure"
+        - alert: TrueNASHighTemperature
+          expr: netdata_sensors_temperature_Celsius_average{job="external-truenas-netdata"} > 70
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS sensor {{ $labels.dimension }} temperature is high"
+            description: "Temperature is {{ $value | printf \"%.1f\" }}°C"
+        - alert: TrueNASNetworkErrors
+          expr: >-
+            abs(netdata_net_errors_errors_persec_average{job="external-truenas-netdata"}) > 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS network errors on {{ $labels.chart }}"
+            description: "Network error rate: {{ $value | printf \"%.1f\" }} errors/sec"
+    - name: ipmi-alerts
+      rules:
         - alert: IPMITemperatureHigh
           expr: ipmi_temperature_celsius{job="ipmi-exporter"} > 75
           for: 5m
@@ -81,3 +258,151 @@ spec:
           annotations:
             summary: "IPMI sensor {{ $labels.name }} temperature is high"
             description: "Temperature is {{ $value }}°C, exceeding 75°C threshold"
+        - alert: IPMITemperatureWarning
+          expr: ipmi_temperature_celsius{job="ipmi-exporter"} > 60
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "IPMI sensor {{ $labels.name }} temperature elevated"
+            description: "Temperature is {{ $value }}°C"
+        - alert: IPMIFanSpeedLow
+          expr: ipmi_fan_speed_rpm{job="ipmi-exporter"} > 0 and ipmi_fan_speed_rpm{job="ipmi-exporter"} < 500
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "IPMI fan {{ $labels.name }} speed is low"
+            description: "Fan speed is {{ $value }} RPM, potential cooling failure"
+        - alert: IPMIFanStopped
+          expr: ipmi_fan_speed_rpm{job="ipmi-exporter"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "IPMI fan {{ $labels.name }} has stopped"
+            description: "Fan speed is 0 RPM"
+        - alert: IPMISensorCritical
+          expr: ipmi_sensor_state{job="ipmi-exporter"} != 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "IPMI sensor {{ $labels.name }} in non-nominal state"
+            description: "Sensor state is {{ $value }}"
+        - alert: IPMIPowerHigh
+          expr: ipmi_power_watts{job="ipmi-exporter"} > 400
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Server power consumption is high"
+            description: "Power draw is {{ $value }}W"
+    - name: klipper-alerts
+      rules:
+        - alert: KlipperPrinterError
+          expr: klipper_printer_state{state!="ready"} == 1
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "3D Printer is in error state"
+            description: "Klipper printer state is not ready"
+        - alert: KlipperExtruderTempHigh
+          expr: klipper_extruder_temperature > 260
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "3D Printer extruder temperature is dangerously high"
+            description: "Extruder temperature is {{ $value | printf \"%.1f\" }}°C"
+        - alert: KlipperBedTempHigh
+          expr: klipper_heater_bed_temperature > 120
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "3D Printer heated bed temperature is dangerously high"
+            description: "Bed temperature is {{ $value | printf \"%.1f\" }}°C"
+    - name: portainer-alerts
+      rules:
+        - alert: PortainerHighCPU
+          expr: 100 - netdata_system_cpu_percentage_average{chart="system.cpu",dimension="idle",job="external-portainer-netdata"} > 80
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Portainer host CPU usage is high"
+            description: "CPU usage is above 80% (current: {{ $value | printf \"%.1f\" }}%)"
+        - alert: PortainerHighMemory
+          expr: >-
+            100 * (1 - netdata_system_ram_MiB_average{chart="system.ram",dimension="free",job="external-portainer-netdata"}
+            / scalar(sum(netdata_system_ram_MiB_average{chart="system.ram",job="external-portainer-netdata"}))) > 90
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Portainer host memory usage is high"
+            description: "Memory usage is above 90% (current: {{ $value | printf \"%.1f\" }}%)"
+    - name: certificate-alerts
+      rules:
+        - alert: CertificateExpiringSoon
+          expr: certmanager_certificate_expiration_timestamp_seconds - time() < 30 * 24 * 3600
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Certificate {{ $labels.namespace }}/{{ $labels.name }} expiring soon"
+            description: "Certificate expires in {{ $value | humanizeDuration }}"
+        - alert: CertificateExpiryCritical
+          expr: certmanager_certificate_expiration_timestamp_seconds - time() < 7 * 24 * 3600
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: "Certificate {{ $labels.namespace }}/{{ $labels.name }} expiring very soon"
+            description: "Certificate expires in {{ $value | humanizeDuration }}. Immediate renewal required."
+    - name: etcd-alerts
+      rules:
+        - alert: EtcdHighFsyncDuration
+          expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "etcd WAL fsync duration is high"
+            description: "99th percentile fsync duration is {{ $value | printf \"%.3f\" }}s"
+        - alert: EtcdHighCommitDuration
+          expr: histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])) > 0.25
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "etcd backend commit duration is high"
+            description: "99th percentile commit duration is {{ $value | printf \"%.3f\" }}s"
+    - name: argocd-alerts
+      rules:
+        - alert: ArgoCDAppDegraded
+          expr: argocd_app_info{health_status="Degraded"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ArgoCD app {{ $labels.name }} is degraded"
+            description: "Application has been in Degraded state for more than 15 minutes"
+        - alert: ArgoCDAppOutOfSync
+          expr: argocd_app_info{sync_status="OutOfSync"} == 1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ArgoCD app {{ $labels.name }} is out of sync"
+            description: "Application has been OutOfSync for more than 30 minutes"
+        - alert: ArgoCDSyncFailed
+          expr: argocd_app_sync_total{phase="Failed"} > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ArgoCD app {{ $labels.name }} sync failed"
+            description: "Application sync has failed"

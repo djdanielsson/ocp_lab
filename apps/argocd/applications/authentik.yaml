@@ -11,14 +11,68 @@ spec:
     namespace: authentik
     server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://github.com/djdanielsson/ocp_lab.git
-    path: apps/authentik/
-    targetRevision: new
+  sources:
+    - repoURL: https://charts.goauthentik.io
+      chart: authentik
+      targetRevision: "2026.2.1"
+      helm:
+        valuesObject:
+          authentik:
+            secret_key: ""
+            existingSecret:
+              secretName: authentik-credentials
+            postgresql:
+              host: authentik-postgresql
+              name: authentik
+              user: authentik
+              password: ""
+            error_reporting:
+              enabled: false
+          global:
+            env:
+              - name: AUTHENTIK_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-credentials
+                    key: AUTHENTIK_SECRET_KEY
+              - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-credentials
+                    key: AUTHENTIK_BOOTSTRAP_PASSWORD
+              - name: AUTHENTIK_BOOTSTRAP_EMAIL
+                value: "admin@danielsson.us.com"
+          postgresql:
+            enabled: true
+            auth:
+              username: authentik
+              database: authentik
+              existingSecret: authentik-postgres-credentials
+              secretKeys:
+                userPasswordKey: POSTGRES_PASSWORD
+            primary:
+              persistence:
+                storageClass: lvms-lvm-local-storage
+                size: 8Gi
+          redis:
+            enabled: true
+          server:
+            replicas: 1
+            ingress:
+              enabled: false
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: false
+          worker:
+            replicas: 1
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      path: apps/authentik/secrets/
+      targetRevision: new
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - Replace=true
+      - ServerSideApply=true
