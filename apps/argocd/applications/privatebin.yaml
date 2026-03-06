@@ -19,11 +19,17 @@ spec:
         values: |
           ingress:
             enabled: true
+            annotations:
+              route.openshift.io/termination: "edge"
+              route.openshift.io/insecure-edge-termination-policy: "Redirect"
             hosts:
               - host: privatebin.apps.ocp.new.lab.danielsson.us.com
                 paths:
                   - path: /
                     pathType: ImplementationSpecific
+            tls:
+              - hosts:
+                  - privatebin.apps.ocp.new.lab.danielsson.us.com
 
   destination:
     server: https://kubernetes.default.svc
