@@ -13,11 +13,21 @@ spec:
     chart: privatebin
     targetRevision: 0.23.3
     helm:
-      parameters:
-        - name: ingress.enabled
-          value: "true"
-        - name: ingress.hosts.host
-          value: privatebin.apps.ocp.new.lab.danielsson.us.com
+      values: |
+        ingress:
+          enabled: true
+          hosts:
+            - host: privatebin.apps.ocp.new.lab.danielsson.us.com
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+        
+        # Override hardcoded IDs so OpenShift's restricted SCC can inject its own
+        podSecurityContext:
+          fsGroup: null
+        securityContext:
+          runAsUser: null
+          
   destination:
     server: https://kubernetes.default.svc
     namespace: privatebin
