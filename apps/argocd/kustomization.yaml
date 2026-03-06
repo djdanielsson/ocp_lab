@@ -28,4 +28,5 @@ resources:
   - applications/ollama.yaml
   - applications/ocp-mcp-server.yaml
   - applications/kubeshark.yaml
+  - applications/privatebin.yaml
 #  - applications/github-runners.yaml
