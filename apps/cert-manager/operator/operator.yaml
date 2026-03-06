@@ -1,19 +1,13 @@
 ---
-# apiVersion: operators.coreos.com/v1
-# kind: OperatorGroup
-# metadata:
-#   name: external-secrets-operator
-#   namespace: external-secrets
-# spec: {}
-# ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: external-secrets-operator
+  name: cert-manager
   namespace: openshift-operators
 spec:
   channel: stable
+  name: cert-manager
+  startingCSV: cert-manager.v1.16.5
   installPlanApproval: Automatic
-  name: external-secrets-operator
   source: community-operators
   sourceNamespace: openshift-marketplace

@@ -1,0 +1,68 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: klipper-exporter
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: klipper-exporter-anyuid
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:anyuid
+subjects:
+- kind: ServiceAccount
+  name: klipper-exporter
+  namespace: monitoring
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: klipper-exporter
+  namespace: monitoring
+  labels:
+    app: klipper-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: klipper-exporter
+  template:
+    metadata:
+      labels:
+        app: klipper-exporter
+    spec:
+      serviceAccountName: klipper-exporter
+      securityContext:
+        runAsUser: 0
+      containers:
+      - name: klipper-exporter
+        image: ghcr.io/scross01/prometheus-klipper-exporter:v0.14.0
+        ports:
+        - containerPort: 9101
+          name: metrics
+        resources:
+          requests:
+            cpu: 5m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: klipper-exporter
+  namespace: monitoring
+  labels:
+    app: klipper-exporter
+spec:
+  selector:
+    app: klipper-exporter
+  ports:
+  - name: metrics
+    port: 9101
+    targetPort: metrics

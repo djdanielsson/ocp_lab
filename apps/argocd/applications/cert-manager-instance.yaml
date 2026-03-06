@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-instance
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  destination:
+    namespace: cert-manager
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/cert-manager/instance/
+    targetRevision: new
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

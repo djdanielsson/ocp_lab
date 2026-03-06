@@ -25,7 +25,20 @@ spec:
   #                   name: grafana-service
   #                   port:
   #                     number: 3000
-  # admin:
-  #   existingSecret: grafana-admin-credentials
-  #   userKey: admin-user
-  #   passwordKey: admin-password
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_SECURITY_ADMIN_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-admin-vaultwarden
+                      key: GF_SECURITY_ADMIN_USER
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-admin-vaultwarden
+                      key: GF_SECURITY_ADMIN_PASSWORD

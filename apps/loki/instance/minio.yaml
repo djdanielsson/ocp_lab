@@ -1,0 +1,171 @@
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: loki-minio-credentials
+  namespace: loki
+spec:
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: bitwarden-login
+    kind: ClusterSecretStore
+  target:
+    name: loki-minio-credentials
+    deletionPolicy: Delete
+    template:
+      type: Opaque
+      data:
+        MINIO_ROOT_USER: "{{ .username }}"
+        MINIO_ROOT_PASSWORD: "{{ .password }}"
+  data:
+    - secretKey: username
+      sourceRef:
+        storeRef:
+          name: bitwarden-login
+          kind: ClusterSecretStore
+      remoteRef:
+        key: ocp-lab/loki-minio
+        property: username
+    - secretKey: password
+      sourceRef:
+        storeRef:
+          name: bitwarden-login
+          kind: ClusterSecretStore
+      remoteRef:
+        key: ocp-lab/loki-minio
+        property: password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: loki
+  labels:
+    app: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: quay.io/minio/minio:latest
+        args:
+        - server
+        - /data
+        - --console-address
+        - ":9001"
+        env:
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: loki-minio-credentials
+              key: MINIO_ROOT_USER
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: loki-minio-credentials
+              key: MINIO_ROOT_PASSWORD
+        ports:
+        - name: api
+          containerPort: 9000
+        - name: console
+          containerPort: 9001
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: minio-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-data
+  namespace: loki
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: lvms-lvm-local-storage
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: loki
+spec:
+  selector:
+    app: minio
+  ports:
+  - name: api
+    port: 9000
+    targetPort: 9000
+  - name: console
+    port: 9001
+    targetPort: 9001
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-setup
+  namespace: loki
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: mc
+        image: quay.io/minio/mc:latest
+        env:
+        - name: MC_CONFIG_DIR
+          value: /tmp/.mc
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: loki-minio-credentials
+              key: MINIO_ROOT_USER
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: loki-minio-credentials
+              key: MINIO_ROOT_PASSWORD
+        command:
+        - /bin/sh
+        - -c
+        - |
+          until mc alias set local http://minio.loki.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
+            sleep 2
+          done
+          mc mb --ignore-existing local/loki
+          mc mb --ignore-existing local/loki-ruler

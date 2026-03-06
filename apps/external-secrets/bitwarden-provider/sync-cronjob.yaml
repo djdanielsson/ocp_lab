@@ -1,0 +1,30 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bitwarden-cli-sync
+  namespace: external-secrets
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: sync
+            image: docker.io/curlimages/curl:latest
+            command:
+            - /bin/sh
+            - -c
+            - 'curl -sf -X POST http://bitwarden-cli.external-secrets.svc.cluster.local:8087/sync'
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                cpu: 50m
+                memory: 64Mi

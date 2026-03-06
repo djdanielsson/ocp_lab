@@ -1,0 +1,182 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ipmi-exporter-config
+  namespace: monitoring
+data:
+  config.yml: |
+    modules:
+      remote:
+        user: "__IPMI_USERNAME__"
+        pass: "__IPMI_PASSWORD__"
+        driver: "LAN_2_0"
+        privilege: "user"
+        timeout: 10000
+        collectors:
+          - ipmi
+          - dcmi
+          - bmc
+          - chassis
+        custom_args:
+          ipmi-sensors:
+            - "--bridge-sensors"
+        exclude_sensor_ids: []
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: ipmi-credentials
+  namespace: monitoring
+spec:
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: bitwarden-login
+    kind: ClusterSecretStore
+  target:
+    name: ipmi-credentials
+    deletionPolicy: Delete
+    template:
+      type: Opaque
+      data:
+        IPMI_USERNAME: "{{ .username }}"
+        IPMI_PASSWORD: "{{ .password }}"
+  data:
+    - secretKey: username
+      sourceRef:
+        storeRef:
+          name: bitwarden-login
+          kind: ClusterSecretStore
+      remoteRef:
+        key: ocp-lab/ipmi-bmc
+        property: username
+    - secretKey: password
+      sourceRef:
+        storeRef:
+          name: bitwarden-login
+          kind: ClusterSecretStore
+      remoteRef:
+        key: ocp-lab/ipmi-bmc
+        property: password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels:
+    app: ipmi-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipmi-exporter
+  template:
+    metadata:
+      labels:
+        app: ipmi-exporter
+    spec:
+      initContainers:
+      - name: config-inject
+        image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          cp /etc/ipmi-exporter-template/config.yml /etc/ipmi-exporter/config.yml
+          sed -i "s/__IPMI_USERNAME__/$IPMI_USERNAME/g" /etc/ipmi-exporter/config.yml
+          sed -i "s/__IPMI_PASSWORD__/$IPMI_PASSWORD/g" /etc/ipmi-exporter/config.yml
+        env:
+        - name: IPMI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ipmi-credentials
+              key: IPMI_USERNAME
+        - name: IPMI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ipmi-credentials
+              key: IPMI_PASSWORD
+        volumeMounts:
+        - name: config-template
+          mountPath: /etc/ipmi-exporter-template
+          readOnly: true
+        - name: config
+          mountPath: /etc/ipmi-exporter
+        resources:
+          requests:
+            cpu: 5m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+      containers:
+      - name: ipmi-exporter
+        image: quay.io/prometheuscommunity/ipmi-exporter:latest
+        args:
+        - --config.file=/etc/ipmi-exporter/config.yml
+        - --freeipmi.path=/usr/sbin
+        ports:
+        - name: metrics
+          containerPort: 9290
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/ipmi-exporter
+          readOnly: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+      volumes:
+      - name: config-template
+        configMap:
+          name: ipmi-exporter-config
+      - name: config
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels:
+    app: ipmi-exporter
+spec:
+  selector:
+    app: ipmi-exporter
+  ports:
+  - name: metrics
+    port: 9290
+    targetPort: 9290
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      app: ipmi-exporter
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+  - port: metrics
+    interval: 60s
+    path: /ipmi
+    params:
+      module: ["remote"]
+      target: ["192.168.2.80"]
+    metricRelabelings:
+    - sourceLabels: [__param_target]
+      targetLabel: instance
+  - port: metrics
+    interval: 120s
+    path: /metrics

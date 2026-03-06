@@ -7,3 +7,4 @@ resources:
   - service.yaml
   - networkpolicy.yaml
   - clustersecretstore.yaml
+  - sync-cronjob.yaml

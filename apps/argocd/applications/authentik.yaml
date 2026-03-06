@@ -1,0 +1,24 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  destination:
+    namespace: authentik
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/authentik/
+    targetRevision: new
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true

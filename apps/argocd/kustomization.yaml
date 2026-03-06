@@ -3,20 +3,26 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - applications/lvms-operator.yaml
-  - applications/lvms-instance.yaml
   - applications/external-secrets-operator.yaml
   - applications/external-secrets-bitwarden.yaml
+  - applications/cert-manager-operator.yaml
   - applications/ocp-virt-operator.yaml
   - applications/aap-pg-operator.yaml
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
   - applications/aap-monitoring.yaml
+  - applications/loki-operator.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
   - applications/ocp-virt-instance.yaml
+  - applications/cert-manager-instance.yaml
+  - applications/loki-instance.yaml
+  - applications/authentik.yaml
+  - applications/tailscale.yaml
+  - applications/aap-portal-secrets.yaml
+  - applications/aap-portal.yaml
   - applications/pipelines.yaml
   - applications/web-terminal.yaml
   - applications/ollama.yaml
