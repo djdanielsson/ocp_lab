@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     repoURL: https://privatebin.github.io/helm-chart
-    chart: privatebin/privatebin
+    chart: privatebin
     targetRevision: 0.23.3
     helm:
       parameters:
