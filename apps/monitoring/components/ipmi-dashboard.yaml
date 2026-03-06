@@ -15,7 +15,10 @@ spec:
         "list": [
           {
             "builtIn": 1,
-            "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+            "datasource": {
+              "type": "grafana",
+              "uid": "-- Grafana --"
+            },
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -27,528 +30,1191 @@ spec:
       "description": "Supermicro BMC/IPMI monitoring via ipmi-exporter",
       "editable": true,
       "fiscalYearStartMonth": 0,
-      "graphTooltip": 1,
-      "id": null,
+      "graphTooltip": 0,
+      "id": 0,
       "links": [],
       "panels": [
         {
           "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
           "id": 100,
           "panels": [],
           "title": "Server Health",
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
               "mappings": [
-                { "options": { "0": { "color": "red", "text": "OFF" }, "1": { "color": "green", "text": "ON" } }, "type": "value" }
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "text": "OFF"
+                    },
+                    "1": {
+                      "color": "green",
+                      "text": "ON"
+                    }
+                  },
+                  "type": "value"
+                }
               ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
                 ]
               }
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 0,
+            "y": 1
+          },
           "id": 1,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "auto"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "title": "Chassis Power",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_chassis_power_state{job=\"ipmi-exporter\"}",
               "legendFormat": "Power",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Chassis Power",
+          "type": "stat"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
               "mappings": [
-                { "options": { "0": { "color": "green", "text": "OK" }, "1": { "color": "red", "text": "FAULT" } }, "type": "value" }
+                {
+                  "options": {
+                    "0": {
+                      "color": "green",
+                      "text": "OK"
+                    },
+                    "1": {
+                      "color": "red",
+                      "text": "FAULT"
+                    }
+                  },
+                  "type": "value"
+                }
               ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green", "value": null },
-                  { "color": "red", "value": 1 }
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
                 ]
               }
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 4,
+            "y": 1
+          },
           "id": 2,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "auto"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "title": "Drive Fault",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_chassis_drive_fault_state{job=\"ipmi-exporter\"}",
               "legendFormat": "Drive",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Drive Fault",
+          "type": "stat"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
               "mappings": [
-                { "options": { "0": { "color": "green", "text": "OK" }, "1": { "color": "red", "text": "FAULT" } }, "type": "value" }
+                {
+                  "options": {
+                    "0": {
+                      "color": "green",
+                      "text": "OK"
+                    },
+                    "1": {
+                      "color": "red",
+                      "text": "FAULT"
+                    }
+                  },
+                  "type": "value"
+                }
               ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green", "value": null },
-                  { "color": "red", "value": 1 }
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
                 ]
               }
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 8,
+            "y": 1
+          },
           "id": 3,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "auto"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "title": "Cooling Fault",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
               "expr": "ipmi_chassis_cooling_fault_state{job=\"ipmi-exporter\"}",
               "legendFormat": "Cooling",
+              "range": true,
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Cooling Fault",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "reducers": []
+              }
+            }
+          ],
+          "type": "stat"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
               "mappings": [
-                { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "text": "DOWN"
+                    },
+                    "1": {
+                      "color": "green",
+                      "text": "UP"
+                    }
+                  },
+                  "type": "value"
+                }
               ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
                 ]
               }
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 12,
+            "y": 1
+          },
           "id": 4,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "auto"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "title": "IPMI Collector",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "ipmi_up{job=\"ipmi-exporter\",collector=\"ipmi\",instance!~\"10\\..*\"}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "expr": "ipmi_up{job=\"ipmi-exporter\",collector=\"ipmi\"}",
               "legendFormat": "IPMI",
+              "range": true,
               "refId": "A"
             }
-          ]
+          ],
+          "title": "IPMI Collector",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {}
+            }
+          ],
+          "type": "stat"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green", "value": null }
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
                 ]
               },
               "unit": "short"
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 1
+          },
           "id": 5,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "value",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "value_and_name"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "value_and_name",
+            "wideLayout": true
           },
-          "title": "BMC Info",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
               "expr": "ipmi_bmc_info{job=\"ipmi-exporter\"}",
+              "instant": false,
               "legendFormat": "{{manufacturer_id}} FW {{firmware_revision}}",
+              "range": true,
               "refId": "A"
             }
-          ]
+          ],
+          "title": "BMC Info",
+          "type": "stat"
         },
         {
           "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 5
+          },
           "id": 101,
           "panels": [],
           "title": "Temperatures",
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "continuous-BlYlRd" },
+              "color": {
+                "mode": "continuous-BlYlRd"
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green", "value": null },
-                  { "color": "yellow", "value": 55 },
-                  { "color": "orange", "value": 70 },
-                  { "color": "red", "value": 85 }
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 55
+                  },
+                  {
+                    "color": "orange",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 85
+                  }
                 ]
-              },
-              "unit": "celsius",
-              "min": 0,
-              "max": 100
-            },
-            "overrides": []
-          },
-          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 6 },
-          "id": 10,
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "orientation": "horizontal",
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "title": "Current Temperatures",
-          "type": "gauge",
-          "targets": [
-            {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "ipmi_temperature_celsius{job=\"ipmi-exporter\"}",
-              "legendFormat": "{{name}}",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "palette-classic" },
-              "custom": {
-                "axisBorderShow": false,
-                "axisLabel": "°C",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "drawStyle": "line",
-                "gradientMode": "opacity",
-                "showPoints": "never",
-                "spanNulls": true
               },
               "unit": "celsius"
             },
             "overrides": []
           },
-          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 12 },
-          "id": 11,
-          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","mean","max"], "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi" } },
-          "title": "Temperature History",
-          "type": "timeseries",
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 6
+          },
+          "id": 10,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_temperature_celsius{job=\"ipmi-exporter\"}",
               "legendFormat": "{{name}}",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Current Temperatures",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "°C",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 12
+          },
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull",
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "ipmi_temperature_celsius{job=\"ipmi-exporter\"}",
+              "legendFormat": "{{name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Temperature History",
+          "type": "timeseries"
         },
         {
           "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 21
+          },
           "id": 102,
           "panels": [],
           "title": "Fan Speeds",
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "orange", "value": 1000 },
-                  { "color": "green", "value": 3000 }
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1000
+                  },
+                  {
+                    "color": "green",
+                    "value": 3000
+                  }
                 ]
-              },
-              "unit": "rotrpm",
-              "min": 0
-            },
-            "overrides": []
-          },
-          "gridPos": { "h": 5, "w": 24, "x": 0, "y": 22 },
-          "id": 20,
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "orientation": "horizontal",
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "title": "Current Fan Speeds",
-          "type": "gauge",
-          "targets": [
-            {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "ipmi_fan_speed_rpm{job=\"ipmi-exporter\"}",
-              "legendFormat": "{{name}}",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "palette-classic" },
-              "custom": {
-                "axisBorderShow": false,
-                "axisLabel": "RPM",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "drawStyle": "line",
-                "gradientMode": "opacity",
-                "showPoints": "never",
-                "spanNulls": true
               },
               "unit": "rotrpm"
             },
             "overrides": []
           },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 27 },
-          "id": 21,
-          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","mean","max"] }, "tooltip": { "mode": "multi" } },
-          "title": "Fan Speed History",
-          "type": "timeseries",
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 22
+          },
+          "id": 20,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_fan_speed_rpm{job=\"ipmi-exporter\"}",
               "legendFormat": "{{name}}",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Current Fan Speeds",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "RPM",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "rotrpm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 27
+          },
+          "id": 21,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull",
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "ipmi_fan_speed_rpm{job=\"ipmi-exporter\"}",
+              "legendFormat": "{{name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Fan Speed History",
+          "type": "timeseries"
         },
         {
           "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 35
+          },
           "id": 103,
           "panels": [],
           "title": "Voltages",
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "palette-classic" },
+              "color": {
+                "mode": "palette-classic"
+              },
               "custom": {
                 "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "Volts",
-                "fillOpacity": 10,
-                "lineWidth": 2,
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
+                "fillOpacity": 10,
                 "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
                 "showPoints": "never",
-                "spanNulls": true
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
               },
               "unit": "volt"
             },
             "overrides": []
           },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 36 },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 36
+          },
           "id": 30,
-          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","mean","min","max"] }, "tooltip": { "mode": "multi" } },
-          "title": "Voltage Rails",
-          "type": "timeseries",
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull",
+                "mean",
+                "min",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_voltage_volts{job=\"ipmi-exporter\"}",
               "legendFormat": "{{name}}",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Voltage Rails",
+          "type": "timeseries"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green", "value": null }
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
                 ]
               },
-              "unit": "volt",
-              "decimals": 2
+              "unit": "volt"
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 44 },
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 44
+          },
           "id": 31,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "value",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "value_and_name"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "value_and_name",
+            "wideLayout": true
           },
-          "title": "Current Voltages",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_voltage_volts{job=\"ipmi-exporter\"}",
               "legendFormat": "{{name}}",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Current Voltages",
+          "type": "stat"
         },
         {
           "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 48 },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 48
+          },
           "id": 104,
           "panels": [],
           "title": "Collector Status",
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "thresholds" },
+              "color": {
+                "mode": "thresholds"
+              },
               "mappings": [
-                { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "text": "DOWN"
+                    },
+                    "1": {
+                      "color": "green",
+                      "text": "UP"
+                    }
+                  },
+                  "type": "value"
+                }
               ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
                 ]
               }
             },
             "overrides": []
           },
-          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 49 },
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 49
+          },
           "id": 40,
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "center",
-            "textMode": "value_and_name"
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "value_and_name",
+            "wideLayout": true
           },
-          "title": "Collector Status",
-          "type": "stat",
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "ipmi_up{job=\"ipmi-exporter\",instance!~\"10\\..*\"}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "expr": "ipmi_up{job=\"ipmi-exporter\"}",
               "legendFormat": "{{collector}}",
+              "range": true,
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Collector Status",
+          "type": "stat"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
-              "color": { "mode": "palette-classic" },
+              "color": {
+                "mode": "palette-classic"
+              },
               "custom": {
                 "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "seconds",
-                "fillOpacity": 20,
-                "lineWidth": 1,
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
+                "fillOpacity": 20,
                 "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
                 "showPoints": "never",
-                "spanNulls": true
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
               },
               "unit": "s"
             },
             "overrides": []
           },
-          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 53 },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 53
+          },
           "id": 41,
-          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
-          "title": "Scrape Duration",
-          "type": "timeseries",
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.3",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
               "expr": "ipmi_scrape_duration_seconds{job=\"ipmi-exporter\"}",
               "legendFormat": "{{collector}}",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "Scrape Duration",
+          "type": "timeseries"
         }
       ],
+      "preload": false,
+      "refresh": "",
+      "schemaVersion": 42,
+      "tags": [],
       "templating": {
         "list": [
           {
-            "current": { "selected": false, "text": "prometheus", "value": "prometheus" },
-            "hide": 0,
+            "current": {
+              "text": "prometheus",
+              "value": "058ce77a-5e9d-42b2-a293-391dc8d7ed3b"
+            },
             "includeAll": false,
             "label": "Datasource",
-            "multi": false,
             "name": "datasource",
             "options": [],
             "query": "prometheus",
@@ -558,11 +1224,13 @@ spec:
           }
         ]
       },
-      "time": { "from": "now-6h", "to": "now" },
+      "time": {
+        "from": "now-5m",
+        "to": "now"
+      },
       "timepicker": {},
       "timezone": "browser",
       "title": "Supermicro IPMI/BMC",
-      "uid": null,
-      "version": 1,
-      "weekStart": ""
+      "uid": "a93449ad-01b2-4fb5-910d-8e992b4c4ee6",
+      "version": 7
     }

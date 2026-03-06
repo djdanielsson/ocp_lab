@@ -21,8 +21,8 @@ resources:
   - applications/loki-instance.yaml
   - applications/authentik.yaml
   - applications/tailscale.yaml
-  - applications/aap-portal-secrets.yaml
-  - applications/aap-portal.yaml
+  # - applications/aap-portal-secrets.yaml
+  # - applications/aap-portal.yaml
   - applications/pipelines.yaml
   - applications/web-terminal.yaml
   - applications/ollama.yaml
