@@ -1,4 +1,3 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -22,11 +21,23 @@ spec:
                 - path: /
                   pathType: ImplementationSpecific
         
-        # Override hardcoded IDs so OpenShift's restricted SCC can inject its own
+        # Scrub all hardcoded Pod-level Alpine UIDs/GIDs
         podSecurityContext:
           fsGroup: null
+          runAsUser: null
+          runAsGroup: null
+          seccompProfile:
+            type: RuntimeDefault
+
+        # Scrub Container-level UIDs and enforce OCP strict standards
         securityContext:
           runAsUser: null
+          runAsGroup: null
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
           
   destination:
     server: https://kubernetes.default.svc
