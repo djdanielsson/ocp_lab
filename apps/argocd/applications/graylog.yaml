@@ -12,29 +12,25 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    - repoURL: https://graylog2.github.io/graylog-helm
-      chart: graylog
-      targetRevision: "1.0.0"
-      helm:
-        parameters:
-          - name: global.storageClass
-            value: lvms-lvm-local-storage
-          - name: graylog.replicas
-            value: "1"
-          - name: datanode.replicas
-            value: "1"
-          - name: graylog.serviceAccount.name
-            value: graylog-sa
-          - name: graylog.serviceAccount.create
-            value: "false"
-          - name: datanode.podSecurityContext.runAsUser
-            value: "1000"
-          - name: datanode.podSecurityContext.fsGroup
-            value: "1000"
-
-    - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      path: apps/graylog/prereqs/
-      targetRevision: new
+    repoURL: https://graylog2.github.io/graylog-helm
+    chart: graylog
+    targetRevision: "1.0.0"
+    helm:
+      parameters:
+        - name: global.storageClass
+          value: lvms-lvm-local-storage
+        - name: graylog.replicas
+          value: "1"
+        - name: datanode.replicas
+          value: "1"
+        - name: graylog.serviceAccount.name
+          value: graylog-sa
+        - name: graylog.serviceAccount.create
+          value: "false"
+        - name: datanode.podSecurityContext.runAsUser
+          value: "1000"
+        - name: datanode.podSecurityContext.fsGroup
+          value: "1000"
   syncPolicy:
     automated:
       prune: true
@@ -42,3 +38,10 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

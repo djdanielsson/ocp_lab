@@ -4,14 +4,14 @@ kind: Namespace
 metadata:
   name: openshift-storage
 ---
-# apiVersion: operators.coreos.com/v1
-# kind: OperatorGroup
-# metadata:
-#   name: openshift-storage-operatorgroup
-#   namespace: openshift-storage
-# spec:
-#   targetNamespaces:
-#     - openshift-storage
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-storage-operatorgroup
+  namespace: openshift-storage
+spec:
+  targetNamespaces:
+    - openshift-storage
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription

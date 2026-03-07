@@ -2,21 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring-components
+  name: authentik-prereqs
   namespace: openshift-gitops
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
+  destination:
+    namespace: authentik
+    server: https://kubernetes.default.svc
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/authentik/secrets/
     targetRevision: new
-    path: apps/monitoring/components/
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
   syncPolicy:
     automated:
       prune: true

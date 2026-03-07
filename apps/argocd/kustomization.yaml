@@ -19,6 +19,7 @@ resources:
   - applications/ocp-virt-instance.yaml
   - applications/cert-manager-instance.yaml
   - applications/loki-instance.yaml
+  - applications/authentik-prereqs.yaml
   - applications/authentik.yaml
   - applications/tailscale.yaml
   # - applications/aap-portal-secrets.yaml
@@ -32,5 +33,6 @@ resources:
   - applications/netobserv-instance.yaml
   - applications/privatebin.yaml
   - applications/graylog-mongodb-operator.yaml
+  - applications/graylog-prereqs.yaml
   - applications/graylog.yaml
 #  - applications/github-runners.yaml
