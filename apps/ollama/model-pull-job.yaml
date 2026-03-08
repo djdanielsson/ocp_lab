@@ -27,7 +27,7 @@ spec:
             - -c
             - |
               OLLAMA_URL="http://ollama.ollama.svc.cluster.local:11434"
-              MODELS="ministral-3:14b gpt-oss:20b qwen3:14b"
+              MODELS="qwen3:14b qwen3:8b gpt-oss:20b ministral-3:14b deepseek-r1:14b gemma3:12b llama3.1:8b"
 
               echo "Waiting for Ollama to be ready..."
               until curl -sf "$OLLAMA_URL" > /dev/null 2>&1; do
