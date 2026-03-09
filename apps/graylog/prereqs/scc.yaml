@@ -46,3 +46,19 @@ subjects:
   - kind: ServiceAccount
     name: mongodb-kubernetes-database-pods
     namespace: operators
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: graylog
+  namespace: graylog
+spec:
+  to:
+    kind: Service
+    name: graylog-svc
+    weight: 100
+  port:
+    targetPort: 9000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
