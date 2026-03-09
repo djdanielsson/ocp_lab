@@ -42,6 +42,17 @@ spec:
                   key: AUTHENTIK_BOOTSTRAP_PASSWORD
             - name: AUTHENTIK_BOOTSTRAP_EMAIL
               value: "admin@danielsson.us.com"
+            - name: AUTHENTIK_POSTGRESQL__HOST
+              value: "authentik-postgresql"
+            - name: AUTHENTIK_POSTGRESQL__NAME
+              value: "authentik"
+            - name: AUTHENTIK_POSTGRESQL__USER
+              value: "authentik"
+            - name: AUTHENTIK_POSTGRESQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-postgres-credentials
+                  key: POSTGRES_PASSWORD
         postgresql:
           enabled: true
           auth:

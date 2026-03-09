@@ -24,7 +24,7 @@ spec:
             - "vaultwarden.lab.danielsson.us.com"
       containers:
         - name: bitwarden-cli
-          image: ghcr.io/morey-tech/bitwarden-cli:latest
+          image: ghcr.io/morey-tech/bitwarden-cli:2025.12.1
           env:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
