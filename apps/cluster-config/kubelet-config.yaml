@@ -9,8 +9,8 @@ spec:
       pools.operator.machineconfiguration.openshift.io/master: ""
   kubeletConfig:
     systemReserved:
-      cpu: "0"
-      memory: "0"
+      cpu: "100m"
+      memory: "1Gi"
     kubeReserved:
-      cpu: "0"
-      memory: "0"
+      cpu: "100m"
+      memory: "1Gi"
