@@ -16,21 +16,30 @@ spec:
     chart: graylog
     targetRevision: "1.0.0"
     helm:
-      parameters:
-        - name: global.storageClass
-          value: lvms-lvm-local-storage
-        - name: graylog.replicas
-          value: "1"
-        - name: datanode.replicas
-          value: "1"
-        - name: graylog.serviceAccount.name
-          value: graylog-sa
-        - name: graylog.serviceAccount.create
-          value: "false"
-        - name: datanode.podSecurityContext.runAsUser
-          value: "1000"
-        - name: datanode.podSecurityContext.fsGroup
-          value: "1000"
+      valuesObject:
+        global:
+          storageClass: lvms-lvm-local-storage
+        graylog:
+          replicas: 1
+          serviceAccount:
+            name: graylog-sa
+            create: false
+          extraEnv:
+            - name: GRAYLOG_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_ROOT_USERNAME
+            - name: GRAYLOG_ROOT_PASSWORD_SHA2
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_ROOT_PASSWORD_SHA2
+        datanode:
+          replicas: 1
+          podSecurityContext:
+            runAsUser: 1000
+            fsGroup: 1000
   syncPolicy:
     automated:
       prune: true

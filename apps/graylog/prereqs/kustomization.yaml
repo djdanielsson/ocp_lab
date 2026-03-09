@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
   - scc.yaml
+  - external-secret.yaml
