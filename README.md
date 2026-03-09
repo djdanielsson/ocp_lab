@@ -106,7 +106,7 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/tailscale` | Secure Note | Custom field: `authkey` = (Tailscale auth key with subnet-router + exit-node tags) |
   | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.new.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `registry-auth-b64` = (base64-encoded `username:password` for registry.redhat.io service account) |
   | `ocp-lab/telegram-alertmanager` | Secure Note | Custom fields: `bot_token` = (Telegram bot token from BotFather), `chat_id` = (Telegram chat/group ID for alerts) |
-  | `ocp-lab/graylog-admin` | Login | username: `admin`, password: (strong password -- used for Graylog web UI login). Custom fields: `password_secret` = (96-char random string -- encryption pepper, must never change after first deploy. Generate with `pwgen -N 1 -s 96`) |
+  | `ocp-lab/graylog-admin` | Login | username: `admin`, password: (strong password -- used for Graylog web UI login) |
 
 2. **Generate API keys** in Vaultwarden: Log in to the web vault, go to
   Settings > Security > Keys, and generate an API key (Client ID + Client Secret).
