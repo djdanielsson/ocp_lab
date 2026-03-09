@@ -62,11 +62,42 @@ spec:
             secretKeys:
               userPasswordKey: POSTGRES_PASSWORD
           primary:
+            podSecurityContext:
+              enabled: true
+              fsGroup: 1001
+              seccompProfile:
+                type: RuntimeDefault
+            containerSecurityContext:
+              enabled: true
+              runAsUser: 1001
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              seccompProfile:
+                type: RuntimeDefault
             persistence:
               storageClass: lvms-lvm-local-storage
               size: 8Gi
         redis:
           enabled: true
+          master:
+            podSecurityContext:
+              enabled: true
+              fsGroup: 1001
+              seccompProfile:
+                type: RuntimeDefault
+            containerSecurityContext:
+              enabled: true
+              runAsUser: 1001
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              seccompProfile:
+                type: RuntimeDefault
         server:
           replicas: 1
           ingress:
