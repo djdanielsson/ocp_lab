@@ -21,6 +21,20 @@ spec:
           storageClass: lvms-lvm-local-storage
         graylog:
           replicas: 1
+          service:
+            inputs:
+              - name: input-gelf
+                port: 12201
+                targetPort: 12201
+                protocol: TCP
+              - name: input-forwarder
+                port: 13301
+                targetPort: 13301
+                protocol: TCP
+              - name: input-raw-tcp
+                port: 5555
+                targetPort: 5555
+                protocol: TCP
           serviceAccount:
             name: graylog-sa
             create: false
@@ -35,11 +49,22 @@ spec:
                 secretKeyRef:
                   name: graylog-admin-credentials
                   key: GRAYLOG_ROOT_PASSWORD_SHA2
+            - name: GRAYLOG_PASSWORD_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_PASSWORD_SECRET
         datanode:
           replicas: 1
           podSecurityContext:
             runAsUser: 1000
             fsGroup: 1000
+          extraEnv:
+            - name: GRAYLOG_PASSWORD_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_PASSWORD_SECRET
   syncPolicy:
     automated:
       prune: true

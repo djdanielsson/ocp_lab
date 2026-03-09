@@ -62,3 +62,20 @@ spec:
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graylog-tcp-input
+  namespace: graylog
+spec:
+  type: ClusterIP
+  selector:
+    app: graylog-app
+    app.kubernetes.io/instance: graylog
+    app.kubernetes.io/name: graylog
+  ports:
+    - name: raw-tcp
+      port: 5555
+      targetPort: 5555
+      protocol: TCP
