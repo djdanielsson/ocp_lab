@@ -12,14 +12,14 @@ resources:
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
   - applications/aap-monitoring.yaml
-  - applications/loki-operator.yaml
+  # - applications/loki-operator.yaml
+  # - applications/loki-instance.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
   - applications/ocp-virt-instance.yaml
   - applications/cert-manager-instance.yaml
-  - applications/loki-instance.yaml
   - applications/authentik-prereqs.yaml
   - applications/authentik.yaml
   - applications/tailscale.yaml
