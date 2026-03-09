@@ -28,7 +28,6 @@ spec:
       name: loki
       namespace: loki
   consolePlugin:
-    register: true
     portNaming:
       enable: true
   prometheus:
