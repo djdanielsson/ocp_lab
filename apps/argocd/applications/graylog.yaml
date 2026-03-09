@@ -49,27 +49,11 @@ spec:
                 secretKeyRef:
                   name: graylog-admin-credentials
                   key: GRAYLOG_ROOT_PASSWORD_SHA2
-            - name: GRAYLOG_PASSWORD_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: graylog-admin-credentials
-                  key: GRAYLOG_PASSWORD_SECRET
         datanode:
           replicas: 1
           podSecurityContext:
             runAsUser: 1000
             fsGroup: 1000
-          extraEnv:
-            - name: GRAYLOG_PASSWORD_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: graylog-admin-credentials
-                  key: GRAYLOG_PASSWORD_SECRET
-            - name: GRAYLOG_DATANODE_PASSWORD_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: graylog-admin-credentials
-                  key: GRAYLOG_PASSWORD_SECRET
   syncPolicy:
     automated:
       prune: true
