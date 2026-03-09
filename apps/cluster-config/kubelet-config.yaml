@@ -1,0 +1,16 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: custom-kubelet-reserved
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/master: ""
+  kubeletConfig:
+    systemReserved:
+      cpu: "0"
+      memory: "0"
+    kubeReserved:
+      cpu: "0"
+      memory: "0"

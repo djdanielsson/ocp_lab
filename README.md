@@ -51,6 +51,7 @@ oc apply -f bootstrap.yaml
 | Sync Wave  | Application                | Description                                                        |
 | ---------- | -------------------------- | ------------------------------------------------------------------ |
 | pre-argocd | lvms-operator + instance   | LVM Storage (via bootstrap-storage.yaml)                           |
+| -3         | cluster-config             | KubeletConfig (disable CPU/memory reservations for SNO)            |
 | -3         | external-secrets-operator  | External Secrets operator                                          |
 | -2         | external-secrets-bitwarden | Bitwarden provider for ESO                                         |
 | -2         | ocp-virt-operator          | OpenShift Virtualization operator                                  |
@@ -178,4 +179,61 @@ oc label service aap -n aap monitor=metrics
 ```bash
 oc patch AutomationController aap -n aap --type=merge -p '{"spec": {"extra_settings": [{"metrics_utility_enabled": "true"}]}}'
 ```
+
+## etcdctl Defragmentation
+
+When etcd raises a `NOSPACE` alarm or the OCP console shows an etcdctl defrag warning,
+run the following procedure. This must be done from inside the etcd pod on each
+control-plane node (SNO = one node).
+
+### 1. Get the etcd pod name
+
+```bash
+oc get pods -n openshift-etcd -l k8s-app=etcd -o name
+```
+
+### 2. Open a shell in the etcd pod
+
+```bash
+oc rsh -n openshift-etcd -c etcdctl $(oc get pods -n openshift-etcd -l k8s-app=etcd -o name | head -1)
+```
+
+### 3. Check the current database size and alarm status
+
+```bash
+etcdctl endpoint status --cluster -w table
+etcdctl alarm list
+```
+
+### 4. Defragment all members
+
+```bash
+etcdctl defrag --cluster
+```
+
+### 5. Verify the database size shrank
+
+```bash
+etcdctl endpoint status --cluster -w table
+```
+
+### 6. Disarm any NOSPACE alarms (if present)
+
+```bash
+etcdctl alarm disarm
+etcdctl alarm list
+```
+
+### 7. Exit the pod
+
+```bash
+exit
+```
+
+The `etcdctl` binary inside the etcd pod is pre-configured with the correct
+TLS certificates and endpoint, so no extra flags are needed.
+
+**When to defrag:** Defragmentation is safe to run at any time. Run it when
+the OCP console shows the defrag warning, after large-scale object deletions,
+or periodically to keep the database compact.
 

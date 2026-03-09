@@ -1,0 +1,28 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-config
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    targetRevision: new
+    path: apps/cluster-config
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
