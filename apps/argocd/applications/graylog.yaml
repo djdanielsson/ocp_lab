@@ -21,6 +21,8 @@ spec:
           storageClass: lvms-lvm-local-storage
         graylog:
           replicas: 1
+          config:
+            customSecretPepper: "af6XNs5dzuuGDMP1eJoP08Huk5MCuR8mIstW95ijpjNziAvQNBkJP4wizpdTkEFLMnyoUJ5uohTI6rHN88x3a5wyaRBChjqM"
           service:
             inputs:
               - name: input-gelf

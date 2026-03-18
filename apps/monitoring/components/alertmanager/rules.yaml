@@ -300,11 +300,21 @@ spec:
             description: "Power draw is {{ $value }}W"
     - name: klipper-alerts
       rules:
+        - alert: KlipperOffline
+          expr: up{job="klipper-exporter"} == 0
+          for: 5m
+          labels:
+            severity: warning
+            alert_group: klipper
+          annotations:
+            summary: "3D Printer is offline"
+            description: "Klipper exporter has been unreachable for 5 minutes"
         - alert: KlipperPrinterError
-          expr: klipper_printer_state{state!="ready"} == 1
+          expr: klipper_printer_state{state!="ready"} == 1 and up{job="klipper-exporter"} == 1
           for: 2m
           labels:
             severity: warning
+            alert_group: klipper
           annotations:
             summary: "3D Printer is in error state"
             description: "Klipper printer state is not ready"
@@ -313,6 +323,7 @@ spec:
           for: 1m
           labels:
             severity: critical
+            alert_group: klipper
           annotations:
             summary: "3D Printer extruder temperature is dangerously high"
             description: "Extruder temperature is {{ $value | printf \"%.1f\" }}°C"
@@ -321,6 +332,7 @@ spec:
           for: 1m
           labels:
             severity: critical
+            alert_group: klipper
           annotations:
             summary: "3D Printer heated bed temperature is dangerously high"
             description: "Bed temperature is {{ $value | printf \"%.1f\" }}°C"
