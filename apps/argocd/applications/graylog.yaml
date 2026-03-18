@@ -23,20 +23,19 @@ spec:
           replicas: 1
           config:
             customSecretPepper: "af6XNs5dzuuGDMP1eJoP08Huk5MCuR8mIstW95ijpjNziAvQNBkJP4wizpdTkEFLMnyoUJ5uohTI6rHN88x3a5wyaRBChjqM"
-          service:
-            inputs:
-              - name: input-gelf
-                port: 12201
-                targetPort: 12201
-                protocol: TCP
-              - name: input-forwarder
-                port: 13301
-                targetPort: 13301
-                protocol: TCP
-              - name: input-raw-tcp
-                port: 5555
-                targetPort: 5555
-                protocol: TCP
+          inputs:
+            - name: input-gelf
+              port: 12201
+              targetPort: 12201
+              protocol: TCP
+            - name: input-forwarder
+              port: 13301
+              targetPort: 13301
+              protocol: TCP
+            - name: input-raw-tcp
+              port: 5555
+              targetPort: 5555
+              protocol: TCP
           serviceAccount:
             name: graylog-sa
             create: false
