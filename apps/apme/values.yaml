@@ -1,6 +1,10 @@
 # APME values override for OCP lab deployment
 # Minimal changes from upstream defaults — only what's needed for OpenShift.
 
+# Images are tagged by git SHA, not semver
+image:
+  tag: sha-7cb2464
+
 # OCP assigns UIDs/GIDs from namespace ranges via SCCs — null out the hardcoded
 # values so the restricted-v2 SCC can inject its own.
 podSecurityContext:
