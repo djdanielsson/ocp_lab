@@ -1,0 +1,61 @@
+{{- if .Values.abbenay.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "apme.fullname" . }}-abbenay
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+    app.kubernetes.io/component: abbenay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "apme.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: abbenay
+  template:
+    metadata:
+      labels:
+        {{- include "apme.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: abbenay
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "apme.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: abbenay
+          image: {{ .Values.abbenay.image }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args: ["daemon", "--grpc-host", "0.0.0.0", "--grpc-port", "50057"]
+          env:
+            - name: APME_ABBENAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "apme.fullname" . }}-secrets
+                  key: abbenay-token
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "apme.fullname" . }}-secrets
+                  key: openrouter-api-key
+                  optional: true
+            - name: VERTEX_ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "apme.fullname" . }}-secrets
+                  key: vertex-anthropic-api-key
+                  optional: true
+            - name: XDG_RUNTIME_DIR
+              value: /tmp/abbenay-run
+          ports:
+            - name: grpc
+              containerPort: 50057
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.abbenay.resources | nindent 12 }}
+{{- end }}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "apme.fullname" . }}-ui
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    {{- include "apme.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ui

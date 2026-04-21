@@ -1,0 +1,51 @@
+{{- if le (int .Values.engine.replicas) 1 }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "apme.fullname" . }}-sessions
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.sessions.accessMode }}
+  {{- if .Values.persistence.sessions.storageClass }}
+  storageClassName: {{ .Values.persistence.sessions.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.sessions.size }}
+{{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "apme.fullname" . }}-gateway-data
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.gateway.accessMode }}
+  {{- if .Values.persistence.gateway.storageClass }}
+  storageClassName: {{ .Values.persistence.gateway.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.gateway.size }}
+{{- if le (int .Values.engine.replicas) 1 }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "apme.fullname" . }}-proxy-cache
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.proxyCache.accessMode }}
+  {{- if .Values.persistence.proxyCache.storageClass }}
+  storageClassName: {{ .Values.persistence.proxyCache.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.proxyCache.size }}
+{{- end }}

@@ -1,0 +1,42 @@
+# APME values override for OCP lab deployment
+# Minimal changes from upstream defaults — only what's needed for OpenShift.
+
+# Disable optional validators to reduce resource pressure for testing
+gitleaks:
+  enabled: false
+collectionHealth:
+  enabled: false
+depAudit:
+  enabled: false
+
+# Abbenay AI is disabled by default — leave it off for initial testing
+abbenay:
+  enabled: false
+
+# Ingress — OpenShift converts to a Route automatically
+ingress:
+  enabled: true
+  annotations:
+    route.openshift.io/termination: edge
+    route.openshift.io/insecure-edge-termination-policy: Redirect
+  hosts:
+    - host: apme.apps.ocp.new.lab.danielsson.us.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: gateway
+        - path: /
+          pathType: Prefix
+          service: ui
+
+# Use smaller PVCs for lab with local storage
+persistence:
+  sessions:
+    size: 5Gi
+    storageClass: lvms-lvm-local-storage
+  gateway:
+    size: 2Gi
+    storageClass: lvms-lvm-local-storage
+  proxyCache:
+    size: 5Gi
+    storageClass: lvms-lvm-local-storage

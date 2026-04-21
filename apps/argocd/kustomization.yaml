@@ -36,4 +36,5 @@ resources:
   - applications/graylog-mongodb-operator.yaml
   - applications/graylog-prereqs.yaml
   - applications/graylog.yaml
+  - applications/apme.yaml
 #  - applications/github-runners.yaml

@@ -1,0 +1,193 @@
+# APME Helm Chart — default values
+# See ADR-054 for architecture rationale.
+# The engine stack (Primary + validators + Galaxy Proxy) runs as sidecars in
+# a single pod, preserving ADR-005 localhost networking and ADR-012 pod scaling.
+
+image:
+  registry: ghcr.io/ansible
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Engine stack (Primary + all validators + Galaxy Proxy)
+engine:
+  replicas: 1
+  resources:
+    primary:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "2"
+        memory: 2Gi
+    native:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    opa:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    ansible:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    gitleaks:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    collectionHealth:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    depAudit:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    galaxyProxy:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -- Gitleaks is optional (requires external binary in the image)
+gitleaks:
+  enabled: true
+
+# -- Collection Health validator
+collectionHealth:
+  enabled: true
+
+# -- Dependency Audit validator
+depAudit:
+  enabled: true
+
+# -- Gateway (REST + gRPC reporting + SQLite persistence)
+gateway:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  feedback:
+    enabled: false
+    githubRepo: ""
+    githubToken: ""
+
+# -- UI (nginx-served React SPA)
+# The default nginx image requires writable /var/run and /var/cache, so
+# the container securityContext omits runAsNonRoot to avoid startup failures.
+# Override with a non-root context once the image supports unprivileged mode.
+ui:
+  replicas: 1
+  securityContext: {}
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -- Abbenay AI provider (optional)
+abbenay:
+  enabled: false
+  image: ghcr.io/redhat-developer/abbenay:2026.4.1-alpha
+  token: ""
+  aiModel: ""
+  apiKeys:
+    openrouterApiKey: ""
+    vertexAnthropicApiKey: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+# -- Persistent volume claims
+persistence:
+  sessions:
+    size: 10Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+  gateway:
+    size: 5Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+  proxyCache:
+    size: 10Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+
+# -- Ingress for Gateway REST API and UI
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: apme.example.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: gateway
+        - path: /
+          pathType: Prefix
+          service: ui
+  tls: []
+
+# -- Horizontal Pod Autoscaler for the engine Deployment
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000

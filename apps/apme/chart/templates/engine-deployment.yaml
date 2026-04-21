@@ -1,0 +1,216 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "apme.fullname" . }}-engine
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+    app.kubernetes.io/component: engine
+spec:
+  replicas: {{ .Values.engine.replicas }}
+  selector:
+    matchLabels:
+      {{- include "apme.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: engine
+  template:
+    metadata:
+      labels:
+        {{- include "apme.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: engine
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "apme.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        # -- Primary orchestrator
+        - name: primary
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "primary" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_PRIMARY_LISTEN
+              value: "0.0.0.0:50051"
+            - name: NATIVE_GRPC_ADDRESS
+              value: "127.0.0.1:50055"
+            - name: OPA_GRPC_ADDRESS
+              value: "127.0.0.1:50054"
+            - name: ANSIBLE_GRPC_ADDRESS
+              value: "127.0.0.1:50053"
+            {{- if .Values.gitleaks.enabled }}
+            - name: GITLEAKS_GRPC_ADDRESS
+              value: "127.0.0.1:50056"
+            {{- end }}
+            {{- if .Values.collectionHealth.enabled }}
+            - name: COLLECTION_HEALTH_GRPC_ADDRESS
+              value: "127.0.0.1:50058"
+            {{- end }}
+            {{- if .Values.depAudit.enabled }}
+            - name: DEP_AUDIT_GRPC_ADDRESS
+              value: "127.0.0.1:50059"
+            {{- end }}
+            - name: APME_GALAXY_PROXY_URL
+              value: "http://127.0.0.1:8765"
+            - name: APME_REPORTING_ENDPOINT
+              value: "{{ include "apme.fullname" . }}-gateway:50060"
+            {{- if .Values.abbenay.enabled }}
+            - name: APME_ABBENAY_ADDR
+              value: "{{ include "apme.fullname" . }}-abbenay:50057"
+            - name: APME_ABBENAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "apme.fullname" . }}-secrets
+                  key: abbenay-token
+            {{- if .Values.abbenay.aiModel }}
+            - name: APME_AI_MODEL
+              value: {{ .Values.abbenay.aiModel | quote }}
+            {{- end }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+          resources:
+            {{- toYaml .Values.engine.resources.primary | nindent 12 }}
+
+        # -- Native validator
+        - name: native
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "native" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_NATIVE_VALIDATOR_LISTEN
+              value: "0.0.0.0:50055"
+          resources:
+            {{- toYaml .Values.engine.resources.native | nindent 12 }}
+
+        # -- OPA validator
+        - name: opa
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "opa" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_OPA_VALIDATOR_LISTEN
+              value: "0.0.0.0:50054"
+          resources:
+            {{- toYaml .Values.engine.resources.opa | nindent 12 }}
+
+        # -- Ansible validator
+        - name: ansible
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "ansible" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_ANSIBLE_VALIDATOR_LISTEN
+              value: "0.0.0.0:50053"
+            - name: APME_GALAXY_PROXY_URL
+              value: "http://127.0.0.1:8765"
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+              readOnly: true
+          resources:
+            {{- toYaml .Values.engine.resources.ansible | nindent 12 }}
+
+        {{- if .Values.gitleaks.enabled }}
+        # -- Gitleaks validator (optional)
+        - name: gitleaks
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "gitleaks" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_GITLEAKS_VALIDATOR_LISTEN
+              value: "0.0.0.0:50056"
+          resources:
+            {{- toYaml .Values.engine.resources.gitleaks | nindent 12 }}
+        {{- end }}
+
+        {{- if .Values.collectionHealth.enabled }}
+        # -- Collection Health validator
+        - name: collection-health
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "collection-health" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_COLLECTION_HEALTH_VALIDATOR_LISTEN
+              value: "0.0.0.0:50058"
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+              readOnly: true
+          resources:
+            {{- toYaml .Values.engine.resources.collectionHealth | nindent 12 }}
+        {{- end }}
+
+        {{- if .Values.depAudit.enabled }}
+        # -- Dependency Audit validator
+        - name: dep-audit
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "dep-audit" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: APME_DEP_AUDIT_VALIDATOR_LISTEN
+              value: "0.0.0.0:50059"
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+              readOnly: true
+          resources:
+            {{- toYaml .Values.engine.resources.depAudit | nindent 12 }}
+        {{- end }}
+
+        # -- Galaxy Proxy (PEP 503)
+        - name: galaxy-proxy
+          image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "galaxy-proxy" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: proxy-cache
+              mountPath: /cache
+          resources:
+            {{- toYaml .Values.engine.resources.galaxyProxy | nindent 12 }}
+
+      volumes:
+        - name: sessions
+          {{- if gt (int .Values.engine.replicas) 1 }}
+          emptyDir: {}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ include "apme.fullname" . }}-sessions
+          {{- end }}
+        - name: proxy-cache
+          {{- if gt (int .Values.engine.replicas) 1 }}
+          emptyDir: {}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ include "apme.fullname" . }}-proxy-cache
+          {{- end }}
+      {{- with .Values.engine.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.engine.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.engine.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
