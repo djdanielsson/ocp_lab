@@ -5,7 +5,7 @@ redhat-developer-hub:
   global:
     clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
     pluginMode: oci
-    imageTagInfo: "2.1"
+    imageTagInfo: "2.2"
   upstream:
     postgresql:
       auth:
