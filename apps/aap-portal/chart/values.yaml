@@ -90,9 +90,9 @@ redhat-developer-hub:
           disabled: false
           integrity: '{{- include "plugins.integrity.auth" . }}'
           pluginConfig: {}
-        # APME plugins
+        # APME plugins (disabled: OCI artifacts not yet available in 2.1 image)
         - package: '{{- include "plugins.load.apme-frontend" . }}'
-          disabled: false
+          disabled: true
           integrity: '{{- include "plugins.integrity.apme-frontend" . }}'
           pluginConfig:
             dynamicPlugins:
@@ -105,7 +105,7 @@ redhat-developer-hub:
                         importName: ApmeLogo
                         text: APME
         - package: '{{- include "plugins.load.apme-backend" . }}'
-          disabled: false
+          disabled: true
           integrity: '{{- include "plugins.integrity.apme-backend" . }}'
           pluginConfig: {}
         - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
