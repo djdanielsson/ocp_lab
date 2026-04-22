@@ -44,6 +44,13 @@ spec:
                     rhaap:
                       '{{- include "catalog.providers.env" . }}':
                         orgs: "Default"
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: redhat-rhaap-portal-postgresql
+      jsonPointers:
+        - /data/password
+        - /data/postgres-password
   syncPolicy:
     automated:
       prune: true
