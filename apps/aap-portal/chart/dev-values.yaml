@@ -1,0 +1,115 @@
+# Development values for deploying with multiple-scm-support branch plugins
+# Using production mode with tarball to pull from plugin-registry instead of Quay OCI
+redhat-developer-hub:
+  global:
+    clusterRouterBase: apps.aap-automation-portal-dev.eng.ansible.com
+    _environment:
+      _development: false
+      _stage: false
+      _production: true
+    imageTagInfo: "2.2"
+    pluginMode: tarball
+    # Override dynamic plugins to remove integrity checks for custom-built plugins
+    dynamic:
+      plugins:
+        - package: ./dynamic-plugins/dist/backstage-community-plugin-rbac
+          disabled: false
+        - package: http://plugin-registry:8080/ansible-plugin-scaffolder-backend-module-backstage-rhaap-dynamic-2.1.1.tgz
+          disabled: false
+          pluginConfig:
+            dynamicPlugins:
+              backend:
+                ansible.plugin-scaffolder-backend-module-backstage-rhaap:
+        - package: http://plugin-registry:8080/ansible-backstage-plugin-catalog-backend-module-rhaap-dynamic-2.1.1.tgz
+          disabled: false
+        - package: http://plugin-registry:8080/ansible-plugin-backstage-self-service-dynamic-2.1.1.tgz
+          disabled: false
+          pluginConfig:
+            dynamicPlugins:
+              frontend:
+                ansible.plugin-backstage-self-service:
+                  signInPage:
+                    importName: SignInPage
+                  providerSettings:
+                    - title: RHAAP
+                      description: Sign in with RHAAP
+                      provider: ansible.auth.rhaap
+                  scaffolderFieldExtensions:
+                    - importName: AAPTokenFieldExtension
+                    - importName: AAPResourcePickerExtension
+                  dynamicRoutes:
+                    - importName: LandingPage
+                      path: /
+                    - importName: SelfServicePage
+                      path: /self-service
+                    - importName: ExecutionEnvironmentPage
+                      path: /self-service/ee
+                  mountPoints:
+                    - mountPoint: application/listener
+                      importName: LocationListener
+        - package: http://plugin-registry:8080/ansible-backstage-plugin-auth-backend-module-rhaap-provider-dynamic-2.1.1.tgz
+          disabled: false
+          pluginConfig: {}
+        - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+          disabled: false
+        - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-gitlab-dynamic
+          disabled: false
+        # Disabled RHDH plugins
+        - package: './dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-catalog-backend-module-marketplace-dynamic'
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-quickstart
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-adoption-insights
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-adoption-insights-backend-dynamic
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-analytics-module-adoption-insights-dynamic
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-dynamic-home-page
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-marketplace
+          disabled: true
+        - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-marketplace-backend-dynamic
+          disabled: true
+  upstream:
+    backstage:
+      # Add SKIP_INTEGRITY_CHECK env var to the init container for custom plugins
+      initContainers:
+        - name: install-dynamic-plugins
+          image: '{{ include "backstage.image" . }}'
+          command:
+            - ./install-dynamic-plugins.sh
+            - /dynamic-plugins-root
+          env:
+            - name: NPM_CONFIG_USERCONFIG
+              value: /opt/app-root/src/.npmrc.dynamic-plugins
+            - name: SKIP_INTEGRITY_CHECK
+              value: "true"
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /dynamic-plugins-root
+              name: dynamic-plugins-root
+            - mountPath: /opt/app-root/src/dynamic-plugins.yaml
+              name: dynamic-plugins
+              readOnly: true
+              subPath: dynamic-plugins.yaml
+            - mountPath: /opt/app-root/src/.npmrc.dynamic-plugins
+              name: dynamic-plugins-npmrc
+              readOnly: true
+              subPath: .npmrc
+            - mountPath: /opt/app-root/src/.config/containers
+              name: dynamic-plugins-registry-auth
+              readOnly: true
+            - mountPath: /opt/app-root/src/.npm/_cacache
+              name: npmcacache
+          workingDir: /opt/app-root/src
+      appConfig:
+        ansible:
+          rhaap:
+            checkSSL: false
+        auth:
+          providers:
+            rhaap:
+              production:
+                checkSSL: false
+        dangerouslyAllowSignInWithoutUserInCatalog: true

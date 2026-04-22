@@ -1,0 +1,52 @@
+# Test values for PR #144 OCI mode
+redhat-developer-hub:
+  global:
+    clusterRouterBase: apps.aap-automation-portal-dev.eng.ansible.com
+    _environment:
+      _development: false
+      _stage: false
+      _production: true
+    imageTagInfo: "2.2"
+    pluginMode: oci  # Test OCI mode from PR #144
+  upstream:
+    backstage:
+      # Add SKIP_INTEGRITY_CHECK env var to the init container
+      initContainers:
+        - name: install-dynamic-plugins
+          image: '{{ include "backstage.image" . }}'
+          command:
+            - ./install-dynamic-plugins.sh
+            - /dynamic-plugins-root
+          env:
+            - name: NPM_CONFIG_USERCONFIG
+              value: /opt/app-root/src/.npmrc.dynamic-plugins
+            - name: SKIP_INTEGRITY_CHECK
+              value: "true"
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /dynamic-plugins-root
+              name: dynamic-plugins-root
+            - mountPath: /opt/app-root/src/dynamic-plugins.yaml
+              name: dynamic-plugins
+              readOnly: true
+              subPath: dynamic-plugins.yaml
+            - mountPath: /opt/app-root/src/.npmrc.dynamic-plugins
+              name: dynamic-plugins-npmrc
+              readOnly: true
+              subPath: .npmrc
+            - mountPath: /opt/app-root/src/.config/containers
+              name: dynamic-plugins-registry-auth
+              readOnly: true
+            - mountPath: /opt/app-root/src/.npm/_cacache
+              name: npmcacache
+          workingDir: /opt/app-root/src
+      appConfig:
+        ansible:
+          rhaap:
+            checkSSL: false
+        auth:
+          providers:
+            rhaap:
+              production:
+                checkSSL: false
+        dangerouslyAllowSignInWithoutUserInCatalog: true

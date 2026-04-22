@@ -1,0 +1,210 @@
+name: Test Template Rendering
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release-*
+    paths:
+      - "templates/**"
+      - "values.yaml"
+      - ".github/workflows/test-template-render.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  test-templates:
+    name: Test Helm Template Rendering
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+
+      - name: Set up Helm
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78
+        with:
+          version: v3.10.0
+
+      - name: Add dependencies
+        run: |
+          helm repo add redhat-developer-hub "https://charts.openshift.io"
+          helm repo update
+          helm dependency update
+
+      - name: Helm lint
+        run: helm lint .
+
+      - name: Test default OCI plugin URLs (registry.redhat.io)
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true)
+
+          EXPECTED_PREFIX="oci://registry.redhat.io/ansible-automation-platform/automation-portal:2.2"
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-auth-backend-module-rhaap-provider" \
+            || { echo "FAIL: auth plugin URL mismatch"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-catalog-backend-module-rhaap" \
+            || { echo "FAIL: catalog plugin URL mismatch"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-backstage-self-service" \
+            || { echo "FAIL: self-service plugin URL mismatch"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-scaffolder-backend-module-backstage-rhaap" \
+            || { echo "FAIL: scaffolder plugin URL mismatch"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "PASS: Default OCI plugin URLs use registry.redhat.io"
+          echo "$OUTPUT" | grep 'oci://'
+
+      - name: Test imageRegistry override (registry host swap)
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true \
+            --set redhat-developer-hub.global.imageRegistry=mirror.example.com)
+
+          EXPECTED_PREFIX="oci://mirror.example.com/ansible-automation-platform/automation-portal:2.2"
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-auth-backend-module-rhaap-provider" \
+            || { echo "FAIL: auth plugin URL mismatch with imageRegistry"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-catalog-backend-module-rhaap" \
+            || { echo "FAIL: catalog plugin URL mismatch with imageRegistry"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-backstage-self-service" \
+            || { echo "FAIL: self-service plugin URL mismatch with imageRegistry"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-scaffolder-backend-module-backstage-rhaap" \
+            || { echo "FAIL: scaffolder plugin URL mismatch with imageRegistry"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          # Verify no duplicate path segments
+          if echo "$OUTPUT" | grep -q 'oci://mirror.example.com/mirror.example.com'; then
+            echo "FAIL: Duplicate registry in OCI URL"
+            echo "$OUTPUT" | grep 'oci://'
+            exit 1
+          fi
+
+          echo "PASS: imageRegistry correctly swaps registry host"
+          echo "$OUTPUT" | grep 'oci://'
+
+      - name: Test ociPluginImage override (full path)
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true \
+            --set redhat-developer-hub.global.ociPluginImage=mirror.example.com/custom-repo/automation-portal)
+
+          EXPECTED_PREFIX="oci://mirror.example.com/custom-repo/automation-portal:2.2"
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-auth-backend-module-rhaap-provider" \
+            || { echo "FAIL: auth plugin URL mismatch with ociPluginImage"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-catalog-backend-module-rhaap" \
+            || { echo "FAIL: catalog plugin URL mismatch with ociPluginImage"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-backstage-self-service" \
+            || { echo "FAIL: self-service plugin URL mismatch with ociPluginImage"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-plugin-scaffolder-backend-module-backstage-rhaap" \
+            || { echo "FAIL: scaffolder plugin URL mismatch with ociPluginImage"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          echo "PASS: ociPluginImage correctly overrides full plugin image path"
+          echo "$OUTPUT" | grep 'oci://'
+
+      - name: Test ociPluginImage takes precedence over imageRegistry
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true \
+            --set redhat-developer-hub.global.imageRegistry=should-not-appear.com \
+            --set redhat-developer-hub.global.ociPluginImage=mirror.example.com/custom/plugins)
+
+          # ociPluginImage should take precedence for plugin URLs
+          if echo "$OUTPUT" | grep 'oci://' | grep -q 'should-not-appear.com'; then
+            echo "FAIL: imageRegistry used instead of ociPluginImage for plugins"
+            echo "$OUTPUT" | grep 'oci://'
+            exit 1
+          fi
+
+          EXPECTED_PREFIX="oci://mirror.example.com/custom/plugins:2.2"
+          echo "$OUTPUT" | grep -q "${EXPECTED_PREFIX}!ansible-backstage-plugin-auth-backend-module-rhaap-provider" \
+            || { echo "FAIL: ociPluginImage did not take precedence"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          # imageRegistry should still be used for non-plugin images (dev tools sidecar)
+          echo "$OUTPUT" | grep -q 'should-not-appear.com/ansible-automation-platform-26/ansible-dev-tools-rhel9' \
+            || { echo "FAIL: imageRegistry not used for dev tools sidecar"; echo "$OUTPUT" | grep 'ansible-dev-tools'; exit 1; }
+
+          echo "PASS: ociPluginImage takes precedence over imageRegistry for plugins"
+          echo "$OUTPUT" | grep 'oci://'
+
+      - name: Test tarball mode (plugin registry URLs)
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=tarball \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true)
+
+          # Should use http://plugin-registry URLs, not OCI
+          if echo "$OUTPUT" | grep -q 'oci://'; then
+            echo "FAIL: OCI URLs present in tarball mode"
+            echo "$OUTPUT" | grep 'oci://'
+            exit 1
+          fi
+
+          echo "$OUTPUT" | grep -q 'http://plugin-registry:8080/ansible-backstage-plugin-auth-backend-module-rhaap-provider' \
+            || { echo "FAIL: auth plugin tarball URL missing"; exit 1; }
+
+          echo "$OUTPUT" | grep -q 'http://plugin-registry:8080/ansible-backstage-plugin-catalog-backend-module-rhaap' \
+            || { echo "FAIL: catalog plugin tarball URL missing"; exit 1; }
+
+          echo "$OUTPUT" | grep -q 'http://plugin-registry:8080/ansible-plugin-backstage-self-service' \
+            || { echo "FAIL: self-service plugin tarball URL missing"; exit 1; }
+
+          echo "$OUTPUT" | grep -q 'http://plugin-registry:8080/ansible-plugin-scaffolder-backend-module-backstage-rhaap' \
+            || { echo "FAIL: scaffolder plugin tarball URL missing"; exit 1; }
+
+          echo "PASS: Tarball mode uses plugin-registry HTTP URLs"
+
+      - name: Test custom imageTagInfo version
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true \
+            --set redhat-developer-hub.global.imageTagInfo=3.0)
+
+          echo "$OUTPUT" | grep -q 'automation-portal:3.0!' \
+            || { echo "FAIL: imageTagInfo not reflected in OCI URLs"; echo "$OUTPUT" | grep 'oci://'; exit 1; }
+
+          if echo "$OUTPUT" | grep -q 'automation-portal:2.2!'; then
+            echo "FAIL: Default imageTagInfo still present"
+            exit 1
+          fi
+
+          echo "PASS: Custom imageTagInfo correctly applied"
+          echo "$OUTPUT" | grep 'oci://'
+
+      - name: Test dev tools sidecar uses imageRegistry
+        run: |
+          OUTPUT=$(helm template test . \
+            --set redhat-developer-hub.global.pluginMode=oci \
+            --set redhat-developer-hub.global.clusterRouterBase=apps.test.com \
+            --set redhat-developer-hub.global._environment._production=true \
+            --set redhat-developer-hub.global.imageRegistry=mirror.example.com)
+
+          echo "$OUTPUT" | grep -q 'mirror.example.com/ansible-automation-platform-26/ansible-dev-tools-rhel9:latest' \
+            || { echo "FAIL: Dev tools sidecar should use imageRegistry"; echo "$OUTPUT" | grep 'ansible-dev-tools'; exit 1; }
+
+          echo "PASS: Dev tools sidecar correctly uses imageRegistry"
+
+      - name: Summary
+        if: success()
+        run: echo "All template rendering tests passed."

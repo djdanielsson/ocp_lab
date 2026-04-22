@@ -1,0 +1,93 @@
+name: Test Image Pull
+
+on:
+  workflow_dispatch:  # Manual trigger from GitHub UI
+  pull_request:
+    branches:
+      - main
+      - release-*
+    paths:
+      - ".github/workflows/test-image-pull.yml"
+
+jobs:
+  test-pull:
+    name: Test Quay Image Pull
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: Test image inspection with credentials
+        run: |
+          IMAGE="quay.io/redhat-user-workloads/ansible-plugins-tenant/ansible-plugins:main"
+          
+          echo "🔍 Testing image access for: $IMAGE"
+          echo "   Using credentials from: secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME"
+          echo ""
+          
+          # Test with skopeo inspect (read-only, doesn't download full image)
+          if skopeo inspect \
+            --creds "${{ secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME }}:${{ secrets.QUAY_REDHAT_USER_WORKLOADS_PASSWORD }}" \
+            "docker://${IMAGE}"; then
+            echo ""
+            echo "✅ SUCCESS: Image can be accessed with provided credentials!"
+          else
+            echo ""
+            echo "❌ FAILED: Cannot access image with provided credentials"
+            echo ""
+            echo "Possible causes:"
+            echo "  - Incorrect username/password in GitHub secrets"
+            echo "  - User doesn't have read access to the repository"
+            echo "  - Image tag 'main' doesn't exist"
+            echo ""
+            echo "Please verify:"
+            echo "  1. secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME is set correctly"
+            echo "  2. secrets.QUAY_REDHAT_USER_WORKLOADS_PASSWORD is set correctly"
+            echo "  3. The Quay user/robot has read access to ansible-plugins-tenant/ansible-plugins"
+            exit 1
+          fi
+
+      - name: Test skopeo copy (simulates RHDH dynamic plugin installation)
+        run: |
+          IMAGE="quay.io/redhat-user-workloads/ansible-plugins-tenant/ansible-plugins:main"
+          
+          echo "🔍 Testing skopeo copy (this simulates what RHDH does internally)..."
+          
+          mkdir -p /tmp/test-copy
+          
+          if skopeo copy \
+            --src-creds "${{ secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME }}:${{ secrets.QUAY_REDHAT_USER_WORKLOADS_PASSWORD }}" \
+            "docker://${IMAGE}" \
+            "dir:/tmp/test-copy"; then
+            echo ""
+            echo "✅ SUCCESS: skopeo copy works!"
+            echo ""
+            echo "Image layers copied:"
+            ls -la /tmp/test-copy
+          else
+            echo ""
+            echo "❌ FAILED: skopeo copy failed"
+            echo "This means RHDH will fail to install dynamic plugins from this registry."
+            exit 1
+          fi
+
+      - name: Summary
+        if: success()
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "✅ All tests passed!"
+          echo "=============================================="
+          echo ""
+          echo "The credentials in secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME"
+          echo "and secrets.QUAY_REDHAT_USER_WORKLOADS_PASSWORD can successfully"
+          echo "pull from quay.io/redhat-user-workloads/ansible-plugins-tenant/ansible-plugins:main"
+          echo ""
+          echo "These credentials can be used to create a pull secret for"
+          echo "RHDH dynamic plugin installation."
+

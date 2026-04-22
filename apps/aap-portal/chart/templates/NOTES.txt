@@ -1,0 +1,100 @@
+=======================================================================
+  Ansible self-service automation portal has been installed.
+=======================================================================
+{{- if and .Values.global (eq (default "" .Values.global.pluginMode) "oci") }}
+
+  OCI Plugin Mode is enabled.
+
+  REQUIRED: Registry Authentication
+  -----------------------------------
+  The install-dynamic-plugins init container uses skopeo to pull OCI
+  plugin artifacts. It does NOT use cluster pull secrets, global pull
+  secrets, or imagePullSecrets. A dedicated auth secret is required.
+
+  Verify the secret exists:
+
+    oc get secret {{ .Release.Name }}-dynamic-plugins-registry-auth \
+      -n {{ .Release.Namespace }}
+
+  If it does not exist, create it:
+
+    AUTHB64=$(printf '%s' '<username>:<password>' | base64 -w0)
+    cat > auth.json <<EOF
+    {
+      "auths": {
+        "<registry-host>": {
+          "auth": "${AUTHB64}"
+        }
+      }
+    }
+    EOF
+    oc create secret generic {{ .Release.Name }}-dynamic-plugins-registry-auth \
+      --from-file=auth.json=./auth.json -n {{ .Release.Namespace }}
+
+  Verify the secret content:
+
+    oc get secret {{ .Release.Name }}-dynamic-plugins-registry-auth \
+      -o jsonpath='{.data.auth\.json}' -n {{ .Release.Namespace }} | base64 -d
+
+{{- if and .Values.global .Values.global.imageRegistry }}
+
+  Custom Registry: {{ .Values.global.imageRegistry }}
+  -----------------------------------
+  The imageRegistry value must be the registry HOST only
+  (e.g., "mirror.example.com:5000"). Do NOT include repository paths.
+
+  Expected plugin OCI URL:
+    oci://{{ include "deployment.oci-plugin-image" . }}:{{ .Values.global.imageTagInfo }}
+
+  If the URL above shows duplicate path segments, use ociPluginImage
+  instead of imageRegistry to specify the full image path.
+{{- end }}
+
+{{- if and .Values.global .Values.global.ociPluginImage }}
+
+  Custom Plugin Image: {{ .Values.global.ociPluginImage }}
+  -----------------------------------
+  Plugin OCI URL:
+    oci://{{ .Values.global.ociPluginImage }}:{{ .Values.global.imageTagInfo }}
+{{- end }}
+
+  Private Registry with Internal CA
+  -----------------------------------
+  If your registry uses a self-signed or internal CA certificate,
+  the init container will fail with:
+
+    x509: certificate signed by unknown authority
+
+  To fix this, mount the registry CA certificate (include the full
+  certificate chain if applicable) into the init container using the
+  per-registry cert directory:
+
+    1. Create a ConfigMap from the CA certificate chain:
+
+       cat registry.crt intermediate.crt root.crt > ca-bundle.crt
+       oc create configmap registry-ca-crt \
+         --from-file=ca.crt=ca-bundle.crt -n {{ .Release.Namespace }}
+
+    2. Add the volume and mount to your values file:
+
+       extraVolumes:
+         - name: registry-ca-crt
+           configMap:
+             name: registry-ca-crt
+
+       initContainers:
+         - name: install-dynamic-plugins
+           volumeMounts:
+             - name: registry-ca-crt
+               mountPath: /etc/containers/certs.d/<registry-host>
+               readOnly: true
+
+    The mountPath must be the registry hostname only.
+    Do NOT include repository paths or the port for standard HTTPS (443).
+
+  For full instructions, see the "Plugin registry CA certificate" section
+  in docs/air-gapped-installation.md.
+
+{{- end }}
+
+  Documentation: https://github.com/ansible/ansible-rhdh-plugins

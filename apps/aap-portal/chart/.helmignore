@@ -1,0 +1,17 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and
+# negation (prefixed with !). Only one pattern per line.
+# Common dirs
+.git/
+.github/
+.gitignore
+# Project files
+renovate.json
+my-values.yaml
+tests/
+docs/
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/

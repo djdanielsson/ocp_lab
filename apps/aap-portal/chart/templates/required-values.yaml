@@ -1,0 +1,39 @@
+{{/*
+    Validates required values
+*/}}
+
+{{- if eq (index .Values "redhat-developer-hub" "global" "clusterRouterBase") "apps.example.com" -}}
+{{- fail "Set the clusterRouterBase value to your cluster host base URL." -}}
+{{- end -}}
+
+{{- if not (or
+    (index .Values "redhat-developer-hub" "global" "_environment" "_production")
+    (index .Values "redhat-developer-hub" "global" "_environment" "_development")
+    (index .Values "redhat-developer-hub" "global" "_environment" "_stage")
+) -}}
+{{- fail "Set either the production, development, or stage environment to true with --set global._environment.[_development, _production, _stage]=true" -}}
+{{- end -}}
+
+{{- if or
+    (and
+      (index .Values "redhat-developer-hub" "global" "_environment" "_production")
+      (index .Values "redhat-developer-hub" "global" "_environment" "_development")
+    )
+    (and
+      (index .Values "redhat-developer-hub" "global" "_environment" "_production")
+      (index .Values "redhat-developer-hub" "global" "_environment" "_stage")
+    )
+    (and
+      (index .Values "redhat-developer-hub" "global" "_environment" "_development")
+      (index .Values "redhat-developer-hub" "global" "_environment" "_stage")
+    )
+-}}
+{{- fail "Multiple environments are set to true, but only one can be active. Set the others to false." -}}
+{{- end -}}
+
+{{- if and
+    (index .Values "redhat-developer-hub" "global" "_environment" "_development")
+    (not (index .Values "redhat-developer-hub" "global" "imageTagInfo"))
+-}}
+{{- fail "Quay image tag required for development environment: use `--set global.imageTagInfo=<tag>` or update the value in the values-dev.yaml file" -}}
+{{- end -}}

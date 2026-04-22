@@ -1,0 +1,196 @@
+name: Test Charts
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release-*
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - ".gitignore"
+      - "renovate.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  test-chart:
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: Add for latest release of RHDH
+        # version:
+        #   # 'latest' is the latest RC or stable release of RHDH (built from a release branch):
+        #   - "latest"
+        # environment: [development]
+        # experimental: [false]
+        include:
+          # 'next' is the upcoming release of RHDH
+          # (built from the RHDH main branch, so might be unstable)
+          - version: "1.8"
+            environment: development
+            experimental: false
+          - version: "1.9"
+            environment: development
+            experimental: false
+          # Stage environment - stable releases
+          - version: "1.9"
+            environment: stage
+            experimental: false
+            imageTagVersion: "2.2"
+          - version: "1.8"
+            environment: stage
+            experimental: false
+            imageTagVersion: "2.1"
+          # TODO: Add for next release of RHDH
+          # Stage environment - next release (experimental)
+          # - version: "next"
+          #   environment: stage
+          #   experimental: true
+
+    name: Test ${{ matrix.version }} (${{ matrix.environment }})
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78
+        with:
+          version: v3.10.0
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: 3.13
+
+      - name: Set up chart-testing
+        uses: alisonlhart/chart-testing-action@1.0.0 # v2.7.0
+
+      - name: Add dependencies
+        run: |
+          helm repo add ingress-nginx "https://kubernetes.github.io/ingress-nginx"
+          helm repo add redhat-developer-hub "https://charts.openshift.io"
+          helm repo update
+          helm dependency update
+
+      - name: Lint chart
+        run: |
+          ct lint \
+            --charts . \
+            --config tests/ct.yaml \
+            --debug \
+            --target-branch "${{ github.event.pull_request.base.ref }}"
+
+      - name: Generate KinD Config
+        run: |
+          cat <<EOF > /tmp/kind-config.yaml
+          apiVersion: kind.x-k8s.io/v1alpha4
+          kind: Cluster
+          nodes:
+            - role: control-plane
+              extraPortMappings:
+                - containerPort: 80
+                  hostPort: 80
+                  protocol: TCP
+                - containerPort: 443
+                  hostPort: 443
+                  protocol: TCP
+          EOF
+
+      - name: Create KIND Cluster
+        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
+        with:
+          config: /tmp/kind-config.yaml
+
+      - name: Create custom storage class
+        run: |
+          export defaultScProvisioner=$(kubectl get storageclass -o jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].provisioner}')
+          if [[ -z "$defaultScProvisioner" ]]; then
+            echo "No default storage class found or it has no provisioner. Exiting early because the test using the custom Storage Class will likely fail. Use a cluster that has a default storage class."
+            exit 1
+          fi
+          echo "[INFO] defaultScProvisioner=$defaultScProvisioner"
+
+          cat <<EOF | kubectl apply -f -
+          apiVersion: storage.k8s.io/v1
+          kind: StorageClass
+          metadata:
+            name: custom-sc
+          # same provisioner as the one used by the default storage class on the cluster
+          provisioner: $defaultScProvisioner
+          reclaimPolicy: Delete
+          volumeBindingMode: WaitForFirstConsumer
+          EOF
+
+          kubectl get storageclass custom-sc -o yaml
+
+      - name: Install Ingress Controller
+        run: |
+          helm install ingress-nginx/ingress-nginx --generate-name \
+            --set controller.service.type='NodePort' \
+            --set controller.admissionWebhooks.enabled=false
+
+      - name: Install Operator Lifecycle Manager (OLM)
+        # In case we need to install additional Operators
+        env:
+          OLM_VERSION: "v0.31.0"
+        run: |
+          curl -L "https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh" -o install-olm.sh
+          chmod +x install-olm.sh
+          ./install-olm.sh "${OLM_VERSION}"
+
+      - name: Run chart-testing (development)
+        if: matrix.environment == 'development'
+        env: 
+          REGISTRY: "${{ matrix.experimental && 'quay.io' || 'registry.redhat.io' }}"
+        run: |
+          ct install \
+            --debug \
+            --charts . \
+            --config tests/ct.yaml \
+            --release-name "rhaap-portal" \
+            --target-branch "${{ github.event.pull_request.base.ref }}" \
+            --helm-extra-set-args="-f tests/test-values.yaml \
+            --timeout 500s \
+            --set redhat-developer-hub.global._environment._development=true \
+            --set redhat-developer-hub.global._environment._stage=false \
+            --set redhat-developer-hub.global._environment._production=false \
+            --set redhat-developer-hub.testImageCredentials.registry=quay.io \
+            --set redhat-developer-hub.testImageCredentials.username=${{ secrets.QUAY_REDHAT_USER_WORKLOADS_USERNAME }} \
+            --set redhat-developer-hub.testImageCredentials.password=${{ secrets.QUAY_REDHAT_USER_WORKLOADS_PASSWORD }} \
+            --set redhat-developer-hub.registryCredentials.username=${{ secrets.RH_REGISTRY_USERNAME }} \
+            --set redhat-developer-hub.registryCredentials.password=${{ secrets.RH_REGISTRY_PASSWORD }} \
+            --set redhat-developer-hub.upstream.backstage.image.tag=${{ matrix.version }} \
+            --set redhat-developer-hub.upstream.backstage.image.registry=${{ env.REGISTRY }}"
+
+      - name: Run chart-testing (stage)
+        if: matrix.environment == 'stage'
+        env: 
+          REGISTRY: "${{ matrix.experimental && 'quay.io' || 'registry.redhat.io' }}"
+        run: |
+          ct install \
+            --debug \
+            --charts . \
+            --config tests/ct.yaml \
+            --release-name "rhaap-portal" \
+            --target-branch "${{ github.event.pull_request.base.ref }}" \
+            --helm-extra-set-args="-f tests/test-values.yaml \
+            --timeout 500s \
+            --set redhat-developer-hub.global._environment._development=false \
+            --set redhat-developer-hub.global._environment._stage=true \
+            --set redhat-developer-hub.global.imageTagInfo=${{ matrix.imageTagVersion }} \
+            --set redhat-developer-hub.global._environment._production=false \
+            --set redhat-developer-hub.testImageCredentials.registry=registry.stage.redhat.io \
+            --set redhat-developer-hub.testImageCredentials.username=${{ secrets.STAGE_REGISTRY_USERNAME }} \
+            --set redhat-developer-hub.testImageCredentials.password=${{ secrets.STAGE_REGISTRY_PASSWORD }} \
+            --set redhat-developer-hub.registryCredentials.username=${{ secrets.RH_REGISTRY_USERNAME }} \
+            --set redhat-developer-hub.registryCredentials.password=${{ secrets.RH_REGISTRY_PASSWORD }} \
+            --set redhat-developer-hub.upstream.backstage.image.tag=${{ matrix.version }} \
+            --set redhat-developer-hub.upstream.backstage.image.registry=${{ env.REGISTRY }}"

@@ -10,10 +10,10 @@ spec:
   project: default
   sources:
     - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      targetRevision: new
+      targetRevision: apme
       ref: values
     - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      targetRevision: new
+      targetRevision: apme
       path: apps/apme/chart
       helm:
         valueFiles:

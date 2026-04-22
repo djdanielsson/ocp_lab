@@ -1,0 +1,34 @@
+name: Publish Helm Chart
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  run-release-script:
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+    steps:
+    - name: Checkout chart
+      uses: actions/checkout@v5
+      with:
+        ref: ${{ github.event.release.tag_name }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      
+    - name: Install yq using uv
+      run: |
+        uv tool install yq
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        yq --version
+      
+    - name: Run release script
+      env:
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        GH_TOKEN: ${{ secrets.GH_PAT_BOT_AUTH }}
+
+      run: |
+        chmod +x build/build-and-publish.sh
+        ./build/build-and-publish.sh

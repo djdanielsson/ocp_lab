@@ -1,0 +1,158 @@
+{{- if .Values.apme.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-apme
+  labels:
+    app.kubernetes.io/name: apme
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: engine
+spec:
+  replicas: {{ .Values.apme.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: apme
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: apme
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: engine
+    spec:
+      containers:
+        - name: gateway
+          image: {{ .Values.apme.gateway.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_DB_PATH
+              value: /data/apme.db
+            - name: APME_GATEWAY_GRPC_LISTEN
+              value: "0.0.0.0:50060"
+            - name: APME_GATEWAY_HTTP_HOST
+              value: "0.0.0.0"
+            - name: APME_GATEWAY_HTTP_PORT
+              value: "8080"
+            - name: APME_CORS_ORIGINS
+              value: {{ .Values.apme.gateway.corsOrigins | default "*" | quote }}
+            {{- if .Values.apme.feedback.enabled }}
+            - name: APME_FEEDBACK_ENABLED
+              value: "true"
+            - name: APME_FEEDBACK_GITHUB_REPO
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-apme-secrets
+                  key: feedback-github-repo
+                  optional: true
+            - name: APME_FEEDBACK_GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-apme-secrets
+                  key: feedback-github-token
+                  optional: true
+            {{- end }}
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 50060
+              name: grpc
+          volumeMounts:
+            - name: gateway-data
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+        - name: primary
+          image: {{ .Values.apme.primary.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_PRIMARY_LISTEN
+              value: "0.0.0.0:50051"
+            - name: NATIVE_GRPC_ADDRESS
+              value: "127.0.0.1:50055"
+            - name: OPA_GRPC_ADDRESS
+              value: "127.0.0.1:50054"
+            - name: ANSIBLE_GRPC_ADDRESS
+              value: "127.0.0.1:50053"
+            {{- if .Values.apme.gitleaks.enabled }}
+            - name: GITLEAKS_GRPC_ADDRESS
+              value: "127.0.0.1:50056"
+            {{- end }}
+            - name: APME_GALAXY_PROXY_URL
+              value: "http://127.0.0.1:8765"
+            - name: APME_REPORTING_ENDPOINT
+              value: "127.0.0.1:50060"
+          ports:
+            - containerPort: 50051
+              name: grpc
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+
+        - name: native
+          image: {{ .Values.apme.native.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_NATIVE_VALIDATOR_LISTEN
+              value: "0.0.0.0:50055"
+
+        - name: opa
+          image: {{ .Values.apme.opa.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_OPA_VALIDATOR_LISTEN
+              value: "0.0.0.0:50054"
+
+        - name: ansible
+          image: {{ .Values.apme.ansible.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_ANSIBLE_VALIDATOR_LISTEN
+              value: "0.0.0.0:50053"
+            - name: APME_GALAXY_PROXY_URL
+              value: "http://127.0.0.1:8765"
+          volumeMounts:
+            - name: sessions
+              mountPath: /sessions
+              readOnly: true
+
+        {{- if .Values.apme.gitleaks.enabled }}
+        - name: gitleaks
+          image: {{ .Values.apme.gitleaks.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          env:
+            - name: APME_GITLEAKS_VALIDATOR_LISTEN
+              value: "0.0.0.0:50056"
+        {{- end }}
+
+        - name: galaxy-proxy
+          image: {{ .Values.apme.galaxyProxy.image }}
+          imagePullPolicy: {{ .Values.apme.imagePullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: 8765
+              name: http-proxy
+          volumeMounts:
+            - name: proxy-cache
+              mountPath: /cache
+
+      volumes:
+        - name: gateway-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-apme-gateway-data
+        - name: sessions
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-apme-sessions
+        - name: proxy-cache
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-apme-proxy-cache
+{{- end }}

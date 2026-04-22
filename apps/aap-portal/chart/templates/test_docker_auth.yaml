@@ -1,0 +1,9 @@
+{{- if (index .Values "redhat-developer-hub" "test" "enabled") }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rh-registry-auth
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: {{ template "deployment.test.registryCredentials" . }}
+{{- end }}
