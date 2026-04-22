@@ -6,6 +6,7 @@ redhat-developer-hub:
     clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
     pluginMode: oci
     imageTagInfo: "2.2"
+    ociPluginImage: image-registry.openshift-image-registry.svc:5000/aap-portal/automation-portal
   upstream:
     postgresql:
       auth:
