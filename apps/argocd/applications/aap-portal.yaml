@@ -14,21 +14,36 @@ spec:
   source:
     repoURL: https://charts.openshift.io
     chart: redhat-rhaap-portal
-    targetRevision: "*"
+    targetRevision: "2.1.0"
     helm:
+      releaseName: redhat-rhaap-portal
       values: |
         redhat-developer-hub:
           global:
             clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
             pluginMode: oci
+            imageTagInfo: "2.1"
           upstream:
             backstage:
               appConfig:
                 app:
                   title: "AAP Self-Service Portal"
-                  baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
+                  baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
                 backend:
-                  baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
+                  baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
+                ansible:
+                  rhaap:
+                    checkSSL: false
+                auth:
+                  providers:
+                    rhaap:
+                      production:
+                        checkSSL: false
+                catalog:
+                  providers:
+                    rhaap:
+                      '{{- include "catalog.providers.env" . }}':
+                        orgs: "Default"
   syncPolicy:
     automated:
       prune: true
