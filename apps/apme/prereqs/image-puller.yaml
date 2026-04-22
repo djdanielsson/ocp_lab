@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aap-portal-image-puller
+  namespace: apme
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:image-puller
+subjects:
+  - kind: Group
+    name: system:serviceaccounts:aap-portal
+    apiGroup: rbac.authorization.k8s.io

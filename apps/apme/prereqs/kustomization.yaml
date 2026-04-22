@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
   - scc.yaml
+  - image-puller.yaml
