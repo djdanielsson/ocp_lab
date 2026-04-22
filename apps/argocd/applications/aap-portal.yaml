@@ -24,6 +24,9 @@ spec:
             pluginMode: oci
             imageTagInfo: "2.1"
           upstream:
+            postgresql:
+              auth:
+                existingSecret: redhat-rhaap-portal-postgresql-creds
             backstage:
               appConfig:
                 app:
@@ -44,13 +47,6 @@ spec:
                     rhaap:
                       '{{- include "catalog.providers.env" . }}':
                         orgs: "Default"
-  ignoreDifferences:
-    - group: ""
-      kind: Secret
-      name: redhat-rhaap-portal-postgresql
-      jsonPointers:
-        - /data/password
-        - /data/postgres-password
   syncPolicy:
     automated:
       prune: true
