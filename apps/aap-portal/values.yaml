@@ -49,6 +49,9 @@ redhat-developer-hub:
           baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
         backend:
           baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
+        apme:
+          gateway:
+            baseUrl: http://redhat-rhaap-portal-apme-gateway:8080
         ansible:
           rhaap:
             checkSSL: false
