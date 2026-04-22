@@ -5,12 +5,44 @@ redhat-developer-hub:
   global:
     clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
     pluginMode: oci
-    imageTagInfo: "2.1"
+    ociPluginImage: image-registry.openshift-image-registry.svc:5000/aap-portal/automation-portal
+    imageTagInfo: "2.2"
   upstream:
     postgresql:
       auth:
         existingSecret: redhat-rhaap-portal-postgresql-creds
     backstage:
+      initContainers:
+        - name: install-dynamic-plugins
+          image: '{{ include "backstage.image" . }}'
+          command:
+            - ./install-dynamic-plugins.sh
+            - /dynamic-plugins-root
+          env:
+            - name: NPM_CONFIG_USERCONFIG
+              value: /opt/app-root/src/.npmrc.dynamic-plugins
+            - name: MAX_ENTRY_SIZE
+              value: "30000000"
+            - name: SKIP_INTEGRITY_CHECK
+              value: "true"
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /dynamic-plugins-root
+              name: dynamic-plugins-root
+            - mountPath: /opt/app-root/src/dynamic-plugins.yaml
+              name: dynamic-plugins
+              readOnly: true
+              subPath: dynamic-plugins.yaml
+            - mountPath: /opt/app-root/src/.npmrc.dynamic-plugins
+              name: dynamic-plugins-npmrc
+              readOnly: true
+              subPath: .npmrc
+            - mountPath: /opt/app-root/src/.config/containers
+              name: dynamic-plugins-registry-auth
+              readOnly: true
+            - mountPath: /opt/app-root/src/.npm/_cacache
+              name: npmcacache
+          workingDir: /opt/app-root/src
       appConfig:
         app:
           title: "AAP Self-Service Portal"
