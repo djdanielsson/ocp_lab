@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/apme/prereqs/
-    targetRevision: new
+    targetRevision: apme
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

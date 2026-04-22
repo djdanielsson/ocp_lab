@@ -11,43 +11,26 @@ spec:
     namespace: aap-portal
     server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://charts.openshift.io
-    chart: redhat-rhaap-portal
-    targetRevision: "2.1.0"
-    helm:
-      releaseName: redhat-rhaap-portal
-      values: |
-        redhat-developer-hub:
-          global:
-            clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
-            pluginMode: oci
-            imageTagInfo: "2.1"
-          upstream:
-            postgresql:
-              auth:
-                existingSecret: redhat-rhaap-portal-postgresql-creds
-            backstage:
-              appConfig:
-                app:
-                  title: "AAP Self-Service Portal"
-                  baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
-                backend:
-                  baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
-                ansible:
-                  rhaap:
-                    checkSSL: false
-                auth:
-                  providers:
-                    rhaap:
-                      production:
-                        checkSSL: false
-                catalog:
-                  providers:
-                    rhaap:
-                      '{{- include "catalog.providers.env" . }}':
-                        orgs: "Default"
+  sources:
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      targetRevision: apme
+      ref: values
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      targetRevision: apme
+      path: apps/aap-portal/chart
+      helm:
+        releaseName: redhat-rhaap-portal
+        valueFiles:
+          - $values/apps/aap-portal/values.yaml
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m
