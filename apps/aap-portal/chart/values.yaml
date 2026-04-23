@@ -561,6 +561,9 @@ apme:
       size: 1Gi
     proxyCache:
       size: 5Gi
+  abbenay:
+    enabled: false
+    image: ghcr.io/redhat-developer/abbenay:latest
   feedback:
     enabled: false
     githubRepo: ""
