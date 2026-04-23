@@ -83,7 +83,14 @@ apme:
   ansible:
     image: image-registry.openshift-image-registry.svc:5000/apme/apme-ansible:latest
   gitleaks:
-    enabled: false
+    enabled: true
+    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-gitleaks:latest
+  collectionHealth:
+    enabled: true
+    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-collection-health:latest
+  depAudit:
+    enabled: true
+    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-dep-audit:latest
   galaxyProxy:
     image: image-registry.openshift-image-registry.svc:5000/apme/apme-galaxy-proxy:latest
   persistence:
