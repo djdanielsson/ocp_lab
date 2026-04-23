@@ -71,6 +71,9 @@ apme:
   enabled: true
   replicas: 1
   imagePullPolicy: Always
+  abbenay:
+    enabled: true
+    image: ghcr.io/redhat-developer/abbenay:latest
   gateway:
     image: image-registry.openshift-image-registry.svc:5000/apme/apme-gateway:latest
     corsOrigins: "*"
