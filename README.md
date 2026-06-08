@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-After a fresh OCP cluster install, run these two steps:
+After a fresh OCP cluster install, run these three steps in order:
 
 ### Step 1: Storage (bootstrap-storage.yaml)
 
@@ -28,10 +28,26 @@ oc get lvmcluster -n openshift-storage
 oc get sc
 ```
 
-### Step 2: GitOps + App-of-Apps (bootstrap.yaml)
+### Step 2: External Secrets bootstrap
 
-Once storage is available, apply the main bootstrap to install the GitOps operator,
-grant ArgoCD cluster-admin, and deploy the app-of-apps:
+Create the `external-secrets` namespace and the Bitwarden credential secret **before**
+deploying the app-of-apps. The External Secrets Operator and its Bitwarden provider
+expect this secret to exist on first sync -- without it, all ExternalSecret resources
+will fail and dependent applications won't get their secrets.
+
+```bash
+oc create namespace external-secrets
+oc create secret generic bitwarden-cli -n external-secrets \
+  --from-literal=BW_HOST=https://your-vaultwarden-url \
+  --from-literal=BW_CLIENTID=your-api-client-id \
+  --from-literal=BW_CLIENTSECRET=your-api-client-secret \
+  --from-literal=BW_PASSWORD=your-master-password
+```
+
+### Step 3: GitOps + App-of-Apps (bootstrap.yaml)
+
+Once storage is available and the Bitwarden secret is in place, apply the main bootstrap
+to install the GitOps operator, grant ArgoCD cluster-admin, and deploy the app-of-apps:
 
 ```bash
 oc apply -f bootstrap.yaml
@@ -110,15 +126,8 @@ Before deploying the ArgoCD applications, you must:
 
 2. **Generate API keys** in Vaultwarden: Log in to the web vault, go to
   Settings > Security > Keys, and generate an API key (Client ID + Client Secret).
-3. **Create the bootstrap secret** on the cluster (this is the only secret not managed by ESO):
-  ```bash
-   oc create namespace external-secrets
-   oc create secret generic bitwarden-cli -n external-secrets \
-     --from-literal=BW_HOST=https://your-vaultwarden-url \
-     --from-literal=BW_CLIENTID=your-api-client-id \
-     --from-literal=BW_CLIENTSECRET=your-api-client-secret \
-     --from-literal=BW_PASSWORD=your-master-password
-  ```
+3. **Create the bootstrap secret** on the cluster -- this is covered in Step 2 of the
+  Quick Start above. This is the only secret not managed by ESO.
 
 ## External Monitoring Targets
 

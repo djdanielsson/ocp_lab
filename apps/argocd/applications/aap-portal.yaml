@@ -15,13 +15,21 @@ spec:
     - repoURL: https://github.com/djdanielsson/ocp_lab.git
       targetRevision: apme
       ref: values
-    - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      targetRevision: apme
-      path: apps/aap-portal/chart
+    - repoURL: https://charts.openshift.io/
+      chart: redhat-rhaap-portal
+      targetRevision: 2.2.0
       helm:
         releaseName: redhat-rhaap-portal
         valueFiles:
           - $values/apps/aap-portal/values.yaml
+    # --- Custom chart source (commented out in favor of public 2.2.0) ---
+    # - repoURL: https://github.com/djdanielsson/ocp_lab.git
+    #   targetRevision: apme
+    #   path: apps/aap-portal/chart
+    #   helm:
+    #     releaseName: redhat-rhaap-portal
+    #     valueFiles:
+    #       - $values/apps/aap-portal/values.yaml
   syncPolicy:
     automated:
       prune: true

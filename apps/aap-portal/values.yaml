@@ -5,44 +5,14 @@ redhat-developer-hub:
   global:
     clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
     pluginMode: oci
-    ociPluginImage: image-registry.openshift-image-registry.svc:5000/aap-portal/automation-portal
+    # Use the official registry.redhat.io OCI plugin image (default for 2.2 chart)
+    # ociPluginImage: image-registry.openshift-image-registry.svc:5000/aap-portal/automation-portal
     imageTagInfo: "2.2"
   upstream:
     postgresql:
       auth:
         existingSecret: redhat-rhaap-portal-postgresql-creds
     backstage:
-      initContainers:
-        - name: install-dynamic-plugins
-          image: '{{ include "backstage.image" . }}'
-          command:
-            - ./install-dynamic-plugins.sh
-            - /dynamic-plugins-root
-          env:
-            - name: NPM_CONFIG_USERCONFIG
-              value: /opt/app-root/src/.npmrc.dynamic-plugins
-            - name: MAX_ENTRY_SIZE
-              value: "30000000"
-            - name: SKIP_INTEGRITY_CHECK
-              value: "true"
-          imagePullPolicy: Always
-          volumeMounts:
-            - mountPath: /dynamic-plugins-root
-              name: dynamic-plugins-root
-            - mountPath: /opt/app-root/src/dynamic-plugins.yaml
-              name: dynamic-plugins
-              readOnly: true
-              subPath: dynamic-plugins.yaml
-            - mountPath: /opt/app-root/src/.npmrc.dynamic-plugins
-              name: dynamic-plugins-npmrc
-              readOnly: true
-              subPath: .npmrc
-            - mountPath: /opt/app-root/src/.config/containers
-              name: dynamic-plugins-registry-auth
-              readOnly: true
-            - mountPath: /opt/app-root/src/.npm/_cacache
-              name: npmcacache
-          workingDir: /opt/app-root/src
       appConfig:
         app:
           title: "AAP Self-Service Portal"
@@ -70,32 +40,33 @@ redhat-developer-hub:
 apme:
   enabled: true
   replicas: 1
-  imagePullPolicy: Always
+  # Use upstream default images from the public chart (no custom internal registry overrides)
+  # imagePullPolicy: Always
   abbenay:
     enabled: false
-    image: ghcr.io/redhat-developer/abbenay:latest
+    # image: ghcr.io/redhat-developer/abbenay:latest
   gateway:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-gateway:latest
     corsOrigins: "*"
-  primary:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-primary:latest
-  native:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-native:latest
-  opa:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-opa:latest
-  ansible:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-ansible:latest
+    # image: image-registry.openshift-image-registry.svc:5000/apme/apme-gateway:latest
+  # primary:
+  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-primary:latest
+  # native:
+  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-native:latest
+  # opa:
+  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-opa:latest
+  # ansible:
+  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-ansible:latest
   gitleaks:
     enabled: true
-    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-gitleaks:latest
+    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-gitleaks:latest
   collectionHealth:
     enabled: true
-    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-collection-health:latest
+    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-collection-health:latest
   depAudit:
     enabled: true
-    image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-dep-audit:latest
-  galaxyProxy:
-    image: image-registry.openshift-image-registry.svc:5000/apme/apme-galaxy-proxy:latest
+    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-dep-audit:latest
+  # galaxyProxy:
+  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-galaxy-proxy:latest
   persistence:
     storageClass: lvms-lvm-local-storage
     sessions:
