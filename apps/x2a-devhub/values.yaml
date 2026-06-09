@@ -1,51 +1,47 @@
-# X2A Developer Hub — standalone RHDH instance for x2a-convertor self-service
-# Uses the redhat-developer-hub chart v1.9.3 from charts.openshift.io
+# X2A Developer Hub — AAP Portal instance for x2a-convertor self-service
+# Uses the redhat-rhaap-portal chart v2.2.0 from charts.openshift.io
 
-global:
-  clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
-  host: x2a.apps.ocp.new.lab.danielsson.us.com
-
-upstream:
-  postgresql:
-    auth:
-      existingSecret: x2a-devhub-postgresql-creds
-  backstage:
-    extraEnvVars:
-      - name: NODE_TLS_REJECT_UNAUTHORIZED
-        value: "0"
-    extraEnvVarsSecrets:
-      - x2a-devhub-aap-auth
-    appConfig:
-      app:
-        title: "X2Ansible Developer Hub"
-        baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
-      backend:
-        baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
-      signInPage: oidc
+redhat-developer-hub:
+  global:
+    clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
+    host: x2a.apps.ocp.new.lab.danielsson.us.com
+    pluginMode: oci
+    imageTagInfo: "2.2"
+  upstream:
+    postgresql:
       auth:
-        session:
-          secret: ${BACKEND_SECRET}
-        environment: production
-        providers:
-          oidc:
-            production:
-              metadataUrl: ${AAP_HOST_URL}/o/.well-known/openid-configuration/
-              clientId: ${AAP_OAUTH_CLIENT_ID}
-              clientSecret: ${AAP_OAUTH_CLIENT_SECRET}
-              callbackUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com/api/auth/oidc/handler/frame
-              prompt: auto
-              signIn:
-                resolvers:
-                  - resolver: preferredUsernameMatchingUserEntityName
-                  - resolver: emailLocalPartMatchingUserEntityName
-              dangerouslyAllowSignInWithoutUserInCatalog: true
-      catalog:
-        locations:
-          - type: url
-            target: https://github.com/x2ansible/x2a-convertor/blob/main/catalog-info.yaml
-            rules:
-              - allow: [Component]
-          - type: url
-            target: https://github.com/x2ansible/x2a-convertor/blob/main/templates/x2a-migration-template.yaml
-            rules:
-              - allow: [Template]
+        existingSecret: x2a-devhub-postgresql-creds
+    backstage:
+      appConfig:
+        app:
+          title: "X2Ansible Developer Hub"
+          baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+        backend:
+          baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+        ansible:
+          rhaap:
+            checkSSL: false
+          automationHub:
+            baseUrl: https://aap.apps.ocp.new.lab.danielsson.us.com
+        auth:
+          providers:
+            rhaap:
+              production:
+                checkSSL: false
+        catalog:
+          providers:
+            rhaap:
+              '{{- include "catalog.providers.env" . }}':
+                orgs: "Default"
+          locations:
+            - type: url
+              target: https://github.com/x2ansible/x2a-convertor/blob/main/catalog-info.yaml
+              rules:
+                - allow: [Component]
+            - type: url
+              target: https://github.com/x2ansible/x2a-convertor/blob/main/templates/x2a-migration-template.yaml
+              rules:
+                - allow: [Template]
+
+apme:
+  enabled: false

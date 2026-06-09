@@ -16,8 +16,8 @@ spec:
       targetRevision: apme
       ref: values
     - repoURL: https://charts.openshift.io/
-      chart: redhat-developer-hub
-      targetRevision: 1.9.3
+      chart: redhat-rhaap-portal
+      targetRevision: 2.2.0
       helm:
         releaseName: x2a-devhub
         valueFiles:
