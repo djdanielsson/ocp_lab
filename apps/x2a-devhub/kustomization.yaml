@@ -4,4 +4,3 @@ kind: Kustomization
 
 resources:
   - secrets.yaml
-  - app-config-cm.yaml

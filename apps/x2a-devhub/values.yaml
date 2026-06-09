@@ -10,15 +10,14 @@ upstream:
     auth:
       existingSecret: x2a-devhub-postgresql-creds
   backstage:
-    extraAppConfig:
-      - configMapRef: x2a-devhub-app-config
-        filename: app-config-x2a.yaml
     appConfig:
       app:
         title: "X2Ansible Developer Hub"
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      auth:
+        environment: development
       catalog:
         locations:
           - type: url
