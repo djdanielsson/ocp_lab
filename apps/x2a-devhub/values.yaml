@@ -18,6 +18,8 @@ upstream:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       auth:
         environment: development
+        providers:
+          guest: {}
       catalog:
         locations:
           - type: url
