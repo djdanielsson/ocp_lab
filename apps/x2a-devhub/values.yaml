@@ -13,6 +13,11 @@ upstream:
     extraEnvVars:
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "0"
+      - name: BACKEND_SECRET
+        valueFrom:
+          secretKeyRef:
+            key: backend-secret
+            name: x2a-devhub-auth
     extraEnvVarsSecrets:
       - x2a-devhub-ocp-auth
     appConfig:
