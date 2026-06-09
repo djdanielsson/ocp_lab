@@ -18,9 +18,10 @@ upstream:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       signInPage: guest
       auth:
-        environment: development
+        environment: production
         providers:
-          guest: {}
+          guest:
+            dangerouslyAllowOutsideDevelopment: true
       catalog:
         locations:
           - type: url
