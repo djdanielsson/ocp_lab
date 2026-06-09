@@ -1,5 +1,5 @@
 # X2A Developer Hub — vanilla redhat-developer-hub chart v1.9.3
-# Auth via OpenShift OAuth (OIDC provider)
+# Auth: Guest (OpenShift OAuth is not OIDC-compliant)
 
 global:
   clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
@@ -27,21 +27,13 @@ upstream:
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       auth:
-        environment: production
+        environment: development
         session:
           secret: ${SESSION_SECRET}
         providers:
-          oidc:
-            production:
-              metadataUrl: https://oauth-openshift.apps.ocp.new.lab.danielsson.us.com/.well-known/openid-configuration
-              clientId: ${OCP_OAUTH_CLIENT_ID}
-              clientSecret: ${OCP_OAUTH_CLIENT_SECRET}
-              prompt: auto
-              signIn:
-                resolvers:
-                  - resolver: preferredUsernameMatchingUserEntityName
-                    dangerouslyAllowSignInWithoutUserInCatalog: true
-      signInPage: oidc
+          guest:
+            dangerouslyAllowOutsideDevelopment: true
+      signInPage: guest
       catalog:
         locations:
           - type: url
