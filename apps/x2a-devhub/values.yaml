@@ -23,6 +23,8 @@ upstream:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       signInPage: oidc
       auth:
+        session:
+          secret: ${BACKEND_SECRET}
         environment: production
         providers:
           oidc:
@@ -31,15 +33,12 @@ upstream:
               clientId: ${AAP_OAUTH_CLIENT_ID}
               clientSecret: ${AAP_OAUTH_CLIENT_SECRET}
               callbackUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com/api/auth/oidc/handler/frame
-              scope: openid read
-              additionalScopes:
-                - openid
-                - read
+              prompt: auto
               signIn:
                 resolvers:
                   - resolver: preferredUsernameMatchingUserEntityName
                   - resolver: emailLocalPartMatchingUserEntityName
-                dangerouslyAllowSignInWithoutUserInCatalog: true
+              dangerouslyAllowSignInWithoutUserInCatalog: true
       catalog:
         locations:
           - type: url
