@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: x2a-devhub-app-config
+  namespace: x2a-devhub
+data:
+  app-config-x2a.yaml: |
+    auth:
+      environment: development
