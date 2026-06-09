@@ -3,6 +3,7 @@
 
 global:
   clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
+  host: x2a.apps.ocp.new.lab.danielsson.us.com
 
 upstream:
   postgresql:
@@ -12,9 +13,13 @@ upstream:
     appConfig:
       app:
         title: "X2Ansible Developer Hub"
-        baseUrl: https://x2a-devhub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+        baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
-        baseUrl: https://x2a-devhub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+        baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      auth:
+        environment: production
+        providers:
+          oauth2Proxy: {}
       catalog:
         locations:
           - type: url
@@ -25,7 +30,3 @@ upstream:
             target: https://github.com/x2ansible/x2a-convertor/blob/main/templates/x2a-migration-template.yaml
             rules:
               - allow: [Template]
-      integrations:
-        github:
-          - host: github.com
-            token: ${GITHUB_TOKEN}
