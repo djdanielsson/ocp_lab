@@ -1,0 +1,31 @@
+# X2A Developer Hub — standalone RHDH instance for x2a-convertor self-service
+# Uses the redhat-developer-hub chart v1.9.3 from charts.openshift.io
+
+global:
+  clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
+
+upstream:
+  postgresql:
+    auth:
+      existingSecret: x2a-devhub-postgresql-creds
+  backstage:
+    appConfig:
+      app:
+        title: "X2Ansible Developer Hub"
+        baseUrl: https://x2a-devhub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+      backend:
+        baseUrl: https://x2a-devhub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+      catalog:
+        locations:
+          - type: url
+            target: https://github.com/x2ansible/x2a-convertor/blob/main/catalog-info.yaml
+            rules:
+              - allow: [Component]
+          - type: url
+            target: https://github.com/x2ansible/x2a-convertor/blob/main/templates/x2a-migration-template.yaml
+            rules:
+              - allow: [Template]
+      integrations:
+        github:
+          - host: github.com
+            token: ${GITHUB_TOKEN}
