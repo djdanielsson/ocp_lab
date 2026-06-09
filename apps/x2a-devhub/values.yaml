@@ -8,7 +8,7 @@ global:
 upstream:
   postgresql:
     auth:
-      existingSecret: x2a-devhub-postgresql-creds
+      existingSecret: x2a-devhub-postgresql
   backstage:
     extraEnvVarsSecrets:
       - x2a-devhub-ocp-auth
