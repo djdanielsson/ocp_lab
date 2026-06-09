@@ -10,13 +10,15 @@ upstream:
     auth:
       existingSecret: x2a-devhub-postgresql-creds
   backstage:
+    extraEnvVars:
+      - name: ENABLE_GUEST_PROVIDER
+        value: "true"
     appConfig:
       app:
         title: "X2Ansible Developer Hub"
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
-      signInPage: guest
       auth:
         environment: production
         providers:
