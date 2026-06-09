@@ -27,6 +27,7 @@ upstream:
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       auth:
+        environment: production
         session:
           secret: ${SESSION_SECRET}
         providers:
