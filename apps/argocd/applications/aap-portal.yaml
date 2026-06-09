@@ -22,14 +22,6 @@ spec:
         releaseName: redhat-rhaap-portal
         valueFiles:
           - $values/apps/aap-portal/values.yaml
-    # --- Custom chart source (commented out in favor of public 2.2.0) ---
-    # - repoURL: https://github.com/djdanielsson/ocp_lab.git
-    #   targetRevision: apme
-    #   path: apps/aap-portal/chart
-    #   helm:
-    #     releaseName: redhat-rhaap-portal
-    #     valueFiles:
-    #       - $values/apps/aap-portal/values.yaml
   syncPolicy:
     automated:
       prune: true

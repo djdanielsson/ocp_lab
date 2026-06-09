@@ -1,26 +1,17 @@
-# AAP Portal + APME — lab values override for OCP
-# Overrides the upstream ansible-portal-chart defaults.
+# AAP Portal — lab values override for OCP
+# Uses official redhat-rhaap-portal chart v2.2.0 with OCI plugin delivery.
+# Plugins are pulled dynamically from registry.redhat.io as OCI artifacts
+# at startup — no custom image build or in-cluster plugin registry needed.
 
 redhat-developer-hub:
   global:
     clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
     pluginMode: oci
-    # Use the official registry.redhat.io OCI plugin image (default for 2.2 chart)
-    # ociPluginImage: image-registry.openshift-image-registry.svc:5000/aap-portal/automation-portal
     imageTagInfo: "2.2"
   upstream:
     postgresql:
       auth:
         existingSecret: redhat-rhaap-portal-postgresql-creds
-      primary:
-        extraVolumes:
-          - name: pg-override
-            configMap:
-              name: portal-postgresql-override
-        extraVolumeMounts:
-          - name: pg-override
-            mountPath: /opt/app-root/src/postgresql-cfg
-            readOnly: true
     backstage:
       appConfig:
         app:
@@ -42,6 +33,5 @@ redhat-developer-hub:
               '{{- include "catalog.providers.env" . }}':
                 orgs: "Default"
 
-# APME is deployed standalone via ansible/apme Helm chart (not embedded in portal)
 apme:
   enabled: false

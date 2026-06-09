@@ -1,3 +1,0 @@
-validate-maintainers: false
-remote: origin
-lint-conf: .yamllint
