@@ -37,6 +37,7 @@ upstream:
           /x2a-trigger:
             target: http://el-x2a-migration.x2a-devhub.svc.cluster.local:8080
             changeOrigin: true
+            credentials: dangerously-allow-unauthenticated
             allowedMethods: ['POST']
       auth:
         environment: development
