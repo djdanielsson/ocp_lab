@@ -10,17 +10,28 @@ upstream:
     auth:
       existingSecret: x2a-devhub-postgresql-creds
   backstage:
+    extraEnvVarsSecrets:
+      - x2a-devhub-aap-auth
     appConfig:
       app:
         title: "X2Ansible Developer Hub"
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      signInPage: oidc
       auth:
-        environment: development
+        environment: production
         providers:
-          guest:
-            dangerouslyAllowOutsideDevelopment: true
+          oidc:
+            production:
+              metadataUrl: ${AAP_HOST_URL}/o/.well-known/openid-configuration
+              clientId: ${AAP_OAUTH_CLIENT_ID}
+              clientSecret: ${AAP_OAUTH_CLIENT_SECRET}
+              callbackUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com/api/auth/oidc/handler/frame
+              signIn:
+                resolvers:
+                  - resolver: emailMatchingUserEntityProfileEmail
+                  - resolver: emailLocalPartMatchingUserEntityName
       catalog:
         locations:
           - type: url
