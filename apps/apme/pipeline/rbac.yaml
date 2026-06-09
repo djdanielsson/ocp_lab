@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: apme-builder
+  namespace: apme
+---
+# Allow pushing images to the internal registry
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apme-builder-image-builder
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:image-builder
+subjects:
+  - kind: ServiceAccount
+    name: apme-builder
+    namespace: apme
+---
+# Allow reading/updating ConfigMaps (SHA tracking) and restarting deployments
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: apme-builder
+  namespace: apme
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, create, update, patch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: apme-builder
+  namespace: apme
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: apme-builder
+subjects:
+  - kind: ServiceAccount
+    name: apme-builder
+    namespace: apme
+---
+# Tekton pipelines need to run tasks from the openshift-pipelines namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apme-builder-pipelines
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-pipelines-resolvers-resolution-request-updates
+subjects:
+  - kind: ServiceAccount
+    name: apme-builder
+    namespace: apme
+---
+# Allow buildah to run with the pipelines-scc (needed for SETFCAP)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: apme-builder-scc
+rules:
+  - apiGroups: [security.openshift.io]
+    resources: [securitycontextconstraints]
+    resourceNames: [pipelines-scc]
+    verbs: [use]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apme-builder-scc
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: apme-builder-scc
+subjects:
+  - kind: ServiceAccount
+    name: apme-builder
+    namespace: apme

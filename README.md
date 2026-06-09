@@ -94,6 +94,8 @@ oc apply -f bootstrap.yaml
 | 1          | netobserv-instance         | FlowCollector CR for network flow capture                          |
 | -1         | graylog-mongodb-operator   | MongoDB Kubernetes Operator (for Graylog)                          |
 | 1          | graylog                    | Graylog log management (Helm chart)                                |
+| 0          | apme-prereqs               | APME secrets (ExternalSecrets for Abbenay AI credentials)          |
+| 1          | apme                       | Ansible Policy & Modernization Engine (standalone Helm chart)      |
 | --         | pipelines                  | OpenShift Pipelines operator                                       |
 | --         | web-terminal               | Web Terminal operator                                              |
 
@@ -120,7 +122,8 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/loki-minio` | Login | username: `minioadmin`, password: (strong password -- used as MinIO root credentials and S3 access key) |
   | `ocp-lab/ipmi-bmc` | Login | username: (BMC/IPMI username), password: (BMC/IPMI password) |
   | `ocp-lab/tailscale` | Secure Note | Custom field: `authkey` = (Tailscale auth key with subnet-router + exit-node tags) |
-  | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.new.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `registry-auth-b64` = (base64-encoded `username:password` for registry.redhat.io service account) |
+  | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.new.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `pg-password` = (PostgreSQL password for portal DB), `registry-username` = (registry.redhat.io service account username), `registry-password` = (registry.redhat.io service account password) |
+  | `ocp-lab/apme-abbenay` | Secure Note | Custom fields: `abbenay-token` = (Abbenay AI provider token), `openrouter-api-key` = (OpenRouter API key), `vertex-anthropic-api-key` = (Vertex Anthropic API key), `config-yaml` = (Abbenay config.yaml contents) |
   | `ocp-lab/telegram-alertmanager` | Secure Note | Custom fields: `bot_token` = (Telegram bot token from BotFather), `chat_id` = (Telegram chat/group ID for alerts) |
   | `ocp-lab/graylog-admin` | Login | username: `admin`, password: (strong password -- used for Graylog web UI login) |
 

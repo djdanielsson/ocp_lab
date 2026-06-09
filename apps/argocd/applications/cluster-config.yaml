@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    targetRevision: new
+    targetRevision: apme
     path: apps/cluster-config
   syncPolicy:
     automated:

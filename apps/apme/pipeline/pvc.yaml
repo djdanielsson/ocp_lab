@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apme-build-workspace
+  namespace: apme
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: lvms-lvm-local-storage
+  resources:
+    requests:
+      storage: 5Gi

@@ -19,9 +19,6 @@ redhat-developer-hub:
           baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
         backend:
           baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
-        apme:
-          gateway:
-            baseUrl: http://redhat-rhaap-portal-apme-gateway:8080
         ansible:
           rhaap:
             checkSSL: false
@@ -36,42 +33,6 @@ redhat-developer-hub:
               '{{- include "catalog.providers.env" . }}':
                 orgs: "Default"
 
-# APME engine stack deployed alongside the portal
+# APME is deployed standalone via ansible/apme Helm chart (not embedded in portal)
 apme:
-  enabled: true
-  replicas: 1
-  # Use upstream default images from the public chart (no custom internal registry overrides)
-  # imagePullPolicy: Always
-  abbenay:
-    enabled: false
-    # image: ghcr.io/redhat-developer/abbenay:latest
-  gateway:
-    corsOrigins: "*"
-    # image: image-registry.openshift-image-registry.svc:5000/apme/apme-gateway:latest
-  # primary:
-  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-primary:latest
-  # native:
-  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-native:latest
-  # opa:
-  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-opa:latest
-  # ansible:
-  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-ansible:latest
-  gitleaks:
-    enabled: true
-    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-gitleaks:latest
-  collectionHealth:
-    enabled: true
-    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-collection-health:latest
-  depAudit:
-    enabled: true
-    # image: image-registry.openshift-image-registry.svc:5000/aap-portal/apme-dep-audit:latest
-  # galaxyProxy:
-  #   image: image-registry.openshift-image-registry.svc:5000/apme/apme-galaxy-proxy:latest
-  persistence:
-    storageClass: lvms-lvm-local-storage
-    sessions:
-      size: 5Gi
-    gatewayData:
-      size: 2Gi
-    proxyCache:
-      size: 5Gi
+  enabled: false

@@ -12,10 +12,11 @@ spec:
     - repoURL: https://github.com/djdanielsson/ocp_lab.git
       targetRevision: apme
       ref: values
-    - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      targetRevision: apme
-      path: apps/apme/chart
+    - repoURL: https://github.com/ansible/apme.git
+      targetRevision: main
+      path: deploy/helm/apme
       helm:
+        releaseName: apme
         valueFiles:
           - $values/apps/apme/values.yaml
   destination:
@@ -27,6 +28,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - SkipDryRunOnMissingResource=true
     retry:
       limit: 5
       backoff:

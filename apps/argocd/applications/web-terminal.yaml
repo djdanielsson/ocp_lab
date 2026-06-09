@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/djdanielsson/ocp_lab.git'
     path: 'apps/web-terminal/'
-    targetRevision: new
+    targetRevision: apme
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: openshift-operators

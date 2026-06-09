@@ -1,46 +1,26 @@
 # APME values override for OCP lab deployment
-# Minimal changes from upstream defaults — only what's needed for OpenShift.
+# Upstream chart: https://github.com/ansible/apme (deploy/helm/apme)
 
 image:
   registry: image-registry.openshift-image-registry.svc:5000/apme
   tag: latest
   pullPolicy: Always
 
-# OCP assigns UIDs/GIDs from namespace ranges via SCCs — null out the hardcoded
-# values so the restricted-v2 SCC can inject its own.
-podSecurityContext:
-  fsGroup: null
-securityContext:
-  runAsNonRoot: null
-  runAsUser: null
-
-# Disable optional validators to reduce resource pressure for testing
-gitleaks:
-  enabled: false
-collectionHealth:
-  enabled: false
-depAudit:
-  enabled: false
-
-# Abbenay AI is disabled by default — leave it off for initial testing
+# Abbenay AI provider
+# Token is a placeholder — real credentials are managed by ExternalSecret (apme-prereqs)
+# which overwrites the chart-created apme-secrets Secret with values from Vaultwarden.
 abbenay:
-  enabled: false
-
-# Ingress — OpenShift converts to a Route automatically
-ingress:
   enabled: true
-  annotations:
-    route.openshift.io/termination: edge
-    route.openshift.io/insecure-edge-termination-policy: Redirect
-  hosts:
-    - host: apme.apps.ocp.new.lab.danielsson.us.com
-      paths:
-        - path: /api
-          pathType: Prefix
-          service: gateway
-        - path: /
-          pathType: Prefix
-          service: ui
+  token: "managed-by-external-secrets"
+
+# OpenShift Route (instead of Ingress)
+route:
+  enabled: true
+  host: apme.apps.ocp.new.lab.danielsson.us.com
+
+# Disable Ingress since we use Route
+ingress:
+  enabled: false
 
 # Use smaller PVCs for lab with local storage
 persistence:
