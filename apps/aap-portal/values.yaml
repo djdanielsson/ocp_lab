@@ -22,6 +22,8 @@ redhat-developer-hub:
         ansible:
           rhaap:
             checkSSL: false
+          automationHub:
+            baseUrl: https://aap.apps.ocp.new.lab.danielsson.us.com
         auth:
           providers:
             rhaap:
@@ -32,6 +34,22 @@ redhat-developer-hub:
             rhaap:
               '{{- include "catalog.providers.env" . }}':
                 orgs: "Default"
+                sync:
+                  pahCollections:
+                    enabled: true
+                    repositories:
+                      - name: rh-certified
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
+                      - name: validated
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
+                      - name: published
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
 
 apme:
   enabled: false
