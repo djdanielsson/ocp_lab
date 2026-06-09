@@ -37,10 +37,10 @@ upstream:
       catalog:
         locations:
           - type: url
-            target: https://github.com/x2ansible/x2a-convertor/blob/main/catalog-info.yaml
+            target: https://github.com/djdanielsson/x2a-devhub-config/blob/main/catalog-info.yaml
             rules:
               - allow: [Component]
           - type: url
-            target: https://github.com/x2ansible/x2a-convertor/blob/main/templates/x2a-migration-template.yaml
+            target: https://github.com/djdanielsson/x2a-devhub-config/blob/main/templates/x2a-migration-template.yaml
             rules:
               - allow: [Template]

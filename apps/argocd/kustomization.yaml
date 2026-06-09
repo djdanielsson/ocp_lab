@@ -35,6 +35,7 @@ resources:
   - applications/privatebin.yaml
   - applications/x2a-devhub-secrets.yaml
   - applications/x2a-devhub.yaml
+  - applications/x2a-devhub-tekton.yaml
   - applications/graylog-mongodb-operator.yaml
   - applications/graylog-prereqs.yaml
   - applications/graylog.yaml
