@@ -4,6 +4,12 @@
 global:
   clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
   host: x2a.apps.ocp.new.lab.danielsson.us.com
+  dynamic:
+    includes:
+      - dynamic-plugins.default.yaml
+    plugins:
+      - package: ./dynamic-plugins/dist/roadiehq-scaffolder-backend-module-http-request-dynamic
+        disabled: false
 
 upstream:
   postgresql:
@@ -26,6 +32,12 @@ upstream:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      proxy:
+        endpoints:
+          /x2a-trigger:
+            target: http://el-x2a-migration.x2a-devhub.svc.cluster.local:8080
+            changeOrigin: true
+            allowedMethods: ['POST']
       auth:
         environment: development
         session:
