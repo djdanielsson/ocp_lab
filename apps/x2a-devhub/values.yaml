@@ -16,12 +16,12 @@ upstream:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       backend:
         baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
-      signInPage: oauth2Proxy
+      signInPage: guest
       auth:
         environment: production
         providers:
-          github: null
-          oauth2Proxy: {}
+          guest:
+            dangerouslyAllowOutsideDevelopment: true
       catalog:
         locations:
           - type: url
