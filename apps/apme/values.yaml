@@ -6,12 +6,16 @@ image:
   tag: latest
   pullPolicy: Always
 
-# Abbenay AI provider
-# Token is a placeholder — real credentials are managed by ExternalSecret (apme-prereqs)
-# which overwrites the chart-created apme-secrets Secret with values from Vaultwarden.
 abbenay:
   enabled: true
   token: "managed-by-external-secrets"
+  vertexAnthropic:
+    enabled: true
+    project: "managed-by-external-secrets"
+    region: us-east5
+    models:
+      - claude-sonnet-4@20250514
+    existingGcpSecret: apme-gcp-credentials
 
 # OpenShift Route (instead of Ingress)
 route:

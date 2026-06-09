@@ -12,6 +12,15 @@ redhat-developer-hub:
     postgresql:
       auth:
         existingSecret: redhat-rhaap-portal-postgresql-creds
+      primary:
+        extraVolumes:
+          - name: pg-override
+            configMap:
+              name: portal-postgresql-override
+        extraVolumeMounts:
+          - name: pg-override
+            mountPath: /opt/app-root/src/postgresql-cfg
+            readOnly: true
     backstage:
       appConfig:
         app:
