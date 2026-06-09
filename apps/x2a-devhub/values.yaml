@@ -10,6 +10,9 @@ upstream:
     auth:
       existingSecret: x2a-devhub-postgresql-creds
   backstage:
+    extraEnvVars:
+      - name: NODE_TLS_REJECT_UNAUTHORIZED
+        value: "0"
     extraEnvVarsSecrets:
       - x2a-devhub-aap-auth
     appConfig:
@@ -24,14 +27,19 @@ upstream:
         providers:
           oidc:
             production:
-              metadataUrl: ${AAP_HOST_URL}/o/.well-known/openid-configuration
+              metadataUrl: ${AAP_HOST_URL}/o/.well-known/openid-configuration/
               clientId: ${AAP_OAUTH_CLIENT_ID}
               clientSecret: ${AAP_OAUTH_CLIENT_SECRET}
               callbackUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com/api/auth/oidc/handler/frame
+              scope: openid read
+              additionalScopes:
+                - openid
+                - read
               signIn:
                 resolvers:
-                  - resolver: emailMatchingUserEntityProfileEmail
+                  - resolver: preferredUsernameMatchingUserEntityName
                   - resolver: emailLocalPartMatchingUserEntityName
+                dangerouslyAllowSignInWithoutUserInCatalog: true
       catalog:
         locations:
           - type: url
