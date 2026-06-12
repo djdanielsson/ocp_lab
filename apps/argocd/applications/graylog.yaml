@@ -64,6 +64,10 @@ spec:
         - .spec.template.metadata
         - .spec.template.spec.containers[]?.resources
         - .spec.template.spec.initContainers[]?.resources
+    - kind: Secret
+      jsonPointers:
+        - /data
+        - /stringData
   syncPolicy:
     automated:
       prune: true
@@ -72,6 +76,7 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - SkipDryRunOnMissingResource=true
+      - RespectIgnoreDifferences=true
     retry:
       limit: 10
       backoff:
