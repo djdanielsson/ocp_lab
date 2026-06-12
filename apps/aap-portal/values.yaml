@@ -16,9 +16,9 @@ redhat-developer-hub:
       appConfig:
         app:
           title: "AAP Self-Service Portal"
-          baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
+          baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
         backend:
-          baseUrl: https://redhat-rhaap-portal-aap-portal.apps.ocp.new.lab.danielsson.us.com
+          baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
         ansible:
           rhaap:
             checkSSL: false
