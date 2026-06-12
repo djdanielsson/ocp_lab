@@ -15,7 +15,7 @@ redhat-developer-hub:
     backstage:
       appConfig:
         app:
-          title: "AAP Self-Service Portal"
+          title: "Automation Portal"
           baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
         backend:
           baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
