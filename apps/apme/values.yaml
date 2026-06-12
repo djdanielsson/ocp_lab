@@ -11,7 +11,6 @@ abbenay:
   token: "managed-by-external-secrets"
   vertexAnthropic:
     enabled: true
-    project: "managed-by-external-secrets"
     region: us-east5
     models:
       - claude-sonnet-4@20250514

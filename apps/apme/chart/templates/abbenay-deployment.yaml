@@ -50,6 +50,17 @@ spec:
                   name: {{ include "apme.fullname" . }}-secrets
                   key: vertex-anthropic-api-key
                   optional: true
+            {{- if .Values.abbenay.vertexAnthropic.enabled }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/run/secrets/gcp/service-account-key.json
+            - name: ANTHROPIC_VERTEX_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.abbenay.vertexAnthropic.existingGcpSecret }}
+                  key: vertex-project-id
+            - name: CLOUD_ML_REGION
+              value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
+            {{- end }}
             - name: XDG_RUNTIME_DIR
               value: /tmp/abbenay-run
           ports:
@@ -58,4 +69,16 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.abbenay.resources | nindent 12 }}
+          {{- if .Values.abbenay.vertexAnthropic.enabled }}
+          volumeMounts:
+            - name: gcp-credentials
+              mountPath: /var/run/secrets/gcp
+              readOnly: true
+          {{- end }}
+      {{- if .Values.abbenay.vertexAnthropic.enabled }}
+      volumes:
+        - name: gcp-credentials
+          secret:
+            secretName: {{ .Values.abbenay.vertexAnthropic.existingGcpSecret }}
+      {{- end }}
 {{- end }}

@@ -133,6 +133,12 @@ abbenay:
   apiKeys:
     openrouterApiKey: ""
     vertexAnthropicApiKey: ""
+  vertexAnthropic:
+    enabled: false
+    region: us-east5
+    models: []
+    # Name of an existing K8s Secret containing service-account-key.json and vertex-project-id
+    existingGcpSecret: ""
   resources:
     requests:
       cpu: 250m

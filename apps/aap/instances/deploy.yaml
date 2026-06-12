@@ -14,7 +14,7 @@ spec:
   service_type: ClusterIP
   ingress_type: Route
   no_log: true
-  redis_mode: cluster
+  redis_mode: standalone
   image_pull_policy: Always
   hostname: aap.apps.ocp.new.lab.danielsson.us.com
   admin_password_secret: aap-admin-password
