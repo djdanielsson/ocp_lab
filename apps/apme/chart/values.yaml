@@ -193,8 +193,5 @@ serviceAccount:
   name: ""
 
 podAnnotations: {}
-podSecurityContext:
-  fsGroup: 1000
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
+podSecurityContext: {}
+securityContext: {}
