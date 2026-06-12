@@ -69,16 +69,22 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.abbenay.resources | nindent 12 }}
-          {{- if .Values.abbenay.vertexAnthropic.enabled }}
           volumeMounts:
+            - name: abbenay-config
+              mountPath: /.config/abbenay
+              readOnly: true
+            {{- if .Values.abbenay.vertexAnthropic.enabled }}
             - name: gcp-credentials
               mountPath: /var/run/secrets/gcp
               readOnly: true
-          {{- end }}
-      {{- if .Values.abbenay.vertexAnthropic.enabled }}
+            {{- end }}
       volumes:
+        - name: abbenay-config
+          secret:
+            secretName: {{ include "apme.fullname" . }}-abbenay-config
+        {{- if .Values.abbenay.vertexAnthropic.enabled }}
         - name: gcp-credentials
           secret:
             secretName: {{ .Values.abbenay.vertexAnthropic.existingGcpSecret }}
-      {{- end }}
+        {{- end }}
 {{- end }}
