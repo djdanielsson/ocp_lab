@@ -6,6 +6,7 @@ metadata:
 spec:
   feature_flags:
     FEATURE_DISPATCHERD_ENABLED: True
+    FEATURE_DASHBOARD_COLLECTION_ENABLED: true
   mcp:
     disabled: false
     allow_write_operations: true
