@@ -58,9 +58,12 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: StatefulSet
-      jsonPointers:
-        - /spec/persistentVolumeClaimRetentionPolicy
-        - /spec/volumeClaimTemplates/0/status
+      jqPathExpressions:
+        - .spec.persistentVolumeClaimRetentionPolicy
+        - .spec.volumeClaimTemplates[]?.status
+        - .spec.template.metadata
+        - .spec.template.spec.containers[]?.resources
+        - .spec.template.spec.initContainers[]?.resources
   syncPolicy:
     automated:
       prune: true
