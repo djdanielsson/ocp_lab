@@ -135,9 +135,10 @@ abbenay:
     vertexAnthropicApiKey: ""
   vertexAnthropic:
     enabled: false
+    project: ""
     region: us-east5
     models: []
-    # Name of an existing K8s Secret containing service-account-key.json and vertex-project-id
+    # Name of an existing K8s Secret containing service-account-key.json
     existingGcpSecret: ""
   resources:
     requests:

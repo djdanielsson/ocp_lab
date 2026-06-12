@@ -11,6 +11,7 @@ abbenay:
   token: "managed-by-external-secrets"
   vertexAnthropic:
     enabled: true
+    project: "itpc-gcp-global-revenue-claude"
     region: us-east5
     models:
       - claude-sonnet-4@20250514
