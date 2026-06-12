@@ -22,6 +22,11 @@ spec:
         releaseName: x2a-devhub
         valueFiles:
           - $values/apps/x2a-devhub/values.yaml
+  ignoreDifferences:
+    - kind: Secret
+      jsonPointers:
+        - /data
+        - /stringData
   syncPolicy:
     automated:
       prune: true

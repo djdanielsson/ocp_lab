@@ -55,6 +55,12 @@ spec:
           podSecurityContext:
             runAsUser: 1000
             fsGroup: 1000
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/persistentVolumeClaimRetentionPolicy
+        - /spec/volumeClaimTemplates/0/status
   syncPolicy:
     automated:
       prune: true

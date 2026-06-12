@@ -6,5 +6,5 @@ metadata:
 spec:
   cluster:
     name: aap-postgres
-  name: controller
-  owner: controller
+  name: automationcontroller
+  owner: automationcontroller
