@@ -58,12 +58,8 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: StatefulSet
-      jqPathExpressions:
-        - .spec.persistentVolumeClaimRetentionPolicy
-        - .spec.volumeClaimTemplates[]?.status
-        - .spec.template.metadata
-        - .spec.template.spec.containers[]?.resources
-        - .spec.template.spec.initContainers[]?.resources
+      managedFieldsManagers:
+        - kube-controller-manager
     - kind: Secret
       jsonPointers:
         - /data
