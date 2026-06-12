@@ -7,8 +7,8 @@ metadata:
 spec:
   schedule: "0 * * * *"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 0
@@ -24,6 +24,20 @@ spec:
                 - -c
                 - |
                   set -euo pipefail
+
+                  cleanup_old_runs() {
+                    echo "Cleaning up old PipelineRuns..."
+                    OLD_RUNS=$(oc get pipelineruns -n apme \
+                      -l tekton.dev/pipeline=apme-build \
+                      -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true)
+                    for run in $OLD_RUNS; do
+                      echo "Deleting old PipelineRun: $run"
+                      oc delete pipelinerun "$run" -n apme --ignore-not-found=true 2>/dev/null || true
+                    done
+                  }
+
+                  cleanup_old_runs
+
                   RUN_NAME="apme-build-$(date +%Y%m%d-%H%M%S)"
                   cat <<YAML | oc apply -f -
                   apiVersion: tekton.dev/v1
@@ -31,6 +45,8 @@ spec:
                   metadata:
                     name: ${RUN_NAME}
                     namespace: apme
+                    labels:
+                      tekton.dev/pipeline: apme-build
                   spec:
                     pipelineRef:
                       name: apme-build
