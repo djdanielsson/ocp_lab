@@ -58,8 +58,8 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: StatefulSet
-      managedFieldsManagers:
-        - kube-controller-manager
+      jqPathExpressions:
+        - .spec
     - kind: Secret
       jsonPointers:
         - /data
