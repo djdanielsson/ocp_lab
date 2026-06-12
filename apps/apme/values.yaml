@@ -17,6 +17,10 @@ abbenay:
       - claude-sonnet-4@20250514
     existingGcpSecret: apme-gcp-credentials
 
+# OpenShift requires managed UID/GID ranges — clear hardcoded values
+podSecurityContext: {}
+securityContext: {}
+
 # OpenShift Route (instead of Ingress)
 route:
   enabled: true
