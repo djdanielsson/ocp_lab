@@ -17,6 +17,8 @@ spec:
       path: deploy/helm/apme
       helm:
         releaseName: apme
+        apiVersions:
+          - route.openshift.io/v1
         valueFiles:
           - $values/apps/apme/values.yaml
   destination:
