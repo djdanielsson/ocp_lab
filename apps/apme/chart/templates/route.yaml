@@ -1,0 +1,43 @@
+{{- if and .Values.route .Values.route.enabled ((.Capabilities.APIVersions.Has "route.openshift.io/v1")) }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "apme.fullname" . }}-ui
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
+spec:
+  host: {{ .Values.route.host }}
+  path: /
+  to:
+    kind: Service
+    name: {{ include "apme.fullname" . }}-ui
+    weight: 100
+  port:
+    targetPort: 8081
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "apme.fullname" . }}-api
+  labels:
+    {{- include "apme.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+spec:
+  host: {{ .Values.route.host }}
+  path: /api
+  to:
+    kind: Service
+    name: {{ include "apme.fullname" . }}-gateway
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
