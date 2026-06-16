@@ -23,14 +23,18 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "apme.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: abbenay
           image: {{ .Values.abbenay.image }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           args: ["daemon", "--grpc-host", "0.0.0.0", "--grpc-port", "50057"]
           env:
             - name: APME_ABBENAY_TOKEN
@@ -50,30 +54,45 @@ spec:
                   name: {{ include "apme.fullname" . }}-secrets
                   key: vertex-anthropic-api-key
                   optional: true
-            {{- if .Values.abbenay.vertexAnthropic.enabled }}
-            - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /var/run/secrets/gcp/service-account-key.json
-            - name: ANTHROPIC_VERTEX_PROJECT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.abbenay.vertexAnthropic.existingGcpSecret }}
-                  key: vertex-project-id
-            - name: CLOUD_ML_REGION
-              value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
+            {{- if .Values.abbenay.aiModel }}
+            - name: APME_AI_MODEL
+              value: {{ .Values.abbenay.aiModel | quote }}
             {{- end }}
             - name: XDG_RUNTIME_DIR
               value: /tmp/abbenay-run
+            - name: XDG_CONFIG_HOME
+              value: /etc/abbenay-config
+            {{- if .Values.abbenay.vertexAnthropic.enabled }}
+            {{- if .Values.abbenay.vertexAnthropic.existingGcpSecret }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/run/secrets/gcp/service-account-key.json
+            {{- end }}
+            - name: ANTHROPIC_VERTEX_PROJECT_ID
+              value: {{ .Values.abbenay.vertexAnthropic.project | quote }}
+            - name: CLOUD_ML_REGION
+              value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
+            {{- end }}
           ports:
             - name: grpc
               containerPort: 50057
               protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 50057
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50057
+            initialDelaySeconds: 15
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.abbenay.resources | nindent 12 }}
           volumeMounts:
             - name: abbenay-config
-              mountPath: /.config/abbenay
+              mountPath: /etc/abbenay-config/abbenay
               readOnly: true
-            {{- if .Values.abbenay.vertexAnthropic.enabled }}
+            {{- if and .Values.abbenay.vertexAnthropic.enabled .Values.abbenay.vertexAnthropic.existingGcpSecret }}
             - name: gcp-credentials
               mountPath: /var/run/secrets/gcp
               readOnly: true
@@ -82,7 +101,7 @@ spec:
         - name: abbenay-config
           secret:
             secretName: {{ include "apme.fullname" . }}-abbenay-config
-        {{- if .Values.abbenay.vertexAnthropic.enabled }}
+        {{- if and .Values.abbenay.vertexAnthropic.enabled .Values.abbenay.vertexAnthropic.existingGcpSecret }}
         - name: gcp-credentials
           secret:
             secretName: {{ .Values.abbenay.vertexAnthropic.existingGcpSecret }}

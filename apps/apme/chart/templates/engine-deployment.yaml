@@ -7,6 +7,10 @@ metadata:
     app.kubernetes.io/component: engine
 spec:
   replicas: {{ .Values.engine.replicas }}
+  {{- with .Values.engine.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "apme.selectorLabels" . | nindent 6 }}
@@ -26,16 +30,22 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "apme.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         # -- Primary orchestrator
         - name: primary
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "primary" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
+            - name: UV_CACHE_DIR
+              value: /tmp/uv-cache
             - name: APME_PRIMARY_LISTEN
               value: "0.0.0.0:50051"
             - name: NATIVE_GRPC_ADDRESS
@@ -77,6 +87,16 @@ spec:
             - name: grpc
               containerPort: 50051
               protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 15
+            periodSeconds: 30
           volumeMounts:
             - name: sessions
               mountPath: /sessions
@@ -87,11 +107,23 @@ spec:
         - name: native
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "native" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_NATIVE_VALIDATOR_LISTEN
               value: "0.0.0.0:50055"
+          readinessProbe:
+            tcpSocket:
+              port: 50055
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50055
+            initialDelaySeconds: 15
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.engine.resources.native | nindent 12 }}
 
@@ -99,11 +131,23 @@ spec:
         - name: opa
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "opa" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_OPA_VALIDATOR_LISTEN
               value: "0.0.0.0:50054"
+          readinessProbe:
+            tcpSocket:
+              port: 50054
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50054
+            initialDelaySeconds: 15
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.engine.resources.opa | nindent 12 }}
 
@@ -111,13 +155,25 @@ spec:
         - name: ansible
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "ansible" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_ANSIBLE_VALIDATOR_LISTEN
               value: "0.0.0.0:50053"
             - name: APME_GALAXY_PROXY_URL
               value: "http://127.0.0.1:8765"
+          readinessProbe:
+            tcpSocket:
+              port: 50053
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50053
+            initialDelaySeconds: 15
+            periodSeconds: 30
           volumeMounts:
             - name: sessions
               mountPath: /sessions
@@ -130,11 +186,23 @@ spec:
         - name: gitleaks
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "gitleaks" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_GITLEAKS_VALIDATOR_LISTEN
               value: "0.0.0.0:50056"
+          readinessProbe:
+            tcpSocket:
+              port: 50056
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50056
+            initialDelaySeconds: 15
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.engine.resources.gitleaks | nindent 12 }}
         {{- end }}
@@ -144,11 +212,23 @@ spec:
         - name: collection-health
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "collection-health" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_COLLECTION_HEALTH_VALIDATOR_LISTEN
               value: "0.0.0.0:50058"
+          readinessProbe:
+            tcpSocket:
+              port: 50058
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50058
+            initialDelaySeconds: 15
+            periodSeconds: 30
           volumeMounts:
             - name: sessions
               mountPath: /sessions
@@ -162,11 +242,23 @@ spec:
         - name: dep-audit
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "dep-audit" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: APME_DEP_AUDIT_VALIDATOR_LISTEN
               value: "0.0.0.0:50059"
+          readinessProbe:
+            tcpSocket:
+              port: 50059
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50059
+            initialDelaySeconds: 15
+            periodSeconds: 30
           volumeMounts:
             - name: sessions
               mountPath: /sessions
@@ -179,8 +271,20 @@ spec:
         - name: galaxy-proxy
           image: {{ include "apme.image" (dict "registry" .Values.image.registry "name" "galaxy-proxy" "tag" .Values.image.tag "fallbackTag" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: 8765
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8765
+            initialDelaySeconds: 10
+            periodSeconds: 30
           volumeMounts:
             - name: proxy-cache
               mountPath: /cache

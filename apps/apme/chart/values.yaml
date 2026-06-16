@@ -15,6 +15,8 @@ fullnameOverride: ""
 # -- Engine stack (Primary + all validators + Galaxy Proxy)
 engine:
   replicas: 1
+  strategy:
+    type: Recreate
   resources:
     primary:
       requests:
@@ -91,6 +93,8 @@ depAudit:
 # -- Gateway (REST + gRPC reporting + SQLite persistence)
 gateway:
   replicas: 1
+  strategy:
+    type: Recreate
   resources:
     requests:
       cpu: 250m
@@ -130,6 +134,9 @@ abbenay:
   image: ghcr.io/redhat-developer/abbenay:2026.4.1-alpha
   token: ""
   aiModel: ""
+  # -- Set to true when secrets are managed externally (e.g. ExternalSecrets).
+  # Skips creating the Helm-managed apme-secrets Secret.
+  externalSecrets: false
   apiKeys:
     openrouterApiKey: ""
     vertexAnthropicApiKey: ""
@@ -147,6 +154,15 @@ abbenay:
     limits:
       cpu: "2"
       memory: 2Gi
+
+# -- OpenShift Route (alternative to Ingress for OCP clusters)
+route:
+  enabled: false
+  host: ""
+  annotations: {}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
 
 # -- Persistent volume claims
 persistence:
