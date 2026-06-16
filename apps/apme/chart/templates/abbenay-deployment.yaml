@@ -55,13 +55,9 @@ spec:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /var/run/secrets/gcp/service-account-key.json
             {{- end }}
-            - name: ANTHROPIC_VERTEX_PROJECT_ID
+            - name: GOOGLE_VERTEX_PROJECT
               value: {{ .Values.abbenay.vertexAnthropic.project | quote }}
-            - name: GOOGLE_VERTEX_PROJECT_ID
-              value: {{ .Values.abbenay.vertexAnthropic.project | quote }}
-            - name: CLOUD_ML_REGION
-              value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
-            - name: GOOGLE_VERTEX_REGION
+            - name: GOOGLE_VERTEX_LOCATION
               value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
             {{- end }}
           ports:
