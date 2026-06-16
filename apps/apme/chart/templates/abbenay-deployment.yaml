@@ -57,7 +57,11 @@ spec:
             {{- end }}
             - name: ANTHROPIC_VERTEX_PROJECT_ID
               value: {{ .Values.abbenay.vertexAnthropic.project | quote }}
+            - name: GOOGLE_VERTEX_PROJECT_ID
+              value: {{ .Values.abbenay.vertexAnthropic.project | quote }}
             - name: CLOUD_ML_REGION
+              value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
+            - name: GOOGLE_VERTEX_REGION
               value: {{ .Values.abbenay.vertexAnthropic.region | quote }}
             {{- end }}
           ports:
