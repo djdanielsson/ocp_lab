@@ -134,9 +134,6 @@ abbenay:
   image: ghcr.io/redhat-developer/abbenay:2026.4.1-alpha
   token: ""
   aiModel: ""
-  # -- Set to true when secrets are managed externally (e.g. ExternalSecrets).
-  # Skips creating the Helm-managed apme-secrets Secret.
-  externalSecrets: false
   apiKeys:
     openrouterApiKey: ""
     vertexAnthropicApiKey: ""

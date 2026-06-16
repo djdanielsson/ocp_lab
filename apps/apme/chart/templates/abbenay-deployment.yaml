@@ -42,18 +42,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "apme.fullname" . }}-secrets
                   key: abbenay-token
-            - name: OPENROUTER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "apme.fullname" . }}-secrets
-                  key: openrouter-api-key
-                  optional: true
-            - name: VERTEX_ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "apme.fullname" . }}-secrets
-                  key: vertex-anthropic-api-key
-                  optional: true
             {{- if .Values.abbenay.aiModel }}
             - name: APME_AI_MODEL
               value: {{ .Values.abbenay.aiModel | quote }}

@@ -8,8 +8,7 @@ image:
 
 abbenay:
   enabled: true
-  token: "managed-by-external-secrets"
-  externalSecrets: true
+  token: "c98da851d26be12ea16ed3f98f74dc7d"
   vertexAnthropic:
     enabled: true
     project: "itpc-gcp-global-revenue-claude"
