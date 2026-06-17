@@ -13,7 +13,7 @@ abbenay:
     vertex-claude:
       engine: vertex-anthropic
       models:
-        claude-sonnet-4@20250514: {}
+        claude-sonnet-4-6: {}
   gcp:
     project: "itpc-gcp-global-revenue-claude"
     location: us-east5
