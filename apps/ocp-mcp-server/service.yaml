@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocp-mcp-server
+  namespace: ocp-mcp-server
+  labels:
+    app: ocp-mcp-server
+spec:
+  selector:
+    app: ocp-mcp-server
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  type: ClusterIP

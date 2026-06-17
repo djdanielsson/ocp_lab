@@ -1,0 +1,45 @@
+# APME values override for OCP lab deployment
+# Upstream chart: https://github.com/ansible/apme (deploy/helm/apme)
+
+image:
+  registry: image-registry.openshift-image-registry.svc:5000/apme
+  tag: latest
+  pullPolicy: Always
+
+abbenay:
+  enabled: true
+  token: "c98da851d26be12ea16ed3f98f74dc7d"
+  providers:
+    vertex-claude:
+      engine: vertex-anthropic
+      models:
+        claude-sonnet-4-6: {}
+  gcp:
+    project: "itpc-gcp-global-revenue-claude"
+    location: us-east5
+    existingSecret: apme-gcp-credentials
+
+# OpenShift requires managed UID/GID ranges — clear hardcoded values
+podSecurityContext: {}
+securityContext: {}
+
+# OpenShift Route (instead of Ingress)
+route:
+  enabled: true
+  host: apme.apps.ocp.new.lab.danielsson.us.com
+
+# Disable Ingress since we use Route
+ingress:
+  enabled: false
+
+# Use smaller PVCs for lab with local storage
+persistence:
+  sessions:
+    size: 5Gi
+    storageClass: lvms-lvm-local-storage
+  gateway:
+    size: 2Gi
+    storageClass: lvms-lvm-local-storage
+  proxyCache:
+    size: 5Gi
+    storageClass: lvms-lvm-local-storage

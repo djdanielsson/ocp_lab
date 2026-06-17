@@ -1,0 +1,1020 @@
+---
+kind: GrafanaDashboard
+apiVersion: grafana.integreatly.org/v1beta1
+metadata:
+  name: klipper-dashboard
+  labels:
+    app: grafana
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  json: >
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "description": "Klipper 3D Printer monitoring via prometheus-klipper-exporter",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "panels": [],
+          "title": "Printer Status",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+          "id": 1,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "System Uptime",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_system_uptime{job=\"klipper\"}",
+              "legendFormat": "Uptime",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "short",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+          "id": 2,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Total Jobs",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_total_jobs{job=\"klipper\"}",
+              "legendFormat": "Jobs",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+          "id": 3,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Total Print Time",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_total_print_time{job=\"klipper\"}",
+              "legendFormat": "Print Time",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "lengthm",
+              "decimals": 1
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+          "id": 4,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Total Filament Used",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_total_filament_used{job=\"klipper\"} / 1000",
+              "legendFormat": "Filament",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "blue", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              },
+              "unit": "short",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+          "id": 5,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Job Queue Length",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_job_queue_length{job=\"klipper\"}",
+              "legendFormat": "Queue",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 }
+                ]
+              },
+              "unit": "short",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+          "id": 6,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Websocket Connections",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_moonraker_websocket_connections{job=\"klipper\"}",
+              "legendFormat": "Connections",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+          "id": 101,
+          "panels": [],
+          "title": "Current Print",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "dark-blue", "value": null },
+                  { "color": "blue", "value": 0.25 },
+                  { "color": "green", "value": 0.5 },
+                  { "color": "yellow", "value": 0.75 },
+                  { "color": "orange", "value": 0.95 }
+                ]
+              },
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 6, "x": 0, "y": 6 },
+          "id": 10,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "title": "Print Progress",
+          "type": "gauge",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_print_file_progress{job=\"klipper\"}",
+              "legendFormat": "Progress",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 6, "x": 6, "y": 6 },
+          "id": 11,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Printing Time",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_printing_time{job=\"klipper\"}",
+              "legendFormat": "Time",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "lengthmm",
+              "decimals": 1
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 6, "x": 12, "y": 6 },
+          "id": 12,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Filament Used (This Print)",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_print_filament_used{job=\"klipper\"}",
+              "legendFormat": "Filament",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "velocityms",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 6, "x": 18, "y": 6 },
+          "id": 13,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Print Speed",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_speed{job=\"klipper\"} / 60",
+              "legendFormat": "Speed",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
+          "id": 102,
+          "panels": [],
+          "title": "Temperatures",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "°C",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "celsius"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": ".*Target.*" },
+                "properties": [
+                  { "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10,5] } },
+                  { "id": "custom.lineWidth", "value": 1 },
+                  { "id": "custom.fillOpacity", "value": 0 }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "id": 20,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Extruder Temperature",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_extruder_temperature{job=\"klipper\"}",
+              "legendFormat": "Actual",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_extruder_target{job=\"klipper\"}",
+              "legendFormat": "Target",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "°C",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "celsius"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": ".*Target.*" },
+                "properties": [
+                  { "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10,5] } },
+                  { "id": "custom.lineWidth", "value": 1 },
+                  { "id": "custom.fillOpacity", "value": 0 }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "id": 21,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Heater Bed Temperature",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_heater_bed_temperature{job=\"klipper\"}",
+              "legendFormat": "Actual",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_heater_bed_target{job=\"klipper\"}",
+              "legendFormat": "Target",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "°C",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+          "id": 22,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Temperature Sensors",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_temperature_sensor_temperature{job=\"klipper\"}",
+              "legendFormat": "{{sensor}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 28 },
+          "id": 103,
+          "panels": [],
+          "title": "Fans & Cooling",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "%",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 29 },
+          "id": 30,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Fan Speed",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_fan_speed{job=\"klipper\"}",
+              "legendFormat": "Part Fan",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_controller_fan_speed{job=\"klipper\"}",
+              "legendFormat": "Controller Fan {{fan}}",
+              "refId": "B"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_generic_fan_speed{job=\"klipper\"}",
+              "legendFormat": "Fan {{fan}}",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "%",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 29 },
+          "id": 31,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Heater Power",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_extruder_power{job=\"klipper\"}",
+              "legendFormat": "Extruder",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_heater_bed_power{job=\"klipper\"}",
+              "legendFormat": "Heater Bed",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 37 },
+          "id": 104,
+          "panels": [],
+          "title": "Toolhead & Motion",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "mm",
+                "fillOpacity": 0,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "none",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "lengthmm"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 38 },
+          "id": 40,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi" } },
+          "title": "Toolhead Position",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_position_x{job=\"klipper\"}",
+              "legendFormat": "X",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_position_y{job=\"klipper\"}",
+              "legendFormat": "Y",
+              "refId": "B"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_position_z{job=\"klipper\"}",
+              "legendFormat": "Z",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "fillOpacity": 0,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "none",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 38 },
+          "id": 41,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Speed & Acceleration",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_toolhead_max_velocity{job=\"klipper\"}",
+              "legendFormat": "Max Velocity",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_toolhead_max_accel{job=\"klipper\"}",
+              "legendFormat": "Max Accel",
+              "refId": "B"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_speed_factor{job=\"klipper\"} * 100",
+              "legendFormat": "Speed Factor %",
+              "refId": "C"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_gcode_extrude_factor{job=\"klipper\"} * 100",
+              "legendFormat": "Extrude Factor %",
+              "refId": "D"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 46 },
+          "id": 105,
+          "panels": [],
+          "title": "System Resources",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "%",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 47 },
+          "id": 50,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "CPU Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_system_cpu{job=\"klipper\"} * 100",
+              "legendFormat": "System CPU",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_moonraker_cpu_usage{job=\"klipper\"}",
+              "legendFormat": "Moonraker CPU",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "KiB",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "deckbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 47 },
+          "id": 51,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Memory",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_system_memory_used{job=\"klipper\"}",
+              "legendFormat": "Used",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_system_memory_available{job=\"klipper\"}",
+              "legendFormat": "Available",
+              "refId": "B"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_moonraker_memory_kb{job=\"klipper\"}",
+              "legendFormat": "Moonraker RSS",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "°C",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 55 },
+          "id": 52,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "System CPU Temperature",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_system_cpu_temp{job=\"klipper\"}",
+              "legendFormat": "CPU Temp",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "bytes",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 55 },
+          "id": 53,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi" } },
+          "title": "Disk Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_disk_usage_used{job=\"klipper\"}",
+              "legendFormat": "Used",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_disk_usage_available{job=\"klipper\"}",
+              "legendFormat": "Available",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 63 },
+          "id": 106,
+          "panels": [],
+          "title": "Network",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "bytes/s",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 64 },
+          "id": 60,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Network TX Bandwidth",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_network_tx_bandwidth{job=\"klipper\"}",
+              "legendFormat": "{{interface}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "bytes",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 64 },
+          "id": 61,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi" } },
+          "title": "Network RX/TX Bytes",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_network_rx_bytes{job=\"klipper\"}",
+              "legendFormat": "{{interface}} RX",
+              "refId": "A"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "klipper_network_tx_bytes{job=\"klipper\"}",
+              "legendFormat": "{{interface}} TX",
+              "refId": "B"
+            }
+          ]
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "current": { "selected": false, "text": "prometheus", "value": "prometheus" },
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "multi": false,
+            "name": "datasource",
+            "options": [],
+            "query": "prometheus",
+            "refresh": 1,
+            "regex": "",
+            "type": "datasource"
+          }
+        ]
+      },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Klipper 3D Printer",
+      "uid": null,
+      "version": 1,
+      "weekStart": ""
+    }

@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: graylog
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: graylog-sa
+  namespace: graylog
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: graylog-datanode-sa
+  namespace: graylog
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: graylog-anyuid
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:anyuid
+subjects:
+  - kind: ServiceAccount
+    name: graylog-sa
+    namespace: graylog
+  - kind: ServiceAccount
+    name: graylog-datanode-sa
+    namespace: graylog
+  - kind: ServiceAccount
+    name: default
+    namespace: graylog
+  - kind: ServiceAccount
+    name: graylog-mongo-sa
+    namespace: graylog
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-operator
+    namespace: operators
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-appdb
+    namespace: operators
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-database-pods
+    namespace: operators
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: graylog
+  namespace: graylog
+spec:
+  to:
+    kind: Service
+    name: graylog-svc
+    weight: 100
+  port:
+    targetPort: 9000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graylog-tcp-input
+  namespace: graylog
+spec:
+  type: ClusterIP
+  selector:
+    app: graylog-app
+    app.kubernetes.io/instance: graylog
+    app.kubernetes.io/name: graylog
+  ports:
+    - name: raw-tcp
+      port: 5555
+      targetPort: 5555
+      protocol: TCP

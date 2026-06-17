@@ -1,6 +1,0 @@
-[allowlist]
-  description = "Global Allowlist"
-
-  paths = [
-    '''apps/external-secrets/**/*.yaml''',
-  ]

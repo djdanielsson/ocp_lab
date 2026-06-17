@@ -1,0 +1,41 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aap-portal
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  destination:
+    namespace: aap-portal
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://charts.openshift.io/
+      chart: redhat-rhaap-portal
+      targetRevision: 2.2.0
+      helm:
+        releaseName: redhat-rhaap-portal
+        valueFiles:
+          - $values/apps/aap-portal/values.yaml
+  ignoreDifferences:
+    - kind: Secret
+      jsonPointers:
+        - /data
+        - /stringData
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

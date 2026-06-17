@@ -1,0 +1,12 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: alertmanager-main
+  namespace: monitoring
+  labels:
+    alertmanager: main
+spec:
+  replicas: 1
+  securityContext: {}
+  configSecret: alertmanager-config

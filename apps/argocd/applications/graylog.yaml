@@ -1,0 +1,82 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: graylog
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  destination:
+    namespace: graylog
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://graylog2.github.io/graylog-helm
+    chart: graylog
+    targetRevision: "1.0.0"
+    helm:
+      valuesObject:
+        global:
+          storageClass: lvms-lvm-local-storage
+        graylog:
+          replicas: 1
+          config:
+            customSecretPepper: "af6XNs5dzuuGDMP1eJoP08Huk5MCuR8mIstW95ijpjNziAvQNBkJP4wizpdTkEFLMnyoUJ5uohTI6rHN88x3a5wyaRBChjqM"
+          inputs:
+            - name: input-gelf
+              port: 12201
+              targetPort: 12201
+              protocol: TCP
+            - name: input-forwarder
+              port: 13301
+              targetPort: 13301
+              protocol: TCP
+            - name: input-raw-tcp
+              port: 5555
+              targetPort: 5555
+              protocol: TCP
+          serviceAccount:
+            name: graylog-sa
+            create: false
+          extraEnv:
+            - name: GRAYLOG_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_ROOT_USERNAME
+            - name: GRAYLOG_ROOT_PASSWORD_SHA2
+              valueFrom:
+                secretKeyRef:
+                  name: graylog-admin-credentials
+                  key: GRAYLOG_ROOT_PASSWORD_SHA2
+        datanode:
+          replicas: 1
+          podSecurityContext:
+            runAsUser: 1000
+            fsGroup: 1000
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec
+    - kind: Secret
+      jsonPointers:
+        - /data
+        - /stringData
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
+      - RespectIgnoreDifferences=true
+      - ServerSideDiff=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

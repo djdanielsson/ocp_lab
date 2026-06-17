@@ -3,17 +3,43 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - applications/cluster-config.yaml
   - applications/external-secrets-operator.yaml
   - applications/external-secrets-bitwarden.yaml
+  - applications/cert-manager-operator.yaml
+  - applications/ocp-virt-operator.yaml
   - applications/aap-pg-operator.yaml
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
   - applications/aap-monitoring.yaml
+  # - applications/loki-operator.yaml
+  # - applications/loki-instance.yaml
   - applications/monitoring-operator.yaml
   - applications/monitoring-components.yaml
   - applications/devspaces-operator.yaml
   - applications/devspaces-instance.yaml
+  - applications/ocp-virt-instance.yaml
+  - applications/cert-manager-instance.yaml
+  - applications/authentik-prereqs.yaml
+  - applications/authentik.yaml
+  - applications/tailscale.yaml
+  - applications/aap-portal-secrets.yaml
+  - applications/aap-portal.yaml
   - applications/pipelines.yaml
   - applications/web-terminal.yaml
-#  - applications/kubeshark.yaml
+  - applications/ollama.yaml
+  - applications/ocp-mcp-server.yaml
+  - applications/kubeshark.yaml
+  - applications/netobserv-operator.yaml
+  - applications/netobserv-instance.yaml
+  - applications/privatebin.yaml
+  - applications/x2a-devhub-secrets.yaml
+  - applications/x2a-devhub.yaml
+  - applications/x2a-devhub-tekton.yaml
+  - applications/graylog-mongodb-operator.yaml
+  - applications/graylog-prereqs.yaml
+  - applications/graylog.yaml
+  - applications/apme-prereqs.yaml
+  - applications/apme-pipeline.yaml
+  - applications/apme.yaml
 #  - applications/github-runners.yaml

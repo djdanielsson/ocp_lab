@@ -18,6 +18,12 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: external-secrets
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: external-secrets
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: bitwarden-cli-sync
       ports:
         - port: 8087
           protocol: TCP

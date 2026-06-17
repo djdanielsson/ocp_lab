@@ -1,0 +1,41 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: x2a-devhub
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  destination:
+    namespace: x2a-devhub
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://charts.openshift.io/
+      chart: redhat-developer-hub
+      targetRevision: 1.9.3
+      helm:
+        releaseName: x2a-devhub
+        valueFiles:
+          - $values/apps/x2a-devhub/values.yaml
+  ignoreDifferences:
+    - kind: Secret
+      jsonPointers:
+        - /data
+        - /stringData
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

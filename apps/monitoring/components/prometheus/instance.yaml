@@ -13,6 +13,9 @@ spec:
   serviceMonitorSelector:
     matchLabels:
       team: frontend
+  additionalScrapeConfigs:
+    name: additional-scrape-configs
+    key: prometheus-additional.yaml
   ruleSelector:
     matchLabels:
       role: prometheus-rulefiles

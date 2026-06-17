@@ -1,0 +1,21 @@
+---
+apiVersion: loki.grafana.com/v1
+kind: LokiStack
+metadata:
+  name: loki
+  namespace: loki
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  size: 1x.demo
+  storage:
+    schemas:
+    - version: v13
+      effectiveDate: "2024-10-25"
+    secret:
+      name: loki-s3-credentials
+      type: s3
+  storageClassName: lvms-lvm-local-storage
+  tenants:
+    mode: openshift-logging
