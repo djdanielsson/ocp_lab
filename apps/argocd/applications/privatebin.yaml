@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: privatebin
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      path: apps/privatebin/
+      targetRevision: main
+
+    - repoURL: https://privatebin.github.io/helm-chart
+      chart: privatebin
+      targetRevision: 0.23.3
+      helm:
+        values: |
+          controller:
+            kind: StatefulSet
+            pvc:
+              requests: 1Gi
+          ingress:
+            enabled: true
+            annotations:
+              route.openshift.io/termination: edge
+              route.openshift.io/insecure-edge-termination-policy: Redirect
+            hosts:
+              - host: privatebin.apps.ocp.new.lab.danielsson.us.com
+                paths:
+                  - path: /
+                    pathType: ImplementationSpecific
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: privatebin
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

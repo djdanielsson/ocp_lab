@@ -1,16 +1,16 @@
 ---
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: external-secrets-operator
-  namespace: external-secrets
-spec: {}
----
+# apiVersion: operators.coreos.com/v1
+# kind: OperatorGroup
+# metadata:
+#   name: external-secrets-operator
+#   namespace: external-secrets
+# spec: {}
+# ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: external-secrets-operator
-  namespace: external-secrets
+  namespace: openshift-operators
 spec:
   channel: stable
   installPlanApproval: Automatic

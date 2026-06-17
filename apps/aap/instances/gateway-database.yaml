@@ -6,5 +6,5 @@ metadata:
 spec:
   cluster:
     name: aap-postgres
-  name: gateway
-  owner: gateway
+  name: automationgateway
+  owner: automationgateway

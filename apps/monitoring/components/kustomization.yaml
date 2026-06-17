@@ -1,0 +1,38 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Prometheus
+  - prometheus/instance.yaml
+  - prometheus/service-account.yaml
+  - prometheus/route.yaml
+  - prometheus/additional-scrape-config.yaml
+  # Grafana
+  - grafana/instance.yaml
+  - grafana/datasources.yaml
+  - grafana/datasource-loki.yaml
+  - grafana/admin-credentials-secret.yaml
+  - grafana/route.yaml
+  # Dashboards
+  - dashboards/aap-gateway.yaml
+  - dashboards/truenas.yaml
+  - dashboards/portainer.yaml
+  - dashboards/klipper.yaml
+  - dashboards/ipmi.yaml
+  # Exporters
+  - exporters/ipmi-exporter.yaml
+  - exporters/klipper-exporter.yaml
+  # ServiceMonitors
+  - servicemonitors/aap-servicemonitor.yaml
+  - servicemonitors/json-servicemonitor.yaml
+  - servicemonitors/postgres-servicemonitor.yaml
+  # Secrets
+  - secrets/aap-admin-secret.yaml
+  - secrets/aap-admin-password-secret.yaml
+  # AlertManager
+  - alertmanager/instance.yaml
+  - alertmanager/config-secret.yaml
+  - alertmanager/service.yaml
+  - alertmanager/route.yaml
+  - alertmanager/rules.yaml

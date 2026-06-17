@@ -1,0 +1,39 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bitwarden-cli-sync
+  namespace: external-secrets
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: bitwarden-cli-sync
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: sync
+            image: quay.io/curl/curl:latest
+            command:
+            - curl
+            - --silent
+            - --show-error
+            - --fail
+            - --max-time
+            - "30"
+            - -X
+            - POST
+            - http://bitwarden-cli.external-secrets.svc.cluster.local:8087/sync
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                cpu: 50m
+                memory: 64Mi

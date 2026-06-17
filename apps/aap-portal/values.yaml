@@ -1,0 +1,55 @@
+# AAP Portal — lab values override for OCP
+# Uses official redhat-rhaap-portal chart v2.2.0 with OCI plugin delivery.
+# Plugins are pulled dynamically from registry.redhat.io as OCI artifacts
+# at startup — no custom image build or in-cluster plugin registry needed.
+
+redhat-developer-hub:
+  global:
+    clusterRouterBase: apps.ocp.new.lab.danielsson.us.com
+    pluginMode: oci
+    imageTagInfo: "2.2"
+  upstream:
+    postgresql:
+      auth:
+        existingSecret: redhat-rhaap-portal-postgresql-creds
+    backstage:
+      appConfig:
+        app:
+          title: "Automation Portal"
+          baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
+        backend:
+          baseUrl: https://aap-portal.apps.ocp.new.lab.danielsson.us.com
+        ansible:
+          rhaap:
+            checkSSL: false
+          automationHub:
+            baseUrl: https://aap.apps.ocp.new.lab.danielsson.us.com
+        auth:
+          providers:
+            rhaap:
+              production:
+                checkSSL: false
+        catalog:
+          providers:
+            rhaap:
+              '{{- include "catalog.providers.env" . }}':
+                orgs: "Default"
+                sync:
+                  pahCollections:
+                    enabled: true
+                    repositories:
+                      - name: rh-certified
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
+                      - name: validated
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
+                      - name: published
+                        schedule:
+                          frequency: {days: 1}
+                          timeout: {minutes: 60}
+
+apme:
+  enabled: false

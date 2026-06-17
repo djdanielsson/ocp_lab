@@ -9,22 +9,22 @@ spec:
       - name: aap
         ensure: present
         login: true
-      - name: gateway
+      - name: automationgateway
         ensure: present
         login: true
         passwordSecret:
           name: external-postgres-configuration-gateway
-      - name: hub
+      - name: automationhub
         ensure: present
         login: true
         passwordSecret:
           name: external-postgres-configuration-hub
-      - name: controller
+      - name: automationcontroller
         ensure: present
         login: true
         passwordSecret:
           name: external-postgres-configuration-controller
-      - name: eda
+      - name: automationeda
         ensure: present
         passwordSecret:
           name: external-postgres-configuration-eda

@@ -19,12 +19,12 @@ spec:
         app.kubernetes.io/name: bitwarden-cli
     spec:
       hostAliases:
-        - ip: "192.168.2.213"
+        - ip: "192.168.2.82"
           hostnames:
             - "vaultwarden.lab.danielsson.us.com"
       containers:
         - name: bitwarden-cli
-          image: ghcr.io/morey-tech/bitwarden-cli:latest
+          image: ghcr.io/morey-tech/bitwarden-cli:2025.12.1
           env:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"

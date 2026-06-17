@@ -1,0 +1,433 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: apme-build
+  namespace: apme
+spec:
+  params:
+    - name: git-url
+      type: string
+      default: https://github.com/ansible/apme.git
+    - name: git-revision
+      type: string
+      default: main
+    - name: registry
+      type: string
+      default: image-registry.openshift-image-registry.svc:5000/apme
+
+  workspaces:
+    - name: source
+
+  tasks:
+    - name: git-clone
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: URL
+          value: $(params.git-url)
+        - name: REVISION
+          value: $(params.git-revision)
+        - name: DEPTH
+          value: "1"
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: check-commit
+      runAfter: [git-clone]
+      taskRef:
+        name: apme-check-commit
+      params:
+        - name: commit-sha
+          value: $(tasks.git-clone.results.COMMIT)
+
+    - name: build-base
+      runAfter: [check-commit]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-base:latest
+        - name: DOCKERFILE
+          value: containers/base/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-gateway
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-gateway:latest
+        - name: DOCKERFILE
+          value: containers/gateway/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-ui
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-ui:latest
+        - name: DOCKERFILE
+          value: containers/ui/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-primary
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-primary:latest
+        - name: DOCKERFILE
+          value: containers/primary/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-native
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-native:latest
+        - name: DOCKERFILE
+          value: containers/native/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-opa
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-opa:latest
+        - name: DOCKERFILE
+          value: containers/opa/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-ansible
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-ansible:latest
+        - name: DOCKERFILE
+          value: containers/ansible/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-gitleaks
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-gitleaks:latest
+        - name: DOCKERFILE
+          value: containers/gitleaks/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-collection-health
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-collection-health:latest
+        - name: DOCKERFILE
+          value: containers/collection-health/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-dep-audit
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-dep-audit:latest
+        - name: DOCKERFILE
+          value: containers/dep-audit/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-galaxy-proxy
+      runAfter: [build-base]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.registry)/apme-galaxy-proxy:latest
+        - name: DOCKERFILE
+          value: containers/galaxy-proxy/Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: BUILD_ARGS
+          value:
+            - "BASE_IMAGE=$(params.registry)/apme-base:latest"
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: rollout-restart
+      runAfter:
+        - build-gateway
+        - build-ui
+        - build-primary
+        - build-native
+        - build-opa
+        - build-ansible
+        - build-gitleaks
+        - build-collection-health
+        - build-dep-audit
+        - build-galaxy-proxy
+      taskRef:
+        name: apme-rollout-restart
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: apme-check-commit
+  namespace: apme
+spec:
+  params:
+    - name: commit-sha
+      type: string
+  results:
+    - name: build-needed
+      description: "true if a new build is needed, false otherwise"
+  steps:
+    - name: check
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        CURRENT="$(params.commit-sha)"
+        LAST=$(oc get configmap apme-last-build-sha -n apme -o jsonpath='{.data.sha}' 2>/dev/null || echo "")
+        if [ "$CURRENT" = "$LAST" ]; then
+          echo "No new commits (SHA: $CURRENT)"
+          printf "false" > "$(results.build-needed.path)"
+        else
+          echo "New commit detected: $LAST -> $CURRENT"
+          oc create configmap apme-last-build-sha -n apme \
+            --from-literal=sha="$CURRENT" \
+            --dry-run=client -o yaml | oc apply -f -
+          printf "true" > "$(results.build-needed.path)"
+        fi
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: apme-rollout-restart
+  namespace: apme
+spec:
+  steps:
+    - name: restart
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        for deploy in $(oc get deployments -n apme -l app.kubernetes.io/instance=apme -o name 2>/dev/null); do
+          echo "Restarting $deploy"
+          oc rollout restart "$deploy" -n apme
+        done
+        echo "All APME deployments restarted"

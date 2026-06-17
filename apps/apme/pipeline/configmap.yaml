@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apme-last-build-sha
+  namespace: apme
+data:
+  sha: ""

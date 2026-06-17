@@ -1,0 +1,555 @@
+---
+kind: GrafanaDashboard
+apiVersion: grafana.integreatly.org/v1beta1
+metadata:
+  name: portainer-dashboard
+  labels:
+    app: grafana
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  json: >
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "description": "Portainer host monitoring via Netdata metrics",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "panels": [],
+          "title": "System Overview",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 60 },
+                  { "color": "red", "value": 85 }
+                ]
+              },
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 4, "x": 0, "y": 1 },
+          "id": 1,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "title": "CPU Usage",
+          "type": "gauge",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "100 - netdata_system_cpu_percentage_average{chart=\"system.cpu\",dimension=\"idle\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "CPU",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              },
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 4, "x": 4, "y": 1 },
+          "id": 2,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "title": "RAM Usage",
+          "type": "gauge",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "100 * (1 - netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"free\",job=\"external-portainer-netdata\"} / (netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"used\",job=\"external-portainer-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"free\",job=\"external-portainer-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"cached\",job=\"external-portainer-netdata\"} + netdata_system_ram_MiB_average{chart=\"system.ram\",dimension=\"buffers\",job=\"external-portainer-netdata\"}))",
+              "legendFormat": "RAM",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 4, "x": 8, "y": 1 },
+          "id": 3,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Load Average (1m)",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_load_load_average{chart=\"system.load\",dimension=\"load1\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "1m",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 5, "w": 4, "x": 12, "y": 1 },
+          "id": 4,
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "textMode": "auto"
+          },
+          "title": "Uptime",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_uptime_seconds_average{chart=\"system.uptime\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "Uptime",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+          "id": 101,
+          "panels": [],
+          "title": "CPU",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "%",
+                "fillOpacity": 30,
+                "lineWidth": 1,
+                "stacking": { "mode": "normal" },
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 7 },
+          "id": 10,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "CPU Usage by Type",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_cpu_percentage_average{chart=\"system.cpu\",dimension!=\"idle\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+          "id": 102,
+          "panels": [],
+          "title": "Memory",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "MiB",
+                "fillOpacity": 30,
+                "lineWidth": 1,
+                "stacking": { "mode": "normal" },
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+          "id": 20,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "RAM Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_ram_MiB_average{chart=\"system.ram\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "MiB",
+                "fillOpacity": 30,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+          "id": 21,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Swap Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_swap_MiB_average{chart=\"system.swap\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 24 },
+          "id": 103,
+          "panels": [],
+          "title": "Disk I/O",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "KiB/s",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "KiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 25 },
+          "id": 30,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Disk I/O",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_io_KiB_persec_average{chart=\"system.io\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "ops/s",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 25 },
+          "id": 31,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Disk IOPS",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_disk_ops_operations_persec_average{job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{chart}} {{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
+          "id": 104,
+          "panels": [],
+          "title": "Network",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "kilobits/s",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "Kbits"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 34 },
+          "id": 40,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Network Traffic",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_net_kilobits_persec_average{chart=\"system.net\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "packets/s",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "pps"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 34 },
+          "id": 41,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Network Packets",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_system_packets_packets_persec_average{chart=\"system.packets\",job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{dimension}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+          "id": 105,
+          "panels": [],
+          "title": "Docker Containers",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "%",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+          "id": 50,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Container CPU Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_cgroup_cpu_percentage_average{job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{chart}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisLabel": "MiB",
+                "fillOpacity": 20,
+                "lineWidth": 1,
+                "drawStyle": "line",
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+          "id": 51,
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean","max"] }, "tooltip": { "mode": "multi" } },
+          "title": "Container Memory Usage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "netdata_cgroup_mem_MiB_average{job=\"external-portainer-netdata\"}",
+              "legendFormat": "{{chart}}",
+              "refId": "A"
+            }
+          ]
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "current": { "selected": false, "text": "prometheus", "value": "prometheus" },
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "multi": false,
+            "name": "datasource",
+            "options": [],
+            "query": "prometheus",
+            "refresh": 1,
+            "regex": "",
+            "type": "datasource"
+          }
+        ]
+      },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Portainer Host Overview",
+      "uid": null,
+      "version": 1,
+      "weekStart": ""
+    }
