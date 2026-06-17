@@ -8,16 +8,19 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
-  source:
-    repoURL: https://github.com/djdanielsson/ocp_lab.git
-    targetRevision: apme
-    path: apps/apme/chart
-    helm:
-      releaseName: apme
-      apiVersions:
-        - route.openshift.io/v1
-      valueFiles:
-        - ../values.yaml
+  sources:
+    - repoURL: https://github.com/ansible/apme.git
+      targetRevision: main
+      path: deploy/helm/apme
+      helm:
+        releaseName: apme
+        apiVersions:
+          - route.openshift.io/v1
+        valueFiles:
+          - $values/apps/apme/values.yaml
+    - repoURL: https://github.com/djdanielsson/ocp_lab.git
+      targetRevision: apme
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: apme

@@ -9,13 +9,15 @@ image:
 abbenay:
   enabled: true
   token: "c98da851d26be12ea16ed3f98f74dc7d"
-  vertexAnthropic:
-    enabled: true
+  providers:
+    vertex-claude:
+      engine: vertex-anthropic
+      models:
+        claude-sonnet-4@20250514: {}
+  gcp:
     project: "itpc-gcp-global-revenue-claude"
-    region: us-east5
-    models:
-      - claude-sonnet-4@20250514
-    existingGcpSecret: apme-gcp-credentials
+    location: us-east5
+    existingSecret: apme-gcp-credentials
 
 # OpenShift requires managed UID/GID ranges — clear hardcoded values
 podSecurityContext: {}
