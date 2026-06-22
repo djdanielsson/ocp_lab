@@ -191,6 +191,11 @@ data:
           OPENAI_API_BASE: ${OPENAI_API_BASE:-http://ollama.ollama.svc.cluster.local:11434/v1}
           OPENAI_API_KEY: ${OPENAI_API_KEY:-not-needed}
           MAX_TOKENS: ${MAX_TOKENS:-16384}
+        aap:
+          url: ${AAP_URL:-https://aap.apps.ocp.new.lab.danielsson.us.com}
+          orgName: ${AAP_ORG_NAME:-Default}
+          oauthToken: ${AAP_OAUTH_TOKEN}
+          skipSSLVerification: ${AAP_SKIP_SSL_VERIFICATION:-false}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
