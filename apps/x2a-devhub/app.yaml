@@ -95,10 +95,10 @@ data:
 
     app:
       title: "X2Ansible Developer Hub"
-      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://backstage-developer-hub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
 
     backend:
-      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://backstage-developer-hub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
       cors:
         origin:
           - http://localhost:6274
@@ -116,6 +116,7 @@ data:
     integrations:
       github:
       - host: github.com
+        token: ${GITHUB_TOKEN}
 
     auth:
       experimentalDynamicClientRegistration:
@@ -128,6 +129,10 @@ data:
       providers:
         guest:
           dangerouslyAllowOutsideDevelopment: true
+          signIn:
+            resolvers:
+              - resolver: guestResolver
+                dangerouslyAllowSignInWithoutUserInCatalog: true
 
     signInPage: guest
 
