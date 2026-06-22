@@ -2,22 +2,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: x2a-devhub-secrets
+  name: x2a-devhub-operator
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
-  destination:
-    namespace: x2a-devhub
-    server: https://kubernetes.default.svc
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
     path: apps/x2a-devhub/
     targetRevision: main
+    directory:
+      include: "operator.yaml"
+  destination:
+    namespace: openshift-operators
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true

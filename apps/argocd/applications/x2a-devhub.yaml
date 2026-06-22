@@ -11,22 +11,21 @@ spec:
     namespace: x2a-devhub
     server: https://kubernetes.default.svc
   project: default
-  sources:
-    - repoURL: https://github.com/djdanielsson/ocp_lab.git
-      targetRevision: main
-      ref: values
-    - repoURL: https://charts.openshift.io/
-      chart: redhat-developer-hub
-      targetRevision: 1.9.3
-      helm:
-        releaseName: x2a-devhub
-        valueFiles:
-          - $values/apps/x2a-devhub/values.yaml
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/x2a-devhub/
+    targetRevision: main
+    directory:
+      exclude: "operator.yaml"
   ignoreDifferences:
     - kind: Secret
       jsonPointers:
         - /data
         - /stringData
+    - group: rhdh.redhat.com
+      kind: Backstage
+      jsonPointers:
+        - /spec/deployment
   syncPolicy:
     automated:
       prune: true
