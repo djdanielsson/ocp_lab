@@ -95,10 +95,10 @@ data:
 
     app:
       title: "X2Ansible Developer Hub"
-      baseUrl: https://backstage-developer-hub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
 
     backend:
-      baseUrl: https://backstage-developer-hub-x2a-devhub.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
       cors:
         origin:
           - http://localhost:6274
@@ -133,8 +133,16 @@ data:
             resolvers:
               - resolver: guestResolver
                 dangerouslyAllowSignInWithoutUserInCatalog: true
+        github:
+          development:
+            clientId: ${AUTH_GITHUB_CLIENT_ID}
+            clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+            signIn:
+              resolvers:
+                - resolver: usernameMatchingUserEntityName
+                  dangerouslyAllowSignInWithoutUserInCatalog: true
 
-    signInPage: guest
+    signInPage: github
 
     dynamicPlugins:
       frontend:
@@ -236,4 +244,21 @@ spec:
       secrets:
         - name: x2a-credentials
     route:
-      enabled: true
+      enabled: false
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: x2a
+  namespace: x2a-devhub
+spec:
+  host: x2a.apps.ocp.new.lab.danielsson.us.com
+  port:
+    targetPort: http-backend
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  to:
+    kind: Service
+    name: backstage-developer-hub
+    weight: 100
