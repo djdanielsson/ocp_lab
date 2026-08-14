@@ -1,0 +1,12 @@
+---
+# Ensure LVMS remains the default StorageClass (required by CDI/CNV).
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: lvms-lvm-local-storage
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: topolvm.io
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete

@@ -5,3 +5,5 @@ kind: Kustomization
 resources:
   - kubelet-config.yaml
   - dns-forwarders.yaml
+  - alert-relabel-lab.yaml
+  - storageclass-default.yaml

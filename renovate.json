@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "argocd": {
+    "managerFilePatterns": [
+      "/apps/argocd/applications/.+\\.yaml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Propose Helm chart version bumps for external Argo CD Applications",
+      "matchManagers": [
+        "argocd"
+      ],
+      "matchDatasources": [
+        "helm"
+      ],
+      "groupName": "argocd-helm-{{depName}}",
+      "commitMessageTopic": "Argo CD Helm chart {{depName}}",
+      "labels": [
+        "dependencies",
+        "argocd"
+      ]
+    },
+    {
+      "description": "Do not bump git branch or tag pins in Argo CD Applications",
+      "matchManagers": [
+        "argocd"
+      ],
+      "matchDatasources": [
+        "git-tags",
+        "docker"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Group GitHub Actions updates",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "github-actions",
+      "labels": [
+        "dependencies",
+        "github-actions"
+      ]
+    }
+  ]
+}

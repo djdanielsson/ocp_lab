@@ -81,6 +81,10 @@ spec:
 
     - name: build-gateway
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -110,6 +114,10 @@ spec:
 
     - name: build-ui
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -136,6 +144,10 @@ spec:
 
     - name: build-primary
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -165,6 +177,10 @@ spec:
 
     - name: build-native
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -194,6 +210,10 @@ spec:
 
     - name: build-opa
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -223,6 +243,10 @@ spec:
 
     - name: build-ansible
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -252,6 +276,10 @@ spec:
 
     - name: build-gitleaks
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -281,6 +309,10 @@ spec:
 
     - name: build-collection-health
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -310,6 +342,10 @@ spec:
 
     - name: build-dep-audit
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -339,6 +375,10 @@ spec:
 
     - name: build-galaxy-proxy
       runAfter: [build-base]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         resolver: cluster
         params:
@@ -378,6 +418,10 @@ spec:
         - build-collection-health
         - build-dep-audit
         - build-galaxy-proxy
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
       taskRef:
         name: apme-rollout-restart
 
@@ -426,6 +470,32 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -euo pipefail
+        if oc get deployment apme-engine -n apme >/dev/null 2>&1; then
+          echo "Patching abbenay health probes (upstream chart expects node binary)"
+          oc patch deployment apme-engine -n apme --type=strategic -p '
+          spec:
+            template:
+              spec:
+                containers:
+                - name: abbenay
+                  readinessProbe:
+                    exec:
+                      command: ["sh", "-c", "echo > /dev/tcp/127.0.0.1/50057"]
+                    initialDelaySeconds: 5
+                    periodSeconds: 10
+                    timeoutSeconds: 1
+                    successThreshold: 1
+                    failureThreshold: 3
+                  livenessProbe:
+                    exec:
+                      command: ["sh", "-c", "echo > /dev/tcp/127.0.0.1/50057"]
+                    initialDelaySeconds: 15
+                    periodSeconds: 30
+                    timeoutSeconds: 1
+                    successThreshold: 1
+                    failureThreshold: 3
+          ' || true
+        fi
         for deploy in $(oc get deployments -n apme -l app.kubernetes.io/instance=apme -o name 2>/dev/null); do
           echo "Restarting $deploy"
           oc rollout restart "$deploy" -n apme

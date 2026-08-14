@@ -1,0 +1,16 @@
+---
+# Suppress platform alerts that are expected/noisy on this single-node,
+# heavily over-provisioned lab cluster.
+apiVersion: monitoring.openshift.io/v1
+kind: AlertRelabelConfig
+metadata:
+  name: lab-alert-suppressions
+  namespace: openshift-monitoring
+spec:
+  configs:
+    - action: Drop
+      sourceLabels: [alertname]
+      regex: SystemMemoryExceedsReservation|KubeMemoryOvercommit|KubeCPUOvercommit
+    - action: Drop
+      sourceLabels: [alertname]
+      regex: PodDisruptionBudgetAtLimit|AlertmanagerReceiversNotConfigured|UpdateAvailable|CDIDefaultStorageClassDegraded|CsvAbnormalFailedOver2Min|InstallPlanStepAppliedWithWarnings

@@ -41,4 +41,5 @@ resources:
   - applications/apme-prereqs.yaml
   - applications/apme-pipeline.yaml
   - applications/apme.yaml
+  - applications/apme-fixes.yaml
 #  - applications/github-runners.yaml

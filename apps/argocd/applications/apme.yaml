@@ -24,6 +24,15 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: apme
+  ignoreDifferences:
+    # Upstream chart probes Abbenay with `node`, but v2026.8.5 has no Node binary.
+    # apps/apme/fixes patches these to a shell TCP check on loopback.
+    - group: apps
+      kind: Deployment
+      name: apme-engine
+      jqPathExpressions:
+        - .spec.template.spec.containers[] | select(.name=="abbenay") | .readinessProbe
+        - .spec.template.spec.containers[] | select(.name=="abbenay") | .livenessProbe
   syncPolicy:
     automated:
       prune: true
