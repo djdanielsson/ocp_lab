@@ -17,7 +17,7 @@ spec:
       ref: values
     - repoURL: https://charts.openshift.io/
       chart: redhat-rhaap-portal
-      targetRevision: 2.2.6
+      targetRevision: 2.2.7
       helm:
         releaseName: redhat-rhaap-portal
         valueFiles:
