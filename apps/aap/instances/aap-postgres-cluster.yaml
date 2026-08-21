@@ -29,6 +29,16 @@ spec:
         passwordSecret:
           name: external-postgres-configuration-eda
         login: true
+      - name: orchestrator
+        ensure: present
+        login: true
+        passwordSecret:
+          name: ao-orchestrator-postgres-password
+      - name: temporal
+        ensure: present
+        login: true
+        passwordSecret:
+          name: ao-temporal-postgres-password
   instances: 3
   switchoverDelay: 5
   replicationSlots:

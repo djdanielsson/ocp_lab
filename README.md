@@ -74,16 +74,19 @@ oc apply -f bootstrap.yaml
 | -2         | cert-manager-operator      | cert-manager operator                                              |
 | -1         | aap-pg-operator            | CloudNativePG operator                                             |
 | -1         | aap-operator               | Ansible Automation Platform operator                               |
+| -1         | automation-orchestrator-operator | Automation Orchestrator operator                             |
 | -1         | devspaces-operator         | Dev Spaces operator                                                |
 | -1         | monitoring-operator        | Grafana + Prometheus operators                                     |
 | -1         | loki-operator              | Loki logging operator                                              |
 | 0          | aap-instance               | AAP deployment                                                     |
+| 0          | automation-orchestrator-prereqs | Automation Orchestrator PostgreSQL secrets                    |
 | 0          | devspaces-instance         | Dev Spaces instance                                                |
 | 0          | ocp-virt-instance          | HyperConverged CR                                                  |
 | 0          | cert-manager-instance      | ClusterIssuers (self-signed, Let's Encrypt)                        |
 | 0          | loki-instance              | LokiStack + MinIO object storage                                   |
 | 0          | authentik                  | Authentik SSO (server, worker, PostgreSQL, Redis)                  |
 | 1          | aap-monitoring             | AAP monitoring components                                          |
+| 1          | automation-orchestrator-instance | Automation Orchestrator deployment                          |
 | 1          | aap-portal-secrets         | AAP Self-Service Portal secrets                                    |
 | 1          | tailscale                  | Tailscale exit node                                                |
 | 1          | ollama                     | Ollama + Open WebUI                                                |
@@ -115,6 +118,9 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/postgres-gateway` | Login | username: `gateway`, password: (strong password) |
   | `ocp-lab/postgres-controller` | Login | username: `controller`, password: (strong password) |
   | `ocp-lab/postgres-eda` | Login | username: `eda`, password: (strong password) |
+  | `ocp-lab/postgres-orchestrator` | Login | username: `orchestrator`, password: (strong password) |
+  | `ocp-lab/postgres-temporal` | Login | username: `temporal`, password: (strong password) |
+  | `ocp-lab/automation-orchestrator-admin` | Login | username: `admin`, password: (strong password -- built-in Automation Orchestrator admin login) |
   | `ocp-lab/grafana-admin` | Login | username: `admin`, password: (strong password) |
   | `ocp-lab/quay-config` | Secure Note | Custom fields: `SECRET_KEY`, `DATABASE_SECRET_KEY`, `DB_PASSWORD` |
   | `ocp-lab/authentik-admin` | Login | username: `akadmin`, password: (strong password -- used for initial Authentik admin login and as the secret key) |
@@ -155,6 +161,24 @@ Loki does not have its own UI. To view logs, use Grafana:
 4. Use LogQL queries, e.g. `{kubernetes_namespace_name="default"}`
 
 The Loki Route (`loki-loki.apps.ocp.new.lab.danielsson.us.com`) is the API gateway for log ingestion, not a web UI.
+
+## Automation Orchestrator Setup
+
+Automation Orchestrator deploys co-located with AAP on the same OpenShift cluster. It uses the
+existing CloudNativePG cluster in the `aap` namespace (`orchestrator`, `temporal`, and
+`temporal_visibility` databases) and exposes the UI at
+`https://orchestrator.apps.ocp.new.lab.danielsson.us.com`.
+
+Before sync, create the Vaultwarden items listed in the secrets table
+(`ocp-lab/postgres-orchestrator`, `ocp-lab/postgres-temporal`, and
+`ocp-lab/automation-orchestrator-admin`).
+
+Log in with the built-in admin account using the password from
+`ocp-lab/automation-orchestrator-admin` (username: `admin`).
+
+To enable OIDC through AAP and job dispatch to automation controller, configure an AAP
+co-location in the Automation Orchestrator UI or API after installation (day-2 operation). Point
+it at `https://aap.apps.ocp.new.lab.danielsson.us.com`.
 
 ## AAP Self-Service Portal Setup
 

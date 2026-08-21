@@ -1,0 +1,10 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - orchestrator-postgres-secret.yaml
+  - temporal-postgres-secret.yaml
+  - automation-orchestrator-admin-password-secret.yaml
+
+namespace: automation-orchestrator

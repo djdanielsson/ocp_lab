@@ -11,6 +11,9 @@ resources:
   - applications/aap-pg-operator.yaml
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
+  - applications/automation-orchestrator-operator.yaml
+  - applications/automation-orchestrator-prereqs.yaml
+  - applications/automation-orchestrator-instance.yaml
   - applications/aap-monitoring.yaml
   # - applications/loki-operator.yaml
   # - applications/loki-instance.yaml

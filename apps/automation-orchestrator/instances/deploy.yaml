@@ -1,0 +1,23 @@
+---
+apiVersion: aap.ansible.com/v1alpha1
+kind: AutomationOrchestrator
+metadata:
+  name: automation-orchestrator
+  namespace: automation-orchestrator
+spec:
+  secrets:
+    initialAdminPasswordSecretRef:
+      name: automation-orchestrator-admin-password
+  ingress:
+    host: orchestrator.apps.ocp.new.lab.danielsson.us.com
+    type: Route
+  postgres:
+    host: aap-postgres-rw.aap.svc.cluster.local
+    port: 5432
+    sslMode: disable
+    backendDatabase:
+      secretRef:
+        name: orchestrator-postgres-secret
+    temporalDatabase:
+      secretRef:
+        name: temporal-postgres-secret
