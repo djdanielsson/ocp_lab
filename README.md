@@ -75,6 +75,7 @@ oc apply -f bootstrap.yaml
 | -1         | aap-pg-operator            | CloudNativePG operator                                             |
 | -1         | aap-operator               | Ansible Automation Platform operator                               |
 | -1         | automation-orchestrator-operator | Automation Orchestrator operator                             |
+| -1         | automation-orchestrator-postgres | Automation Orchestrator CNPG password secrets                |
 | -1         | devspaces-operator         | Dev Spaces operator                                                |
 | -1         | monitoring-operator        | Grafana + Prometheus operators                                     |
 | -1         | loki-operator              | Loki logging operator                                              |

@@ -12,6 +12,7 @@ resources:
   - applications/aap-operator.yaml
   - applications/aap-instance.yaml
   - applications/automation-orchestrator-operator.yaml
+  - applications/automation-orchestrator-postgres.yaml
   - applications/automation-orchestrator-prereqs.yaml
   - applications/automation-orchestrator-instance.yaml
   - applications/aap-monitoring.yaml

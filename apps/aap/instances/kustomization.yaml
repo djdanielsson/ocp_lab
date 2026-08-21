@@ -14,8 +14,6 @@ resources:
   - external-postgres-configuration-hub-secret.yaml
   - external-postgres-configuration-gateway-secret.yaml
   - external-postgres-configuration-controller-secret.yaml
-  - ao-orchestrator-postgres-password-secret.yaml
-  - ao-temporal-postgres-password-secret.yaml
   - orchestrator-database.yaml
   - temporal-database.yaml
   - temporal-visibility-database.yaml
