@@ -47,6 +47,8 @@ spec:
   logLevel: info
   primaryUpdateStrategy: unsupervised
   postgresql:
+    parameters:
+      max_connections: "2000"
     synchronous:
       method: any
       number: 2
