@@ -43,6 +43,9 @@ resources:
   - applications/graylog-prereqs.yaml
   - applications/graylog.yaml
   - applications/apme-prereqs.yaml
+  - applications/apme-pipeline.yaml
   - applications/apme-operator.yaml
-  - applications/apme-operator-instance.yaml
+  - applications/apme-operator-dev.yaml
+  - applications/apme-operator-instance-stable.yaml
+  - applications/apme-operator-instance-dev.yaml
 #  - applications/github-runners.yaml

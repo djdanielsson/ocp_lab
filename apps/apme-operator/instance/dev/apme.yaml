@@ -2,17 +2,18 @@
 apiVersion: apme.ansible.com/v1alpha1
 kind: Apme
 metadata:
-  name: apme-op
-  namespace: apme
+  name: apme-dev
+  namespace: apme-dev
   labels:
     app.kubernetes.io/name: apme
     app.kubernetes.io/managed-by: apme-operator
 spec:
-  version: "2026.8.9"
+  # Images built by Tekton (apps/apme/pipeline) into the apme-dev namespace.
+  version: "latest"
   replicas: 1
   image:
-    registry: quay.io/ansible
-    pullPolicy: IfNotPresent
+    registry: image-registry.openshift-image-registry.svc:5000/apme-dev
+    pullPolicy: Always
   components:
     gitleaks: true
     collectionHealth: true
@@ -21,7 +22,7 @@ spec:
   exposure:
     route:
       enabled: true
-      host: apme-operator.apps.ocp.new.lab.danielsson.us.com
+      host: apme-dev.apps.ocp.new.lab.danielsson.us.com
   storage:
     sessions:
       size: 5Gi

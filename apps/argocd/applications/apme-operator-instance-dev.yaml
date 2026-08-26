@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: apme-operator-instance
+  name: apme-operator-instance-dev
   namespace: openshift-gitops
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -10,16 +10,17 @@ spec:
   project: default
   source:
     repoURL: https://github.com/djdanielsson/ocp_lab.git
-    path: apps/apme-operator/instance/
+    path: apps/apme-operator/instance/dev/
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: apme
+    namespace: apme-dev
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
       - SkipDryRunOnMissingResource=true
     retry:
       limit: 5

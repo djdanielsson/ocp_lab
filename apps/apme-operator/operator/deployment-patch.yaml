@@ -12,6 +12,11 @@ spec:
       containers:
         - name: manager
           imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: apme
+            - name: LEADER_ELECTION_ID
+              value: b760e4bf.ansible.com
           resources:
             limits:
               cpu: 500m

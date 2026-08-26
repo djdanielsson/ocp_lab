@@ -1,0 +1,137 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: apme-operator-build
+  namespace: apme-dev
+spec:
+  params:
+    - name: git-url
+      type: string
+      default: https://github.com/ansible/apme-operator.git
+    - name: git-revision
+      type: string
+      default: main
+    - name: operator-image
+      type: string
+      default: image-registry.openshift-image-registry.svc:5000/apme-operator-dev-system/apme-operator:latest
+
+  workspaces:
+    - name: source
+
+  tasks:
+    - name: git-clone
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: URL
+          value: $(params.git-url)
+        - name: REVISION
+          value: $(params.git-revision)
+        - name: DEPTH
+          value: "1"
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: check-commit
+      runAfter: [git-clone]
+      taskRef:
+        name: apme-operator-check-commit
+      params:
+        - name: commit-sha
+          value: $(tasks.git-clone.results.COMMIT)
+
+    - name: build-operator
+      runAfter: [check-commit]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: $(params.operator-image)
+        - name: DOCKERFILE
+          value: Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: rollout-restart
+      runAfter: [build-operator]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["true"]
+      taskRef:
+        name: apme-operator-rollout-restart
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: apme-operator-check-commit
+  namespace: apme-dev
+spec:
+  params:
+    - name: commit-sha
+      type: string
+  results:
+    - name: build-needed
+      description: "true if a new build is needed, false otherwise"
+  steps:
+    - name: check
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        CURRENT="$(params.commit-sha)"
+        LAST=$(oc get configmap apme-operator-last-build-sha -n apme-dev -o jsonpath='{.data.sha}' 2>/dev/null || echo "")
+        if [ "$CURRENT" = "$LAST" ]; then
+          echo "No new operator commits (SHA: $CURRENT)"
+          printf "false" > "$(results.build-needed.path)"
+        else
+          echo "New operator commit detected: $LAST -> $CURRENT"
+          oc create configmap apme-operator-last-build-sha -n apme-dev \
+            --from-literal=sha="$CURRENT" \
+            --dry-run=client -o yaml | oc apply -f -
+          printf "true" > "$(results.build-needed.path)"
+        fi
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: apme-operator-rollout-restart
+  namespace: apme-dev
+spec:
+  steps:
+    - name: restart
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        oc rollout restart deployment/apme-operator-controller-manager -n apme-operator-dev-system
+        echo "Dev operator deployment restarted"

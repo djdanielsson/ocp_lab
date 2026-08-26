@@ -1,0 +1,158 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: apme-operator-controller-manager
+  namespace: apme-operator-dev-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+    app.kubernetes.io/managed-by: kustomize
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: apme-operator-leader-election-role
+  namespace: apme-operator-dev-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: [coordination.k8s.io]
+    resources: [leases]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: apme-operator-leader-election-rolebinding
+  namespace: apme-operator-dev-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: apme-operator-leader-election-role
+subjects:
+  - kind: ServiceAccount
+    name: apme-operator-controller-manager
+    namespace: apme-operator-dev-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apme-operator-dev-manager-rolebinding
+  labels:
+    app.kubernetes.io/name: apme-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: apme-operator-manager-role
+subjects:
+  - kind: ServiceAccount
+    name: apme-operator-controller-manager
+    namespace: apme-operator-dev-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apme-operator-dev-metrics-auth-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: apme-operator-metrics-auth-role
+subjects:
+  - kind: ServiceAccount
+    name: apme-operator-controller-manager
+    namespace: apme-operator-dev-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apme-operator-controller-manager-metrics-service
+  namespace: apme-operator-dev-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+    control-plane: controller-manager
+spec:
+  ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app.kubernetes.io/name: apme-operator
+    control-plane: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apme-operator-controller-manager
+  namespace: apme-operator-dev-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+    control-plane: controller-manager
+  annotations:
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"apme-operator:latest","namespace":"apme-operator-dev-system"},"fieldPath":"spec.template.spec.containers[?(@.name==\"manager\")].image"}]'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: apme-operator
+      control-plane: controller-manager
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        app.kubernetes.io/name: apme-operator
+        control-plane: controller-manager
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: apme-operator-controller-manager
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: manager
+          image: controller:latest
+          imagePullPolicy: Always
+          command: [/manager]
+          args:
+            - --metrics-bind-address=:8443
+            - --leader-elect
+            - --health-probe-bind-address=:8081
+          env:
+            - name: WATCH_NAMESPACE
+              value: apme-dev
+            - name: LEADER_ELECTION_ID
+              value: c871f5cg.ansible.com
+          ports: []
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
