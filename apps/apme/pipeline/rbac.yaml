@@ -52,7 +52,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: apme-builder-operator-rollout
-  namespace: apme-operator-dev-system
+  namespace: apme-dev
 rules:
   - apiGroups: [apps]
     resources: [deployments]
@@ -62,7 +62,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: apme-builder-operator-rollout
-  namespace: apme-operator-dev-system
+  namespace: apme-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

@@ -14,7 +14,7 @@ spec:
       default: main
     - name: operator-image
       type: string
-      default: image-registry.openshift-image-registry.svc:5000/apme-operator-dev-system/apme-operator:latest
+      default: image-registry.openshift-image-registry.svc:5000/apme-dev/apme-operator:latest
 
   workspaces:
     - name: source
@@ -133,5 +133,5 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -euo pipefail
-        oc rollout restart deployment/apme-operator-controller-manager -n apme-operator-dev-system
+        oc rollout restart deployment/apme-operator-controller-manager -n apme-dev
         echo "Dev operator deployment restarted"

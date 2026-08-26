@@ -474,7 +474,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: apme-operator
   name: apme-operator-controller-manager
-  namespace: apme-operator-system
+  namespace: apme
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -483,7 +483,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: apme-operator
   name: apme-operator-leader-election-role
-  namespace: apme-operator-system
+  namespace: apme
 rules:
 - apiGroups:
   - ""
@@ -715,7 +715,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: apme-operator
   name: apme-operator-leader-election-rolebinding
-  namespace: apme-operator-system
+  namespace: apme
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -723,7 +723,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: apme-operator-controller-manager
-  namespace: apme-operator-system
+  namespace: apme
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -739,7 +739,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: apme-operator-controller-manager
-  namespace: apme-operator-system
+  namespace: apme
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -752,7 +752,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: apme-operator-controller-manager
-  namespace: apme-operator-system
+  namespace: apme
 ---
 apiVersion: v1
 kind: Service
@@ -762,7 +762,7 @@ metadata:
     app.kubernetes.io/name: apme-operator
     control-plane: controller-manager
   name: apme-operator-controller-manager-metrics-service
-  namespace: apme-operator-system
+  namespace: apme
 spec:
   ports:
   - name: https
@@ -781,7 +781,7 @@ metadata:
     app.kubernetes.io/name: apme-operator
     control-plane: controller-manager
   name: apme-operator-controller-manager
-  namespace: apme-operator-system
+  namespace: apme
 spec:
   replicas: 1
   selector:

@@ -476,8 +476,8 @@ spec:
           echo "Restarting $deploy"
           oc rollout restart "$deploy" -n apme-dev
         done
-        if oc get deployment apme-operator-controller-manager -n apme-operator-dev-system >/dev/null 2>&1; then
+        if oc get deployment apme-operator-controller-manager -n apme-dev >/dev/null 2>&1; then
           echo "Restarting dev operator deployment"
-          oc rollout restart deployment/apme-operator-controller-manager -n apme-operator-dev-system
+          oc rollout restart deployment/apme-operator-controller-manager -n apme-dev
         fi
         echo "Dev APME workloads restarted"

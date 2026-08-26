@@ -3,7 +3,7 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: apme-operator
-  namespace: apme-operator-system
+  namespace: apme
   labels:
     app.kubernetes.io/name: apme-operator
 spec:
@@ -29,5 +29,5 @@ spec:
       cpu: "2"
       memory: 4Gi
   # Manual / binary builds only. First image is typically:
-  #   oc start-build apme-operator -n apme-operator-system --from-dir=<apme-operator> --follow
+  #   oc start-build apme-operator -n apme --from-dir=<apme-operator> --follow
   triggers: []

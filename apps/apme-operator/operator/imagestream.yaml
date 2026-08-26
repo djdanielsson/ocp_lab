@@ -3,7 +3,7 @@ apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   name: apme-operator
-  namespace: apme-operator-system
+  namespace: apme
   labels:
     app.kubernetes.io/name: apme-operator
 spec:
