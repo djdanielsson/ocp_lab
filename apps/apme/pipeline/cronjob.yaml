@@ -39,6 +39,7 @@ spec:
 
                   create_run() {
                     local pipeline="$1"
+                    local pvc="$2"
                     local run_name="${pipeline}-$(date +%Y%m%d-%H%M%S)"
                     cat <<YAML | oc apply -f -
                   apiVersion: tekton.dev/v1
@@ -56,12 +57,12 @@ spec:
                     workspaces:
                       - name: source
                         persistentVolumeClaim:
-                          claimName: apme-build-workspace
+                          claimName: ${pvc}
                   YAML
                     echo "Created PipelineRun: ${run_name}"
                   }
 
                   cleanup_old_runs apme-build
                   cleanup_old_runs apme-operator-build
-                  create_run apme-build
-                  create_run apme-operator-build
+                  create_run apme-build apme-build-workspace
+                  create_run apme-operator-build apme-operator-build-workspace

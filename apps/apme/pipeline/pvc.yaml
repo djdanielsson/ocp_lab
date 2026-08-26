@@ -11,3 +11,16 @@ spec:
   resources:
     requests:
       storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apme-operator-build-workspace
+  namespace: apme-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: lvms-lvm-local-storage
+  resources:
+    requests:
+      storage: 2Gi
