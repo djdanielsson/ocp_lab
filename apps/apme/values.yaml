@@ -2,9 +2,9 @@
 # Upstream chart: https://github.com/ansible/apme (deploy/helm/apme)
 
 image:
-  registry: image-registry.openshift-image-registry.svc:5000/apme
-  tag: latest
-  pullPolicy: Always
+  registry: quay.io/ansible
+  tag: "2026.8.9"
+  pullPolicy: IfNotPresent
 
 abbenay:
   enabled: true

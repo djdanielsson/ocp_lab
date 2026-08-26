@@ -142,7 +142,7 @@ spec:
         - name: source
           workspace: source
 
-    - name: build-primary
+    - name: build-engine
       runAfter: [build-base]
       when:
         - input: $(tasks.check-commit.results.build-needed)
@@ -159,9 +159,9 @@ spec:
             value: openshift-pipelines
       params:
         - name: IMAGE
-          value: $(params.registry)/apme-primary:latest
+          value: $(params.registry)/apme-engine:latest
         - name: DOCKERFILE
-          value: containers/primary/Dockerfile
+          value: containers/engine/Dockerfile
         - name: CONTEXT
           value: .
         - name: BUILD_ARGS
@@ -410,7 +410,7 @@ spec:
       runAfter:
         - build-gateway
         - build-ui
-        - build-primary
+        - build-engine
         - build-native
         - build-opa
         - build-ansible
