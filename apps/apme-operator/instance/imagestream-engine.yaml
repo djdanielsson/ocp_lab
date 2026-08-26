@@ -1,0 +1,22 @@
+---
+# The operator pulls apme-engine; the lab Tekton pipeline publishes apme-primary.
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: apme-engine
+  namespace: apme
+  labels:
+    app.kubernetes.io/name: apme
+    app.kubernetes.io/managed-by: apme-operator
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: latest
+      from:
+        kind: ImageStreamTag
+        name: apme-primary:latest
+        namespace: apme
+      importPolicy: {}
+      referencePolicy:
+        type: Local

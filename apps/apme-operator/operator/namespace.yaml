@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apme-operator-system
+  labels:
+    app.kubernetes.io/name: apme-operator
+    openshift.io/cluster-monitoring: "true"

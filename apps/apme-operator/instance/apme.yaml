@@ -1,0 +1,39 @@
+---
+apiVersion: apme.ansible.com/v1alpha1
+kind: Apme
+metadata:
+  name: apme-op
+  namespace: apme
+  labels:
+    app.kubernetes.io/name: apme
+    app.kubernetes.io/managed-by: apme-operator
+spec:
+  # Lab ImageStreams from apps/apme/pipeline. apme-engine is aliased from apme-primary.
+  version: "latest"
+  replicas: 1
+  image:
+    registry: image-registry.openshift-image-registry.svc:5000/apme
+    pullPolicy: Always
+  components:
+    gitleaks: true
+    collectionHealth: true
+    depAudit: true
+    ui: true
+  exposure:
+    route:
+      enabled: true
+      host: apme-operator.apps.ocp.new.lab.danielsson.us.com
+  storage:
+    sessions:
+      size: 5Gi
+      storageClass: lvms-lvm-local-storage
+    proxyCache:
+      size: 5Gi
+      storageClass: lvms-lvm-local-storage
+  database:
+    postgres:
+      storage:
+        size: 5Gi
+        storageClass: lvms-lvm-local-storage
+  abbenay:
+    enabled: false
