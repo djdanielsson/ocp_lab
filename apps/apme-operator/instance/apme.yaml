@@ -8,12 +8,11 @@ metadata:
     app.kubernetes.io/name: apme
     app.kubernetes.io/managed-by: apme-operator
 spec:
-  # Lab ImageStreams from apps/apme/pipeline. apme-engine is aliased from apme-primary.
-  version: "latest"
+  version: "2026.8.9"
   replicas: 1
   image:
-    registry: image-registry.openshift-image-registry.svc:5000/apme
-    pullPolicy: Always
+    registry: quay.io/ansible
+    pullPolicy: IfNotPresent
   components:
     gitleaks: true
     collectionHealth: true
