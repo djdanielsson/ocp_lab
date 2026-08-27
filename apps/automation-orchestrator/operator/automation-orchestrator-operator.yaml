@@ -12,7 +12,7 @@ metadata:
   name: automation-orchestrator-operator
   namespace: automation-orchestrator
 spec:
-  channel: stable
+  channel: early-access
   installPlanApproval: Automatic
   name: automation-orchestrator-operator
   source: redhat-operators
