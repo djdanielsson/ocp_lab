@@ -37,9 +37,8 @@ spec:
         storageClass: lvms-lvm-local-storage
   abbenay:
     enabled: true
-    tokenSecretRef:
-      name: apme-dev-abbenay
-      key: token
+    # Operator auto-generates apme-dev-abbenay (dashboard/gRPC auth token).
+    # Provider API keys are added via the Abbenay UI, not here.
     persistence:
       enabled: true
       size: 1Gi
