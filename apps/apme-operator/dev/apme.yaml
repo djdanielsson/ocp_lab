@@ -36,4 +36,11 @@ spec:
         size: 5Gi
         storageClass: lvms-lvm-local-storage
   abbenay:
-    enabled: false
+    enabled: true
+    tokenSecretRef:
+      name: apme-dev-abbenay
+      key: token
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: lvms-lvm-local-storage
