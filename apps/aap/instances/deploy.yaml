@@ -7,6 +7,14 @@ spec:
   feature_flags:
     FEATURE_DISPATCHERD_ENABLED: True
     FEATURE_DASHBOARD_COLLECTION_ENABLED: true
+  metrics:
+    disabled: false
+    database:
+      database_secret: aap-metrics-postgres-configuration
+      externally_managed: true
+    ms_awx_readonly_user:
+      externally_managed: true
+    ms_awx_readonly_user_secret: external-metrics-readonly-configuration
   mcp:
     disabled: false
     allow_write_operations: true

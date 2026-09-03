@@ -32,8 +32,14 @@ spec:
       - name: metricsservice
         ensure: present
         login: true
+        createdb: true
         passwordSecret:
           name: aap-metrics-postgres-configuration
+      - name: ms_awx_readonly
+        ensure: present
+        login: true
+        passwordSecret:
+          name: external-metrics-readonly-configuration
       - name: orchestrator
         ensure: present
         login: true

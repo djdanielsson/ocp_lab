@@ -118,6 +118,7 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/postgres-hub` | Login | username: `hub`, password: (strong password) |
   | `ocp-lab/postgres-gateway` | Login | username: `gateway`, password: (strong password) |
   | `ocp-lab/postgres-controller` | Login | username: `controller`, password: (strong password) |
+  | `ocp-lab/postgres-metrics-readonly` | Login | username: `ms_awx_readonly`, password: (strong password) |
   | `ocp-lab/postgres-eda` | Login | username: `eda`, password: (strong password) |
   | `ocp-lab/postgres-orchestrator` | Login | username: `orchestrator`, password: (strong password) |
   | `ocp-lab/postgres-temporal` | Login | username: `temporal`, password: (strong password) |

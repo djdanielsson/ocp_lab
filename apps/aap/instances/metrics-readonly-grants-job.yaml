@@ -1,0 +1,54 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metrics-readonly-grants
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: grants
+          image: postgres:18
+          env:
+            - name: PGHOST
+              value: aap-postgres-rw.aap.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aap-postgres-superuser
+                  key: password
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              for i in $(seq 1 30); do
+                if psql -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='ms_awx_readonly'" | grep -q 1; then
+                  break
+                fi
+                echo "waiting for ms_awx_readonly role..."
+                sleep 10
+              done
+              psql -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='ms_awx_readonly'" | grep -q 1
+              psql -v ON_ERROR_STOP=1 -d postgres -c \
+                "GRANT CONNECT ON DATABASE automationcontroller TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "GRANT USAGE ON SCHEMA public TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "GRANT SELECT ON ALL TABLES IN SCHEMA public TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "ALTER DEFAULT PRIVILEGES FOR ROLE automationcontroller IN SCHEMA public GRANT SELECT ON TABLES TO ms_awx_readonly;"
+              psql -v ON_ERROR_STOP=1 -d automationcontroller -c \
+                "ALTER DEFAULT PRIVILEGES FOR ROLE automationcontroller IN SCHEMA public GRANT SELECT ON SEQUENCES TO ms_awx_readonly;"
