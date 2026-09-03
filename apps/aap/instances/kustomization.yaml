@@ -10,6 +10,7 @@ resources:
   - eda-database.yaml
   - hub-database.yaml
   - gateway-database.yaml
+  - metrics-database.yaml
   - external-postgres-configuration-eda-secret.yaml
   - external-postgres-configuration-hub-secret.yaml
   - external-postgres-configuration-gateway-secret.yaml

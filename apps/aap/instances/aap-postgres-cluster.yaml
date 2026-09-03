@@ -29,6 +29,11 @@ spec:
         passwordSecret:
           name: external-postgres-configuration-eda
         login: true
+      - name: metricsservice
+        ensure: present
+        login: true
+        passwordSecret:
+          name: aap-metrics-postgres-configuration
       - name: orchestrator
         ensure: present
         login: true
