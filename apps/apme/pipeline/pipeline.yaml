@@ -49,6 +49,15 @@ spec:
         - name: commit-sha
           value: $(tasks.git-clone.results.COMMIT)
 
+    - name: refresh-abbenay
+      runAfter: [check-commit]
+      when:
+        - input: $(tasks.check-commit.results.build-needed)
+          operator: in
+          values: ["false"]
+      taskRef:
+        name: apme-refresh-abbenay
+
     - name: build-base
       runAfter: [check-commit]
       when:
@@ -456,6 +465,43 @@ spec:
             --dry-run=client -o yaml | oc apply -f -
           printf "true" > "$(results.build-needed.path)"
         fi
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: apme-refresh-abbenay
+  namespace: apme-dev
+spec:
+  steps:
+    - name: refresh
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        NS=apme-dev
+        APME=apme-dev
+        ENABLED=$(oc get apme "$APME" -n "$NS" -o jsonpath='{.spec.abbenay.enabled}' 2>/dev/null || echo "false")
+        if [ "$ENABLED" != "true" ]; then
+          echo "Abbenay disabled, skipping refresh"
+          exit 0
+        fi
+        IMAGE=$(oc get apme "$APME" -n "$NS" -o jsonpath='{.spec.abbenay.image}')
+        if [ -z "$IMAGE" ]; then
+          IMAGE="ghcr.io/redhat-developer/abbenay:v2026.8.7"
+        fi
+        if [[ "$IMAGE" != *:latest ]]; then
+          echo "Abbenay image is not :latest ($IMAGE), skipping refresh"
+          exit 0
+        fi
+        if ! oc get deployment "$APME" -n "$NS" >/dev/null 2>&1; then
+          echo "Deployment $APME not found, skipping refresh"
+          exit 0
+        fi
+        echo "Re-pulling Abbenay :latest via rollout restart of deployment/$APME"
+        oc rollout restart "deployment/$APME" -n "$NS"
+        oc rollout status "deployment/$APME" -n "$NS" --timeout=10m
+        echo "Abbenay refresh complete"
 
 ---
 apiVersion: tekton.dev/v1

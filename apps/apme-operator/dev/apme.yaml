@@ -37,6 +37,7 @@ spec:
         storageClass: lvms-lvm-local-storage
   abbenay:
     enabled: true
+    image: ghcr.io/redhat-developer/abbenay:latest
     # Operator auto-generates apme-dev-abbenay (dashboard/gRPC auth token).
     # Provider API keys are added via the Abbenay UI, not here.
     persistence:
