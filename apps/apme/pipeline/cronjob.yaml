@@ -5,7 +5,9 @@ metadata:
   name: apme-build-trigger
   namespace: apme-dev
 spec:
-  schedule: "0 * * * *"
+  # Once daily around noon US Central (covers both apme-build and apme-operator-build).
+  schedule: "0 12 * * *"
+  timeZone: America/Chicago
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
