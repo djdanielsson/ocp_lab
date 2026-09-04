@@ -17,6 +17,9 @@ subjects:
   - kind: ServiceAccount
     name: apme-builder
     namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
+    namespace: apme-dev
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -47,6 +50,9 @@ subjects:
   - kind: ServiceAccount
     name: apme-builder
     namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
+    namespace: apme-dev
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -71,6 +77,12 @@ subjects:
   - kind: ServiceAccount
     name: apme-builder
     namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
+    namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
+    namespace: apme-dev
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -83,6 +95,9 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: apme-builder
+    namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
     namespace: apme-dev
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -106,4 +121,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: apme-builder
+    namespace: apme-dev
+  - kind: ServiceAccount
+    name: pipeline
     namespace: apme-dev

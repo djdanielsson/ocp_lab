@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: apme-build-workspace
   namespace: apme-dev
+  labels:
+    tekton.dev/pipeline: apme-build
 spec:
   accessModes:
     - ReadWriteOnce
@@ -17,6 +19,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: apme-operator-build-workspace
   namespace: apme-dev
+  labels:
+    tekton.dev/pipeline: apme-operator-build
 spec:
   accessModes:
     - ReadWriteOnce
