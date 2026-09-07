@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://graylog2.github.io/graylog-helm
     chart: graylog
-    targetRevision: "1.0.0"
+    targetRevision: "2.0.0"
     helm:
       valuesObject:
         global:
