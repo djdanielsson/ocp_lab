@@ -16,7 +16,6 @@ resources:
   - grafana/route.yaml
   # Dashboards
   - dashboards/aap-gateway.yaml
-  - dashboards/aap-hub-api.yaml
   - dashboards/truenas.yaml
   - dashboards/portainer.yaml
   - dashboards/klipper.yaml
