@@ -40,6 +40,11 @@ spec:
         login: true
         passwordSecret:
           name: external-metrics-readonly-configuration
+      - name: monitoring
+        ensure: present
+        login: true
+        passwordSecret:
+          name: monitoring-postgres-credentials
       - name: orchestrator
         ensure: present
         login: true
@@ -68,3 +73,5 @@ spec:
     size: 100Gi
   walStorage:
     size: 20Gi
+  monitoring:
+    enablePodMonitor: true

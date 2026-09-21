@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: ansiblecontroller-monitor
+  name: aap-controller-metrics
   labels:
     team: frontend
 spec:
@@ -12,8 +12,9 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: aap
+      app.kubernetes.io/managed-by: aap-operator
   endpoints:
-    - interval: 5s
+    - interval: 15s
       path: /api/controller/v2/metrics
       scheme: http
       basicAuth:

@@ -1,0 +1,19 @@
+---
+# CloudNativePG exposes Prometheus metrics at :9187/metrics on each instance.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cnpg-cluster-metrics
+  labels:
+    team: frontend
+spec:
+  namespaceSelector:
+    matchNames:
+      - aap
+  selector:
+    matchLabels:
+      cnpg.io/cluster: aap-postgres
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

@@ -1,0 +1,665 @@
+---
+kind: GrafanaDashboard
+apiVersion: grafana.integreatly.org/v1beta1
+metadata:
+  name: aap-hub-api-dashboard
+  labels:
+    app: grafana
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "description": "Automation Hub API metrics from the Django/Pulp/Galaxy /metrics endpoint",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "panels": [],
+          "title": "Process Health",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+          "id": 1,
+          "title": "Process Memory",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "process_resident_memory_bytes{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Resident (RSS)",
+              "refId": "A"
+            },
+            {
+              "expr": "process_virtual_memory_bytes{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Virtual (VSZ)",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+          "id": 2,
+          "title": "Process CPU Time",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(process_cpu_seconds_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "CPU seconds/sec",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 9 },
+          "id": 3,
+          "title": "Open File Descriptors",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "process_open_fds{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Open FDs",
+              "refId": "A"
+            },
+            {
+              "expr": "process_max_fds{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Max FDs",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 9 },
+          "id": 4,
+          "title": "Python GC Collections (rate/min)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(python_gc_collections_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Gen {{generation}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 9 },
+          "id": 5,
+          "title": "Python GC Objects Collected (rate/min)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(python_gc_objects_collected_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Gen {{generation}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 },
+          "id": 200,
+          "panels": [],
+          "title": "Galaxy API — Collection Operations",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+          "id": 10,
+          "title": "Collection Import Attempts (rate/min)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(galaxy_api_collection_import_attempts_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Attempts",
+              "refId": "A"
+            },
+            {
+              "expr": "rate(galaxy_api_collection_import_successes_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Successes",
+              "refId": "B"
+            },
+            {
+              "expr": "rate(galaxy_api_collection_import_failures_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Failures",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+          "id": 11,
+          "title": "Collection Artifact Downloads (rate/min)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(galaxy_api_collection_artifact_download_attempts_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Attempts",
+              "refId": "A"
+            },
+            {
+              "expr": "rate(galaxy_api_collection_artifact_download_successes_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Successes",
+              "refId": "B"
+            },
+            {
+              "expr": "rate(galaxy_api_collection_artifact_download_failures_total{job=\"aap-hub-api-svc\"}[5m]) * 60",
+              "legendFormat": "Failures",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Imports" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Successes" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Failures" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Downloads" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "purple", "mode": "fixed" } }]
+              }
+            ]
+          },
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 26 },
+          "id": 12,
+          "title": "Collection Totals (cumulative)",
+          "type": "stat",
+          "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "targets": [
+            {
+              "expr": "galaxy_api_collection_import_attempts_total{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Imports",
+              "refId": "A"
+            },
+            {
+              "expr": "galaxy_api_collection_import_successes_total{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Successes",
+              "refId": "B"
+            },
+            {
+              "expr": "galaxy_api_collection_import_failures_total{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Failures",
+              "refId": "C"
+            },
+            {
+              "expr": "galaxy_api_collection_artifact_download_attempts_total{job=\"aap-hub-api-svc\"}",
+              "legendFormat": "Downloads",
+              "refId": "D"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 30 },
+          "id": 300,
+          "panels": [],
+          "title": "Django HTTP — Request Rate & Latency",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
+          "id": 20,
+          "title": "Request Rate (req/s)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_http_requests_before_middlewares_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Incoming",
+              "refId": "A"
+            },
+            {
+              "expr": "rate(django_http_responses_before_middlewares_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Completed",
+              "refId": "B"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
+          "id": 21,
+          "title": "Request Latency (incl. middlewares)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_http_requests_latency_including_middlewares_seconds_sum{job=\"aap-hub-api-svc\"}[5m]) / rate(django_http_requests_latency_including_middlewares_seconds_count{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Avg latency",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.95, rate(django_http_requests_latency_including_middlewares_seconds_bucket{job=\"aap-hub-api-svc\"}[5m]))",
+              "legendFormat": "p95 latency",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.99, rate(django_http_requests_latency_including_middlewares_seconds_bucket{job=\"aap-hub-api-svc\"}[5m]))",
+              "legendFormat": "p99 latency",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "stacking": { "mode": "normal" }
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+          "id": 22,
+          "title": "Requests by HTTP Method (rate/s)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_http_requests_total_by_method_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "{{method}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "stacking": { "mode": "normal" }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": "^5.." },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byRegexp", "options": "^4.." },
+                "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byRegexp", "options": "^2.." },
+                "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+          "id": 23,
+          "title": "Responses by Status Code (rate/s)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_http_responses_total_by_status_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 47 },
+          "id": 400,
+          "panels": [],
+          "title": "Django HTTP — Per-View Latency",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 48 },
+          "id": 30,
+          "title": "Average Latency by View (top 10)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "topk(10, rate(django_http_requests_latency_seconds_by_view_method_sum{job=\"aap-hub-api-svc\"}[5m]) / rate(django_http_requests_latency_seconds_by_view_method_count{job=\"aap-hub-api-svc\"}[5m]))",
+              "legendFormat": "{{method}} {{view}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "stacking": { "mode": "normal" }
+              }
+            }
+          },
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 58 },
+          "id": 31,
+          "title": "Request Rate by View (top 10)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "topk(10, rate(django_http_requests_total_by_view_transport_method_total{job=\"aap-hub-api-svc\"}[5m]))",
+              "legendFormat": "{{method}} {{view}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 68 },
+          "id": 500,
+          "panels": [],
+          "title": "Django ORM & Response Details",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "scheme",
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 69 },
+          "id": 40,
+          "title": "Django Model Operations (rate/s)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_model_inserts_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Inserts",
+              "refId": "A"
+            },
+            {
+              "expr": "rate(django_model_updates_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Updates",
+              "refId": "B"
+            },
+            {
+              "expr": "rate(django_model_deletes_total{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Deletes",
+              "refId": "C"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 69 },
+          "id": 41,
+          "title": "Response Body Size (avg bytes)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(django_http_responses_body_total_bytes_sum{job=\"aap-hub-api-svc\"}[5m]) / rate(django_http_responses_body_total_bytes_count{job=\"aap-hub-api-svc\"}[5m])",
+              "legendFormat": "Avg response size",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "5xx Errors" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "4xx Errors" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Exceptions" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }]
+              }
+            ]
+          },
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 77 },
+          "id": 42,
+          "title": "Error Summary",
+          "type": "stat",
+          "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "targets": [
+            {
+              "expr": "sum(django_http_responses_total_by_status_total{job=\"aap-hub-api-svc\", status=~\"5..\"}) or vector(0)",
+              "legendFormat": "5xx Errors",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(django_http_responses_total_by_status_total{job=\"aap-hub-api-svc\", status=~\"4..\"}) or vector(0)",
+              "legendFormat": "4xx Errors",
+              "refId": "B"
+            },
+            {
+              "expr": "sum(django_http_exceptions_total_by_type_total{job=\"aap-hub-api-svc\"}) or vector(0)",
+              "legendFormat": "Exceptions",
+              "refId": "C"
+            }
+          ]
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["aap", "hub", "galaxy", "django", "hadr"],
+      "templating": {
+        "list": [
+          {
+            "current": {},
+            "hide": 0,
+            "includeAll": false,
+            "multi": false,
+            "name": "DS_PROMETHEUS",
+            "options": [],
+            "query": "prometheus",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+          }
+        ]
+      },
+      "time": { "from": "now-1h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "AAP Hub API Metrics",
+      "uid": "aap-hub-api-svc",
+      "version": 1
+    }

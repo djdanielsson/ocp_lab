@@ -1,0 +1,22 @@
+---
+# Scrapes Django/Pulp/Galaxy metrics from the hub-api /metrics endpoint.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aap-hub-api-metrics
+  labels:
+    team: frontend
+spec:
+  namespaceSelector:
+    matchNames:
+      - aap
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: automationhub-api-aap-hub
+      app.kubernetes.io/managed-by: automationhub-operator
+  endpoints:
+    - interval: 30s
+      path: /metrics
+      port: api-8000
+      scheme: http

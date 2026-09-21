@@ -1,0 +1,101 @@
+---
+# AAP-specific CloudNativePG alert thresholds.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cnpg-aap-custom-alerts
+  labels:
+    role: prometheus-rulefiles
+    prometheus: k8s
+spec:
+  groups:
+    - name: cnpg-aap.rules
+      interval: 30s
+      rules:
+        - alert: AAP_DatabaseConnectionPoolHigh
+          expr: |
+            (cnpg_pg_stat_database_numbackends{datname!="postgres"} / cnpg_pg_settings_max_connections) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Database {{ $labels.datname }} connection pool > 80%"
+            description: "Database {{ $labels.datname }} is using {{ $value | humanizePercentage }} of max connections"
+
+        - alert: AAP_DatabaseConnectionPoolCritical
+          expr: |
+            (cnpg_pg_stat_database_numbackends{datname!="postgres"} / cnpg_pg_settings_max_connections) > 0.95
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database {{ $labels.datname }} connection pool > 95%"
+            description: "Database {{ $labels.datname }} is using {{ $value | humanizePercentage }} of max connections - risk of connection exhaustion"
+
+        - alert: AAP_ReplicationLagHigh
+          expr: |
+            cnpg_pg_replication_lag > 30
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL replication lag > 30 seconds"
+            description: "Replication lag is {{ $value }} seconds on instance {{ $labels.pod }}"
+
+        - alert: AAP_ReplicationLagCritical
+          expr: |
+            cnpg_pg_replication_lag > 120
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL replication lag > 2 minutes"
+            description: "Replication lag is {{ $value }} seconds on instance {{ $labels.pod }} - data loss risk if failover occurs"
+
+        - alert: AAP_PostgresPrimaryDown
+          expr: |
+            count(cnpg_pg_postmaster_start_time{role="primary"}) == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No PostgreSQL primary instance running"
+            description: "CloudNativePG cluster has no primary instance - database unavailable"
+
+        - alert: AAP_PostgresReplicaCountLow
+          expr: |
+            count(cnpg_pg_postmaster_start_time{role="replica"}) < 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL replica count below expected (3 total: 1 primary + 2 replicas)"
+            description: "Only {{ $value }} replica instances running - HA degraded"
+
+        - alert: AAP_DatabaseSizeGrowingFast
+          expr: |
+            rate(cnpg_pg_database_size_bytes[1h]) > 1073741824
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Database {{ $labels.datname }} growing > 1GB/hour"
+            description: "Database {{ $labels.datname }} size increasing rapidly - check for data bloat or unusual activity"
+
+        - alert: AAP_DatabaseLockWaiting
+          expr: |
+            cnpg_backends_waiting_total > 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $value }} database connections waiting for locks"
+            description: "High lock contention detected - may indicate long-running transactions or deadlocks"
+
+    - name: cnpg-aap.recording
+      interval: 30s
+      rules:
+        - record: aap:postgres:health
+          expr: |
+            (count(up{job="aap-postgres"} == 1) >= 2) and
+            (count(cnpg_pg_replication_in_recovery{in_recovery="false"}) == 1)

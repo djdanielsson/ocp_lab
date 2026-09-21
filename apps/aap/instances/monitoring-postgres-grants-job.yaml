@@ -1,0 +1,48 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: monitoring-postgres-grants
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: grants
+          image: postgres:18
+          env:
+            - name: PGHOST
+              value: aap-postgres-rw.aap.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: aap-postgres-app
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aap-postgres-app
+                  key: password
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              for i in $(seq 1 30); do
+                if psql -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='monitoring'" | grep -q 1; then
+                  break
+                fi
+                echo "waiting for monitoring role..."
+                sleep 10
+              done
+              psql -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='monitoring'" | grep -q 1
+              psql -v ON_ERROR_STOP=1 -d postgres -c "GRANT pg_monitor TO monitoring;"
+              psql -v ON_ERROR_STOP=1 -d postgres -c "GRANT pg_read_server_files TO monitoring;"
+              for db in automationgateway automationcontroller automationhub automationeda; do
+                psql -v ON_ERROR_STOP=1 -d postgres -c "GRANT CONNECT ON DATABASE ${db} TO monitoring;"
+              done

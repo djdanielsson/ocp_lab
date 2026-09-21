@@ -16,6 +16,7 @@ resources:
   - grafana/route.yaml
   # Dashboards
   - dashboards/aap-gateway.yaml
+  - dashboards/aap-hub-api.yaml
   - dashboards/truenas.yaml
   - dashboards/portainer.yaml
   - dashboards/klipper.yaml
@@ -25,8 +26,10 @@ resources:
   - exporters/klipper-exporter.yaml
   # ServiceMonitors
   - servicemonitors/aap-servicemonitor.yaml
+  - servicemonitors/aap-hub-api-servicemonitor.yaml
   - servicemonitors/json-servicemonitor.yaml
   - servicemonitors/postgres-servicemonitor.yaml
+  - servicemonitors/cnpg-servicemonitor.yaml
   # Secrets
   - secrets/aap-admin-secret.yaml
   - secrets/aap-admin-password-secret.yaml
@@ -36,3 +39,5 @@ resources:
   - alertmanager/service.yaml
   - alertmanager/route.yaml
   - alertmanager/rules.yaml
+  - alertmanager/cnpg-rules-official.yaml
+  - alertmanager/cnpg-rules-aap-custom.yaml

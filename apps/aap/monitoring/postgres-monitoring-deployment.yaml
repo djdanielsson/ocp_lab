@@ -1,5 +1,5 @@
 ---
-# This Deployment creates a stateless Pod with just the exporters.
+# Per-database postgres_exporter sidecars using the shared monitoring user (pg_monitor).
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,134 +17,126 @@ spec:
         app: postgres-exporters
     spec:
       containers:
-        # --- Container 1: exporter-gateway ---
         - name: exporter-gateway
           image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
-          command:
-            - "postgres_exporter"
+          args:
             - "--web.listen-address=:9186"
           ports:
             - containerPort: 9186
               name: metrics-gateway
           env:
-            - name: POSTGRES_HOST
+            - name: PG_HOST
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-gateway
+                  name: monitoring-postgres-credentials
                   key: host
-            - name: DB_USER
+            - name: PG_PORT
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-gateway
+                  name: monitoring-postgres-credentials
+                  key: port
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: monitoring-postgres-credentials
                   key: username
-            - name: DB_PASS
+            - name: PG_PASS
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-gateway
+                  name: monitoring-postgres-credentials
                   key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: external-postgres-configuration-gateway
-                  key: database
             - name: DATA_SOURCE_NAME
-              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+              value: "postgresql://$(PG_USER):$(PG_PASS)@$(PG_HOST):$(PG_PORT)/automationgateway?sslmode=disable"
 
-        # --- Container 2: exporter-controller ---
         - name: exporter-controller
           image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
-          command:
-            - "postgres_exporter"
+          args:
             - "--web.listen-address=:9187"
           ports:
             - containerPort: 9187
               name: metrics-ctrl
           env:
-            - name: POSTGRES_HOST
+            - name: PG_HOST
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-controller
+                  name: monitoring-postgres-credentials
                   key: host
-            - name: DB_USER
+            - name: PG_PORT
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-controller
+                  name: monitoring-postgres-credentials
+                  key: port
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: monitoring-postgres-credentials
                   key: username
-            - name: DB_PASS
+            - name: PG_PASS
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-controller
+                  name: monitoring-postgres-credentials
                   key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: external-postgres-configuration-controller
-                  key: database
             - name: DATA_SOURCE_NAME
-              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+              value: "postgresql://$(PG_USER):$(PG_PASS)@$(PG_HOST):$(PG_PORT)/automationcontroller?sslmode=disable"
 
-        # --- Container 3: exporter-hub ---
         - name: exporter-hub
           image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
-          command:
-            - "postgres_exporter"
+          args:
             - "--web.listen-address=:9188"
           ports:
             - containerPort: 9188
               name: metrics-hub
           env:
-            - name: POSTGRES_HOST
+            - name: PG_HOST
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-hub
+                  name: monitoring-postgres-credentials
                   key: host
-            - name: DB_USER
+            - name: PG_PORT
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-hub
+                  name: monitoring-postgres-credentials
+                  key: port
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: monitoring-postgres-credentials
                   key: username
-            - name: DB_PASS
+            - name: PG_PASS
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-hub
+                  name: monitoring-postgres-credentials
                   key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: external-postgres-configuration-hub
-                  key: database
             - name: DATA_SOURCE_NAME
-              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
-              
-        # --- Container 4: exporter-eda ---
+              value: "postgresql://$(PG_USER):$(PG_PASS)@$(PG_HOST):$(PG_PORT)/automationhub?sslmode=disable"
+
         - name: exporter-eda
           image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
-          command:
-            - "postgres_exporter"
+          args:
             - "--web.listen-address=:9189"
           ports:
             - containerPort: 9189
               name: metrics-eda
           env:
-            - name: POSTGRES_HOST
+            - name: PG_HOST
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-eda
+                  name: monitoring-postgres-credentials
                   key: host
-            - name: DB_USER
+            - name: PG_PORT
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-eda
+                  name: monitoring-postgres-credentials
+                  key: port
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: monitoring-postgres-credentials
                   key: username
-            - name: DB_PASS
+            - name: PG_PASS
               valueFrom:
                 secretKeyRef:
-                  name: external-postgres-configuration-eda
+                  name: monitoring-postgres-credentials
                   key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: external-postgres-configuration-eda
-                  key: database
             - name: DATA_SOURCE_NAME
-              value: "postgresql://$(DB_USER):$(DB_PASS)@$(POSTGRES_HOST):5432/$(DB_NAME)?sslmode=disable"
+              value: "postgresql://$(PG_USER):$(PG_PASS)@$(PG_HOST):$(PG_PORT)/automationeda?sslmode=disable"

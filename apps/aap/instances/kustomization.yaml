@@ -16,7 +16,9 @@ resources:
   - external-postgres-configuration-gateway-secret.yaml
   - external-postgres-configuration-controller-secret.yaml
   - external-metrics-readonly-configuration-secret.yaml
+  - monitoring-postgres-credentials-secret.yaml
   - metrics-readonly-grants-job.yaml
+  - monitoring-postgres-grants-job.yaml
   - orchestrator-database.yaml
   - temporal-database.yaml
   - temporal-visibility-database.yaml
