@@ -1,5 +1,11 @@
 # ocp_lab
 
+## Troubleshooting
+
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for post-reboot recovery, CSR
+approval, ingress/console issues, BMC/IPMI power control, and an issue log you
+can extend over time.
+
 ## Quick Start
 
 After a fresh OCP cluster install, run these three steps in order:
