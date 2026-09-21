@@ -4,6 +4,7 @@ apiVersion: postgresql.cnpg.io/v1
 metadata:
   name: aap-postgres
 spec:
+  enableSuperuserAccess: true
   managed:
     roles:
       - name: aap
@@ -43,6 +44,9 @@ spec:
       - name: monitoring
         ensure: present
         login: true
+        inRoles:
+          - pg_monitor
+          - pg_read_server_files
         passwordSecret:
           name: monitoring-postgres-credentials
       - name: orchestrator

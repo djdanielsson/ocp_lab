@@ -20,14 +20,11 @@ spec:
             - name: PGPORT
               value: "5432"
             - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  name: aap-postgres-app
-                  key: username
+              value: postgres
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: aap-postgres-app
+                  name: aap-postgres-superuser
                   key: password
           command:
             - /bin/bash
