@@ -5,7 +5,7 @@ metadata:
   name: apme-operator-controller-manager
   namespace: apme
   annotations:
-    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"apme-operator:latest","namespace":"apme"},"fieldPath":"spec.template.spec.containers[?(@.name==\"manager\")].image"}]'
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"apme-operator:0.1.1","namespace":"apme"},"fieldPath":"spec.template.spec.containers[?(@.name==\"manager\")].image"}]'
 spec:
   template:
     spec:

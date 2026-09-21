@@ -11,8 +11,8 @@ spec:
   source:
     type: Git
     git:
-      uri: https://github.com/djdanielsson/apme-operator.git
-      ref: main
+      uri: https://github.com/ansible/apme-operator.git
+      ref: v0.1.1
   strategy:
     type: Docker
     dockerStrategy:
@@ -20,7 +20,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: apme-operator:latest
+      name: apme-operator:0.1.1
   resources:
     requests:
       cpu: 500m
