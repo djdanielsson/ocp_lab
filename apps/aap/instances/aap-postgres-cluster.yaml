@@ -3,7 +3,10 @@ kind: Cluster
 apiVersion: postgresql.cnpg.io/v1
 metadata:
   name: aap-postgres
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   enableSuperuserAccess: true
   managed:
     roles:
@@ -77,5 +80,3 @@ spec:
     size: 100Gi
   walStorage:
     size: 20Gi
-  monitoring:
-    enablePodMonitor: true
