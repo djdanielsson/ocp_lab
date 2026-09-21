@@ -17,15 +17,23 @@ spec:
         app: ocp-mcp-server
     spec:
       serviceAccountName: ocp-mcp-server
+      volumes:
+        - name: config
+          configMap:
+            name: ocp-mcp-server-config
       containers:
         - name: ocp-mcp-server
           image: ghcr.io/containers/kubernetes-mcp-server:latest
           args:
-            - --port
-            - "8080"
+            - --config
+            - /etc/kubernetes-mcp-server/config.toml
           ports:
             - containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/kubernetes-mcp-server
+              readOnly: true
           readinessProbe:
             httpGet:
               path: /healthz
