@@ -14,7 +14,7 @@ spec:
 
     - repoURL: https://privatebin.github.io/helm-chart
       chart: privatebin
-      targetRevision: 0.23.7
+      targetRevision: 0.23.8
       helm:
         values: |
           controller:
