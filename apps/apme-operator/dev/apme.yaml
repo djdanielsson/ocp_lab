@@ -22,7 +22,7 @@ spec:
   exposure:
     route:
       enabled: true
-      host: apme-dev.apps.ocp.new.lab.danielsson.us.com
+      host: apme-dev.apps.ocp.lab.danielsson.us.com
   storage:
     sessions:
       size: 5Gi
