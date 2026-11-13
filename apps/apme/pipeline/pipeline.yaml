@@ -145,7 +145,7 @@ spec:
         - name: IMAGE
           value: $(params.registry)/apme-ui:latest
         - name: DOCKERFILE
-          value: containers/ui/Dockerfile
+          value: containers/rhdh/Dockerfile
         - name: CONTEXT
           value: .
         - name: STORAGE_DRIVER
