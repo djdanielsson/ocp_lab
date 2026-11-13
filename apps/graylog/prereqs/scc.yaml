@@ -11,13 +11,27 @@ metadata:
   namespace: graylog
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ocp-lab-use-scc-graylog-runtime
+rules:
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - graylog-runtime
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: graylog-runtime-scc
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: system:openshift:scc:graylog-runtime
+  name: ocp-lab-use-scc-graylog-runtime
 subjects:
   - kind: ServiceAccount
     name: graylog-sa
@@ -66,13 +80,27 @@ volumes:
   - secret
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ocp-lab-use-scc-mongodb-operator-runtime
+rules:
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - mongodb-operator-runtime
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: mongodb-operator-runtime-scc
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: system:openshift:scc:mongodb-operator-runtime
+  name: ocp-lab-use-scc-mongodb-operator-runtime
 subjects:
   - kind: ServiceAccount
     name: mongodb-kubernetes-operator
