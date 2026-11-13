@@ -4,7 +4,6 @@ kind: Kustomization
 
 resources:
   - rbac.yaml
-  - configmap.yaml
   - pvc.yaml
   - pipeline.yaml
   - operator-pipeline.yaml
