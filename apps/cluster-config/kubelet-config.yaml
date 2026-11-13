@@ -8,6 +8,7 @@ spec:
     matchLabels:
       pools.operator.machineconfiguration.openshift.io/master: ""
   kubeletConfig:
+    maxPods: 500
     systemReserved:
       cpu: "100m"
       memory: "1Gi"
