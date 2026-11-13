@@ -8,3 +8,4 @@ resources:
   - alert-relabel-lab.yaml
   - storageclass-default.yaml
   - image-registry.yaml
+  - console-plugins.yaml

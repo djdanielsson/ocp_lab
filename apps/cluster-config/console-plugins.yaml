@@ -1,0 +1,13 @@
+apiVersion: operator.openshift.io/v1
+kind: Console
+metadata:
+  name: cluster
+spec:
+  plugins:
+    - gitops-plugin
+    - kubevirt-plugin
+    - monitoring-plugin
+    - netobserv-plugin
+    - netobserv-plugin-static
+    - networking-console-plugin
+    - pipelines-console-plugin
