@@ -137,7 +137,7 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/loki-minio` | Login | username: `minioadmin`, password: (strong password -- used as MinIO root credentials and S3 access key) |
   | `ocp-lab/ipmi-bmc` | Login | username: (BMC/IPMI username), password: (BMC/IPMI password) |
   | `ocp-lab/tailscale` | Secure Note | Custom field: `authkey` = (Tailscale auth key with subnet-router + exit-node tags) |
-  | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.new.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `pg-password` = (PostgreSQL password for portal DB), `registry-username` = (registry.redhat.io service account username), `registry-password` = (registry.redhat.io service account password) |
+  | `ocp-lab/aap-portal` | Secure Note | Custom fields: `aap-host-url` = `https://aap.apps.ocp.lab.danielsson.us.com`, `oauth-client-id` = (AAP OAuth client ID), `oauth-client-secret` = (AAP OAuth client secret), `aap-token` = (AAP admin API token with read scope), `github-token` = (GitHub PAT with repo, read:org), `pg-password` = (PostgreSQL password for portal DB), `registry-username` = (registry.redhat.io service account username), `registry-password` = (registry.redhat.io service account password) |
   | `ocp-lab/apme-abbenay` | Secure Note | Custom fields: `abbenay-token` = (Abbenay AI provider token), `openrouter-api-key` = (OpenRouter API key), `vertex-anthropic-api-key` = (Vertex Anthropic API key), `config-yaml` = (Abbenay config.yaml contents), `gcp-service-account-key` = (GCP service account JSON key for Vertex AI — needs Vertex AI User role) |
   | `ocp-lab/telegram-alertmanager` | Secure Note | Custom fields: `bot_token` = (Telegram bot token from BotFather), `chat_id` = (Telegram chat/group ID for alerts) |
   | `ocp-lab/graylog-admin` | Login | username: `admin`, password: (strong password -- used for Graylog web UI login) |
@@ -164,19 +164,19 @@ The following external (non-cluster) services are monitored via Prometheus Servi
 
 Loki does not have its own UI. To view logs, use Grafana:
 
-1. Open Grafana at `https://grafana-monitoring.apps.ocp.new.lab.danielsson.us.com`
+1. Open Grafana at `https://grafana-monitoring.apps.ocp.lab.danielsson.us.com`
 2. Navigate to **Explore** (compass icon in the sidebar)
 3. Select the **loki** datasource from the dropdown
 4. Use LogQL queries, e.g. `{kubernetes_namespace_name="default"}`
 
-The Loki Route (`loki-loki.apps.ocp.new.lab.danielsson.us.com`) is the API gateway for log ingestion, not a web UI.
+The Loki Route (`loki-loki.apps.ocp.lab.danielsson.us.com`) is the API gateway for log ingestion, not a web UI.
 
 ## Automation Orchestrator Setup
 
 Automation Orchestrator deploys co-located with AAP on the same OpenShift cluster. It uses the
 existing CloudNativePG cluster in the `aap` namespace (`orchestrator`, `temporal`, and
 `temporal_visibility` databases) and exposes the UI at
-`https://orchestrator.apps.ocp.new.lab.danielsson.us.com`.
+`https://orchestrator.apps.ocp.lab.danielsson.us.com`.
 
 Before sync, create the Vaultwarden items listed in the secrets table
 (`ocp-lab/postgres-orchestrator`, `ocp-lab/postgres-temporal`, and
@@ -187,7 +187,7 @@ Log in with the built-in admin account using the password from
 
 To enable OIDC through AAP and job dispatch to automation controller, configure an AAP
 co-location in the Automation Orchestrator UI or API after installation (day-2 operation). Point
-it at `https://aap.apps.ocp.new.lab.danielsson.us.com`.
+it at `https://aap.apps.ocp.lab.danielsson.us.com`.
 
 ## AAP Self-Service Portal Setup
 
@@ -197,7 +197,7 @@ Before the AAP Portal Helm chart can connect to AAP, complete these steps in the
 2. Navigate to **Access Management > OAuth Applications** and create a new OAuth Application:
   - Client type: `Confidential`
   - Authorization grant type: `Authorization code`
-  - Redirect URIs: `https://aap-portal.apps.ocp.new.lab.danielsson.us.com/api/auth/callback/aap`
+  - Redirect URIs: `https://aap-portal.apps.ocp.lab.danielsson.us.com/api/auth/callback/aap`
   - Copy the `clientId` and `clientSecret` values
 3. Enable **Allow external users to create OAuth2 tokens** in Platform Gateway settings
 4. Navigate to **Access Management > API Tokens** and create a token with `Read` scope
@@ -207,7 +207,7 @@ Before the AAP Portal Helm chart can connect to AAP, complete these steps in the
 
 After Authentik deploys, configure it as an OIDC provider for your services:
 
-1. Log into Authentik at `https://authentik.apps.ocp.new.lab.danielsson.us.com`
+1. Log into Authentik at `https://authentik.apps.ocp.lab.danielsson.us.com`
   (default user: `akadmin`, password from Vaultwarden `ocp-lab/authentik-admin`)
 2. Create OAuth2/OIDC providers and applications for:
   - **OpenShift** -- Add as an OAuth identity provider in OCP

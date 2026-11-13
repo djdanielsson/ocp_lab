@@ -8,11 +8,11 @@ sections as you hit and fix issues — future you will thank present you.
 | Item | Value |
 |------|-------|
 | Cluster | Single-node OpenShift (SNO) |
-| Node hostname | `ocp.new.lab.danielsson.us.com` |
+| Node hostname | `ocp.lab.danielsson.us.com` |
 | Node IP | `192.168.2.120` |
-| API | `https://api.ocp.new.lab.danielsson.us.com:6443` |
-| Apps domain | `*.apps.ocp.new.lab.danielsson.us.com` |
-| Console | `https://console-openshift-console.apps.ocp.new.lab.danielsson.us.com` |
+| API | `https://api.ocp.lab.danielsson.us.com:6443` |
+| Apps domain | `*.apps.ocp.lab.danielsson.us.com` |
+| Console | `https://console-openshift-console.apps.ocp.lab.danielsson.us.com` |
 | Supermicro BMC (IPMI) | `192.168.2.80` (credentials in your password manager) |
 | DNS upstream | `192.168.2.1` (see `apps/cluster-config/dns-forwarders.yaml`) |
 
@@ -31,7 +31,7 @@ ping -c 3 192.168.2.120
 
 # 2. Is the Kubernetes API up? (control plane / etcd)
 curl -k -s -o /dev/null -w "API healthz: HTTP %{http_code}\n" \
-  https://api.ocp.new.lab.danielsson.us.com:6443/healthz
+  https://api.ocp.lab.danielsson.us.com:6443/healthz
 
 # 3. Can oc talk to the cluster?
 oc whoami
@@ -39,10 +39,10 @@ oc get nodes
 
 # 4. Are apps/console reachable? (ingress router on 443)
 curl -k -s -o /dev/null -w "Console: HTTP %{http_code}\n" \
-  https://console-openshift-console.apps.ocp.new.lab.danielsson.us.com
+  https://console-openshift-console.apps.ocp.lab.danielsson.us.com
 
 # 5. Is the node heartbeat current?
-oc get --raw /api/v1/nodes/ocp.new.lab.danielsson.us.com | \
+oc get --raw /api/v1/nodes/ocp.lab.danielsson.us.com | \
   python3 -c "import sys,json; n=json.load(sys.stdin); \
   print('Ready:', [c for c in n['status']['conditions'] if c['type']=='Ready']); \
   print('Last heartbeat:', n['status']['conditions'][0]['lastHeartbeatTime'])"
@@ -109,7 +109,7 @@ oc get nodes
 oc get co
 oc get pods -n openshift-ingress
 curl -k -s -o /dev/null -w "Console: HTTP %{http_code}\n" \
-  https://console-openshift-console.apps.ocp.new.lab.danielsson.us.com
+  https://console-openshift-console.apps.ocp.lab.danielsson.us.com
 ```
 
 ### Why CSRs pile up
@@ -308,9 +308,9 @@ oc get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
 
 # Ingress and console smoke test
 for url in \
-  https://api.ocp.new.lab.danielsson.us.com:6443/healthz \
-  https://console-openshift-console.apps.ocp.new.lab.danielsson.us.com \
-  https://oauth-openshift.apps.ocp.new.lab.danielsson.us.com; do
+  https://api.ocp.lab.danielsson.us.com:6443/healthz \
+  https://console-openshift-console.apps.ocp.lab.danielsson.us.com \
+  https://oauth-openshift.apps.ocp.lab.danielsson.us.com; do
   echo -n "$url -> "
   curl -k -s -o /dev/null -w "HTTP %{http_code}\n" --connect-timeout 5 "$url"
 done

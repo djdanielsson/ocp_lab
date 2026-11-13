@@ -9,7 +9,7 @@ spec:
     initialAdminPasswordSecretRef:
       name: automation-orchestrator-admin-password
   ingress:
-    host: orchestrator.apps.ocp.new.lab.danielsson.us.com
+    host: orchestrator.apps.ocp.lab.danielsson.us.com
     type: Route
   postgres:
     host: aap-postgres-rw.aap.svc.cluster.local

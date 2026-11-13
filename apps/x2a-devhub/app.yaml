@@ -95,10 +95,10 @@ data:
 
     app:
       title: "X2Ansible Developer Hub"
-      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://x2a.apps.ocp.lab.danielsson.us.com
 
     backend:
-      baseUrl: https://x2a.apps.ocp.new.lab.danielsson.us.com
+      baseUrl: https://x2a.apps.ocp.lab.danielsson.us.com
       cors:
         origin:
           - http://localhost:6274
@@ -192,7 +192,7 @@ data:
           OPENAI_API_KEY: ${OPENAI_API_KEY:-not-needed}
           MAX_TOKENS: ${MAX_TOKENS:-16384}
         aap:
-          url: ${AAP_URL:-https://aap.apps.ocp.new.lab.danielsson.us.com}
+          url: ${AAP_URL:-https://aap.apps.ocp.lab.danielsson.us.com}
           orgName: ${AAP_ORG_NAME:-Default}
           oauthToken: ${AAP_OAUTH_TOKEN}
           skipSSLVerification: ${AAP_SKIP_SSL_VERIFICATION:-false}
@@ -257,7 +257,7 @@ metadata:
   name: x2a
   namespace: x2a-devhub
 spec:
-  host: x2a.apps.ocp.new.lab.danielsson.us.com
+  host: x2a.apps.ocp.lab.danielsson.us.com
   port:
     targetPort: http-backend
   tls:
