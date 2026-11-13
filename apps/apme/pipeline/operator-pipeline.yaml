@@ -87,6 +87,9 @@ spec:
           values: ["true"]
       taskRef:
         name: apme-operator-rollout-restart
+      params:
+        - name: commit-sha
+          value: $(tasks.git-clone.results.COMMIT)
 
 ---
 apiVersion: tekton.dev/v1
@@ -114,9 +117,6 @@ spec:
           printf "false" > "$(results.build-needed.path)"
         else
           echo "New operator commit detected: $LAST -> $CURRENT"
-          oc create configmap apme-operator-last-build-sha -n apme-dev \
-            --from-literal=sha="$CURRENT" \
-            --dry-run=client -o yaml | oc apply -f -
           printf "true" > "$(results.build-needed.path)"
         fi
 
@@ -127,6 +127,9 @@ metadata:
   name: apme-operator-rollout-restart
   namespace: apme-dev
 spec:
+  params:
+    - name: commit-sha
+      type: string
   steps:
     - name: restart
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
@@ -134,4 +137,8 @@ spec:
         #!/usr/bin/env bash
         set -euo pipefail
         oc rollout restart deployment/apme-operator-controller-manager -n apme-dev
+        oc rollout status deployment/apme-operator-controller-manager -n apme-dev --timeout=10m
+        oc create configmap apme-operator-last-build-sha -n apme-dev \
+          --from-literal=sha="$(params.commit-sha)" \
+          --dry-run=client -o yaml | oc apply -f -
         echo "Dev operator deployment restarted"
