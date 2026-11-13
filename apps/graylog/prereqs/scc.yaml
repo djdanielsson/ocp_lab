@@ -39,6 +39,9 @@ subjects:
   - kind: ServiceAccount
     name: graylog-datanode-sa
     namespace: graylog
+  - kind: ServiceAccount
+    name: graylog-mongo-sa
+    namespace: graylog
 ---
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
