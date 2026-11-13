@@ -8,10 +8,10 @@ spec:
   params:
     - name: git-url
       type: string
-      default: https://github.com/ansible/apme.git
+      default: https://github.com/djdanielsson/apme.git
     - name: git-revision
       type: string
-      default: main
+      default: fix/860-bui-workflow
     - name: registry
       type: string
       default: image-registry.openshift-image-registry.svc:5000/apme-dev
