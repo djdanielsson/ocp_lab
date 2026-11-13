@@ -11,8 +11,8 @@ spec:
   source:
     type: Git
     git:
-      uri: https://github.com/ansible/apme-operator.git
-      ref: v0.1.1
+      uri: https://github.com/djdanielsson/apme-operator.git
+      ref: codex/watch-namespace-fork
   strategy:
     type: Docker
     dockerStrategy:
@@ -20,7 +20,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: apme-operator:0.1.1
+      name: apme-operator:0.1.2
   resources:
     requests:
       cpu: 500m

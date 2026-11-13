@@ -8,10 +8,10 @@ spec:
   params:
     - name: git-url
       type: string
-      default: https://github.com/ansible/apme-operator.git
+      default: https://github.com/djdanielsson/apme-operator.git
     - name: git-revision
       type: string
-      default: main
+      default: codex/watch-namespace-fork
     - name: operator-image
       type: string
       default: image-registry.openshift-image-registry.svc:5000/apme-dev/apme-operator:latest
