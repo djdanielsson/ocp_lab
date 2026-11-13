@@ -15,6 +15,9 @@ spec:
     - name: registry
       type: string
       default: image-registry.openshift-image-registry.svc:5000/apme-dev
+    - name: force-build
+      type: string
+      default: "false"
 
   workspaces:
     - name: source
@@ -48,6 +51,8 @@ spec:
       params:
         - name: commit-sha
           value: $(tasks.git-clone.results.COMMIT)
+        - name: force-build
+          value: $(params.force-build)
 
     - name: refresh-abbenay
       runAfter: [check-commit]
@@ -447,6 +452,9 @@ spec:
   params:
     - name: commit-sha
       type: string
+    - name: force-build
+      type: string
+      default: "false"
   results:
     - name: build-needed
       description: "true if a new build is needed, false otherwise"
@@ -457,8 +465,16 @@ spec:
         #!/usr/bin/env bash
         set -euo pipefail
         CURRENT="$(params.commit-sha)"
+        FORCE_BUILD="$(params.force-build)"
         LAST=$(oc get configmap apme-last-build-sha -n apme-dev -o jsonpath='{.data.sha}' 2>/dev/null || echo "")
-        if [ "$CURRENT" = "$LAST" ]; then
+        case "$FORCE_BUILD" in
+          true|false) ;;
+          *) echo "force-build must be true or false, got: $FORCE_BUILD" >&2; exit 1 ;;
+        esac
+        if [ "$FORCE_BUILD" = "true" ]; then
+          echo "Forced full rebuild requested for SHA: $CURRENT"
+          printf "true" > "$(results.build-needed.path)"
+        elif [ "$CURRENT" = "$LAST" ]; then
           echo "No new commits (SHA: $CURRENT)"
           printf "false" > "$(results.build-needed.path)"
         else
