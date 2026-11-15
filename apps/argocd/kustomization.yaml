@@ -25,8 +25,9 @@ resources:
   - applications/devspaces-instance.yaml
   - applications/ocp-virt-instance.yaml
   - applications/cert-manager-instance.yaml
-  - applications/authentik-prereqs.yaml
-  - applications/authentik.yaml
+  # Legacy Authentik manifests are retained for migration; SSO now uses RHBK.
+  # - applications/authentik-prereqs.yaml
+  # - applications/authentik.yaml
   - applications/tailscale.yaml
   - applications/aap-portal-secrets.yaml
   - applications/aap-portal.yaml
@@ -47,3 +48,6 @@ resources:
   - applications/apme-pipeline.yaml
   - applications/apme-stable.yaml
 #  - applications/github-runners.yaml
+  - applications/sso.yaml
+  # Quay remains staged until explicitly enabled.
+  # - applications/quay.yaml

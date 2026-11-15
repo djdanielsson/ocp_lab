@@ -1,0 +1,135 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sso-aap
+  namespace: sso
+spec:
+  schedule: '*/5 * * * *'
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  startingDeadlineSeconds: 240
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 600
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: sso-reconciler
+        spec:
+          serviceAccountName: sso-aap
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+          containers:
+          - name: reconcile
+            image: registry.access.redhat.com/ubi9/python-312:latest@sha256:5b184c2acfe9e2eb9df1a243da8e4a82fedd96e5e7f6648ec5512656177fa326
+            command:
+            - python3
+            - /config/applications.py
+            - aap
+            env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: '1'
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              seccompProfile:
+                type: RuntimeDefault
+              readOnlyRootFilesystem: true
+            resources:
+              requests:
+                cpu: 25m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+            volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: admin
+              mountPath: /credentials/admin
+              readOnly: true
+            - name: clients
+              mountPath: /credentials/clients
+              readOnly: true
+          volumes:
+          - name: config
+            configMap:
+              name: sso-reconciler
+          - name: admin
+            secret:
+              secretName: sso-admin
+          - name: clients
+            projected:
+              sources:
+              - secret:
+                  name: sso-aap-credentials
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sso-orchestrator
+  namespace: sso
+spec:
+  schedule: '*/5 * * * *'
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  startingDeadlineSeconds: 240
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 600
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: sso-reconciler
+        spec:
+          serviceAccountName: sso-orchestrator
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+          containers:
+          - name: reconcile
+            image: registry.access.redhat.com/ubi9/python-312:latest@sha256:5b184c2acfe9e2eb9df1a243da8e4a82fedd96e5e7f6648ec5512656177fa326
+            command:
+            - python3
+            - /config/applications.py
+            - orchestrator
+            env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: '1'
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              seccompProfile:
+                type: RuntimeDefault
+              readOnlyRootFilesystem: true
+            resources:
+              requests:
+                cpu: 25m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+            volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: clients
+              mountPath: /credentials/clients
+              readOnly: true
+          volumes:
+          - name: config
+            configMap:
+              name: sso-reconciler
+          - name: clients
+            projected:
+              sources:
+              - secret:
+                  name: sso-orchestrator-credentials

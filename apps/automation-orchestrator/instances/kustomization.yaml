@@ -4,5 +4,6 @@ kind: Kustomization
 
 resources:
   - deploy.yaml
+  - sso-admin-settings.yaml
 
 namespace: automation-orchestrator

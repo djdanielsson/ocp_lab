@@ -35,6 +35,35 @@ spec:
               value: changeme
             - name: HOME
               value: /tmp/open-webui-home
+            - name: WEBUI_URL
+              value: https://open-webui.apps.ocp.lab.danielsson.us.com
+            - name: ENABLE_OAUTH_SIGNUP
+              value: 'true'
+            - name: OAUTH_PROVIDER_NAME
+              value: Lab SSO
+            - name: OPENID_PROVIDER_URL
+              value: https://sso.apps.ocp.lab.danielsson.us.com/realms/lab/.well-known/openid-configuration
+            - name: OAUTH_CLIENT_ID
+              value: open-webui
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sso-oidc
+                  key: client-secret
+            - name: OPENID_REDIRECT_URI
+              value: https://open-webui.apps.ocp.lab.danielsson.us.com/oauth/oidc/callback
+            - name: OAUTH_CODE_CHALLENGE_METHOD
+              value: S256
+            - name: ENABLE_OAUTH_ROLE_MANAGEMENT
+              value: 'true'
+            - name: OAUTH_ROLES_CLAIM
+              value: groups
+            - name: OAUTH_ALLOWED_ROLES
+              value: lab-users,lab-admins
+            - name: OAUTH_ADMIN_ROLES
+              value: lab-admins
+            - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+              value: 'false'
           volumeMounts:
             - name: data
               mountPath: /app/backend/data

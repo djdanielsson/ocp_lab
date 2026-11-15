@@ -1,0 +1,167 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sso-reconcile
+  namespace: sso
+spec:
+  schedule: '*/5 * * * *'
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  startingDeadlineSeconds: 240
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 240
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: sso-reconciler
+        spec:
+          serviceAccountName: sso-reconciler
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+          containers:
+          - name: reconcile
+            image: registry.access.redhat.com/ubi9/python-312:latest@sha256:5b184c2acfe9e2eb9df1a243da8e4a82fedd96e5e7f6648ec5512656177fa326
+            command:
+            - python3
+            - /config/reconcile.py
+            env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: '1'
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              seccompProfile:
+                type: RuntimeDefault
+              readOnlyRootFilesystem: true
+            resources:
+              requests:
+                cpu: 25m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+            volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: admin
+              mountPath: /credentials/admin
+              readOnly: true
+            - name: user
+              mountPath: /credentials/user
+              readOnly: true
+            - name: clients
+              mountPath: /credentials/clients
+              readOnly: true
+          volumes:
+          - name: config
+            configMap:
+              name: sso-reconciler
+          - name: admin
+            secret:
+              secretName: sso-admin
+          - name: user
+            secret:
+              secretName: sso-user
+          - name: clients
+            projected:
+              sources:
+              - secret:
+                  name: sso-client-credentials
+              - secret:
+                  name: sso-aap-credentials
+              - secret:
+                  name: sso-orchestrator-credentials
+              - secret:
+                  name: sso-devhub-credentials
+              - secret:
+                  name: sso-open-webui-credentials
+              - secret:
+                  name: sso-kubeshark-credentials
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sso-configure
+  namespace: sso
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  activeDeadlineSeconds: 240
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: sso-reconciler
+    spec:
+      serviceAccountName: sso-reconciler
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - name: reconcile
+        image: registry.access.redhat.com/ubi9/python-312:latest@sha256:5b184c2acfe9e2eb9df1a243da8e4a82fedd96e5e7f6648ec5512656177fa326
+        command:
+        - python3
+        - /config/reconcile.py
+        env:
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          readOnlyRootFilesystem: true
+        resources:
+          requests:
+            cpu: 25m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: admin
+          mountPath: /credentials/admin
+          readOnly: true
+        - name: user
+          mountPath: /credentials/user
+          readOnly: true
+        - name: clients
+          mountPath: /credentials/clients
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: sso-reconciler
+      - name: admin
+        secret:
+          secretName: sso-admin
+      - name: user
+        secret:
+          secretName: sso-user
+      - name: clients
+        projected:
+          sources:
+          - secret:
+              name: sso-client-credentials
+          - secret:
+              name: sso-aap-credentials
+          - secret:
+              name: sso-orchestrator-credentials
+          - secret:
+              name: sso-devhub-credentials
+          - secret:
+              name: sso-open-webui-credentials
+          - secret:
+              name: sso-kubeshark-credentials

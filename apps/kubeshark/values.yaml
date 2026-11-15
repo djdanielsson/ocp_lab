@@ -1,0 +1,26 @@
+tap:
+  ingress:
+    enabled: true
+    host: kubeshark.apps.ocp.lab.danielsson.us.com
+  telemetry:
+    enabled: false
+  gitops:
+    enabled: true
+  resourceGuard:
+    enabled: true
+  resources:
+    sniffer:
+      limits:
+        memory: 10Gi
+  auth:
+    enabled: true
+    type: oidc
+    rolesClaim: groups
+    defaultRole: ''
+    groupMapping:
+      lab-users: kubeshark-viewer
+      lab-admins: kubeshark-admin
+    oidc:
+      issuer: https://sso.apps.ocp.lab.danielsson.us.com/realms/lab
+      clientId: kubeshark
+      bypassSslCaCheck: false

@@ -91,7 +91,7 @@ oc apply -f bootstrap.yaml
 | 0          | ocp-virt-instance          | HyperConverged CR                                                  |
 | 0          | cert-manager-instance      | ClusterIssuers (self-signed, Let's Encrypt)                        |
 | 0          | loki-instance              | LokiStack + MinIO object storage                                   |
-| 0          | authentik                  | Authentik SSO (server, worker, PostgreSQL, Redis)                  |
+| 0          | sso                        | Red Hat build of Keycloak SSO (PostgreSQL, Vaultwarden login, OIDC) |
 | 1          | aap-monitoring             | AAP monitoring components                                          |
 | 1          | automation-orchestrator-instance | Automation Orchestrator deployment                          |
 | 1          | aap-portal-secrets         | AAP Self-Service Portal secrets                                    |
@@ -132,8 +132,8 @@ Before deploying the ArgoCD applications, you must:
   | `ocp-lab/automation-orchestrator-admin` | Login | username: `admin`, password: (strong password -- built-in Automation Orchestrator admin login) |
   | `ocp-lab/grafana-admin` | Login | username: `admin`, password: (strong password) |
   | `ocp-lab/quay-config` | Secure Note | Custom fields: `SECRET_KEY`, `DATABASE_SECRET_KEY`, `DB_PASSWORD` |
-  | `ocp-lab/authentik-admin` | Login | username: `akadmin`, password: (strong password -- used for initial Authentik admin login and as the secret key) |
-  | `ocp-lab/authentik-postgres` | Login | username: `authentik`, password: (strong password) |
+  | `sso` | Login | username and password for the human SSO account in both labs; see [SSO](apps/sso/README.md) |
+  | `ocp-lab/authentik-postgres` | Login | Legacy Authentik only; retain during migration if still deployed |
   | `ocp-lab/loki-minio` | Login | username: `minioadmin`, password: (strong password -- used as MinIO root credentials and S3 access key) |
   | `ocp-lab/ipmi-bmc` | Login | username: (BMC/IPMI username), password: (BMC/IPMI password) |
   | `ocp-lab/tailscale` | Secure Note | Custom field: `authkey` = (Tailscale auth key with subnet-router + exit-node tags) |
@@ -203,17 +203,14 @@ Before the AAP Portal Helm chart can connect to AAP, complete these steps in the
 4. Navigate to **Access Management > API Tokens** and create a token with `Read` scope
 5. Store all values in the `ocp-lab/aap-portal` Vaultwarden item (see secrets table above)
 
-## Authentik SSO Integration
+## Single sign-on
 
-After Authentik deploys, configure it as an OIDC provider for your services:
-
-1. Log into Authentik at `https://authentik.apps.ocp.lab.danielsson.us.com`
-  (default user: `akadmin`, password from Vaultwarden `ocp-lab/authentik-admin`)
-2. Create OAuth2/OIDC providers and applications for:
-  - **OpenShift** -- Add as an OAuth identity provider in OCP
-  - **AAP** -- Configure OIDC authentication backend
-  - **Vaultwarden** -- Configure OpenID Connect SSO
-  - **Grafana** -- Configure OAuth authentication
+Red Hat build of Keycloak reads the human login from Vaultwarden item **`sso`**
+for OpenShift, GitOps, Grafana, AAP/portal, Orchestrator, Developer Hub, Open WebUI,
+and Kubeshark. Console extensions inherit OpenShift login. See
+[SSO setup, migration, and rollout](apps/sso/README.md).
+Quay and Loki/MinIO have staged SSO configuration and remain disabled.
+Kubeshark requires an Enterprise license in Vaultwarden `ocp-lab/kubeshark`.
 
 ## Post-Install Steps
 

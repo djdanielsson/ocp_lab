@@ -4,5 +4,7 @@ kind: Kustomization
 
 resources:
   - minio.yaml
+  - sso-credentials.yaml
+  - minio-console-route.yaml
   - loki-s3-secret.yaml
   - lokistack.yaml

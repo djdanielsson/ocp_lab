@@ -21,14 +21,14 @@ redhat-developer-hub:
           baseUrl: https://aap-portal.apps.ocp.lab.danielsson.us.com
         ansible:
           rhaap:
-            checkSSL: false
+            checkSSL: true
           automationHub:
             baseUrl: https://aap.apps.ocp.lab.danielsson.us.com
         auth:
           providers:
             rhaap:
               production:
-                checkSSL: false
+                checkSSL: true
         catalog:
           providers:
             rhaap:

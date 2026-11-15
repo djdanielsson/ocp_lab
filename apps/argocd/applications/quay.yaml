@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: quay
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/quay
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: quay-ephemeral
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - SkipDryRunOnMissingResource=true

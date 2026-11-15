@@ -81,6 +81,10 @@ data:
       - package: "oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-x2a-mcp-extras:bs_1.49.4__0.2.0"
       - package: "oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-scaffolder-backend-module-x2a:bs_1.49.4__0.3.1"
 
+      # Red Hat Developer Hub's shipped OIDC authentication backend.
+      - package: './dynamic-plugins/dist/backstage-plugin-auth-backend-module-oidc-provider-dynamic'
+        disabled: false
+
       # GitHub scaffolder module (disabled by default, enable for GitHub integration)
       - package: './dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic'
         disabled: false
@@ -125,24 +129,20 @@ data:
           - cursor://*
           - https://*
           - http://*
-      environment: development
+      environment: production
       providers:
-        guest:
-          dangerouslyAllowOutsideDevelopment: true
-          signIn:
-            resolvers:
-              - resolver: guestResolver
-                dangerouslyAllowSignInWithoutUserInCatalog: true
-        github:
-          development:
-            clientId: ${AUTH_GITHUB_CLIENT_ID}
-            clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        oidc:
+          production:
+            metadataUrl: https://sso.apps.ocp.lab.danielsson.us.com/realms/lab/.well-known/openid-configuration
+            clientId: devhub
+            clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
+            prompt: auto
             signIn:
               resolvers:
-                - resolver: usernameMatchingUserEntityName
+                - resolver: emailMatchingUserEntityProfileEmail
                   dangerouslyAllowSignInWithoutUserInCatalog: true
 
-    signInPage: github
+    signInPage: oidc
 
     dynamicPlugins:
       frontend:
@@ -225,10 +225,11 @@ spec:
             containers:
               - name: backstage-backend
                 env:
-                  - name: NODE_TLS_REJECT_UNAUTHORIZED
-                    value: "0"
                   - name: NODE_EXTRA_CA_CERTS
                     value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+                  - name: AUTH_OIDC_CLIENT_SECRET
+                    valueFrom:
+                      secretKeyRef: {name: sso-oidc, key: client-secret}
                   - name: NAMESPACE
                     valueFrom:
                       fieldRef:

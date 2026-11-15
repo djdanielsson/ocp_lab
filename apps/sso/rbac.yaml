@@ -1,0 +1,317 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-client-credentials
+  namespace: openshift-config
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - sso-oidc
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-client-credentials
+  namespace: openshift-config
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-client-credentials
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-client-credentials
+  namespace: monitoring
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - sso-oidc
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-client-credentials
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-client-credentials
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: lab-sso-reconciler
+rules:
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - oauths
+  resourceNames:
+  - cluster
+  verbs:
+  - get
+  - patch
+- apiGroups:
+  - user.openshift.io
+  resources:
+  - groups
+  resourceNames:
+  - lab-users
+  - lab-admins
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lab-sso-reconciler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lab-sso-reconciler
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lab-users
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: Group
+  name: lab-users
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lab-admins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: Group
+  name: lab-admins
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-client-credentials
+  namespace: x2a-devhub
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - sso-oidc
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-client-credentials
+  namespace: x2a-devhub
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-client-credentials
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-client-credentials
+  namespace: ollama
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - sso-oidc
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-client-credentials
+  namespace: ollama
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-client-credentials
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-client-credentials
+  namespace: kubeshark
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - kubeshark-secret-default
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-client-credentials
+  namespace: kubeshark
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-client-credentials
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-bootstrap-reader
+  namespace: aap
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - aap-admin-password
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-bootstrap-reader
+  namespace: aap
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-bootstrap-reader
+subjects:
+- kind: ServiceAccount
+  name: sso-aap
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sso-bootstrap-reader
+  namespace: automation-orchestrator
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - automation-orchestrator-admin-password
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sso-bootstrap-reader
+  namespace: automation-orchestrator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sso-bootstrap-reader
+subjects:
+- kind: ServiceAccount
+  name: sso-orchestrator
+  namespace: sso
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: lab-sso-optional-clients
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  resourceNames:
+  - quay-sso-client
+  - minio-sso-client
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lab-sso-optional-clients
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lab-sso-optional-clients
+subjects:
+- kind: ServiceAccount
+  name: sso-reconciler
+  namespace: sso
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sso-aap
+  namespace: sso
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sso-orchestrator
+  namespace: sso

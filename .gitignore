@@ -8,3 +8,6 @@ credentials.json
 .env.local
 .env.production
 tmp/
+
+# Kustomize downloads this pinned chart during rendering.
+/apps/kubeshark/charts/

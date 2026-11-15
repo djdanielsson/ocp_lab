@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sso
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    targetRevision: main
+    path: apps/sso
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sso
+  ignoreDifferences:
+  - group: ''
+    kind: Secret
+    name: sso-oidc
+    jsonPointers:
+    - /data
+  - group: user.openshift.io
+    kind: Group
+    name: lab-users
+    jsonPointers:
+    - /users
+  - group: user.openshift.io
+    kind: Group
+    name: lab-admins
+    jsonPointers:
+    - /users
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+    - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

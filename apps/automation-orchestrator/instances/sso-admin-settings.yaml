@@ -1,0 +1,9 @@
+# The operator discovers its conventionally named admin-settings ConfigMap.
+# The lab's RHBK ingress resolves to a private LAN address.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automation-orchestrator-admin-settings
+  namespace: automation-orchestrator
+data:
+  APP_OIDC_ALLOW_PRIVATE_NETWORKS: "true"

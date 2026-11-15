@@ -1,31 +1,16 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kubeshark
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: '0'
 spec:
   project: default
   source:
-    repoURL: https://helm.kubeshark.com
-    chart: kubeshark
-    targetRevision: 53.6.0
-    helm:
-      parameters:
-        - name: tap.ingress.enabled
-          value: "true"
-        - name: tap.ingress.host
-          value: kubeshark.apps.ocp.lab.danielsson.us.com
-        - name: tap.telemetry.enabled
-          value: "false"
-        - name: tap.gitops.enabled
-          value: "true"
-        - name: tap.resourceGuard.enabled
-          value: "true"
-        - name: tap.resources.sniffer.limits.memory
-          value: 10Gi
+    repoURL: https://github.com/djdanielsson/ocp_lab.git
+    path: apps/kubeshark
+    targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeshark
@@ -34,4 +19,15 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true
+    - ServerSideApply=true
+  ignoreDifferences:
+  - group: ''
+    kind: Secret
+    name: kubeshark-secret-default
+    namespace: kubeshark
+    jsonPointers:
+    - /data/OIDC_CLIENT_ID
+    - /data/OIDC_CLIENT_SECRET
+    - /data/LICENSE

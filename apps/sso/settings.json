@@ -1,0 +1,163 @@
+{
+  "realm": "lab",
+  "issuer": "https://sso.apps.ocp.lab.danielsson.us.com/realms/lab",
+  "openshift": true,
+  "user": {
+    "emailDomain": "danielsson.us.com",
+    "enabled": true,
+    "admin": false,
+    "policyGroups": [
+      {
+        "name": "readonly",
+        "adminOnly": false
+      },
+      {
+        "name": "consoleAdmin",
+        "adminOnly": true
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "openshift",
+      "redirectUris": [
+        "https://oauth-openshift.apps.ocp.lab.danielsson.us.com/oauth2callback/lab-sso"
+      ],
+      "webOrigins": [
+        "https://oauth-openshift.apps.ocp.lab.danielsson.us.com"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "https://oauth-openshift.apps.ocp.lab.danielsson.us.com/"
+      },
+      "secretKey": "openshift-client-secret"
+    },
+    {
+      "clientId": "grafana",
+      "redirectUris": [
+        "https://grafana-monitoring.apps.ocp.lab.danielsson.us.com/login/generic_oauth"
+      ],
+      "webOrigins": [
+        "https://grafana-monitoring.apps.ocp.lab.danielsson.us.com"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "https://grafana-monitoring.apps.ocp.lab.danielsson.us.com/"
+      },
+      "secretKey": "grafana-client-secret"
+    },
+    {
+      "redirectUris": [
+        "https://orchestrator.apps.ocp.lab.danielsson.us.com/api/v1/auth/oidc/callback"
+      ],
+      "webOrigins": [
+        "https://orchestrator.apps.ocp.lab.danielsson.us.com"
+      ],
+      "clientId": "orchestrator",
+      "secretKey": "orchestrator-client-secret"
+    },
+    {
+      "redirectUris": [
+        "https://x2a.apps.ocp.lab.danielsson.us.com/api/auth/oidc/handler/frame"
+      ],
+      "webOrigins": [
+        "https://x2a.apps.ocp.lab.danielsson.us.com"
+      ],
+      "clientId": "devhub",
+      "secretKey": "devhub-client-secret"
+    },
+    {
+      "redirectUris": [
+        "https://open-webui.apps.ocp.lab.danielsson.us.com/oauth/oidc/callback"
+      ],
+      "webOrigins": [
+        "https://open-webui.apps.ocp.lab.danielsson.us.com"
+      ],
+      "pkce": true,
+      "clientId": "open-webui",
+      "secretKey": "open-webui-client-secret"
+    },
+    {
+      "redirectUris": [
+        "https://kubeshark.apps.ocp.lab.danielsson.us.com/api/oauth2/callback"
+      ],
+      "webOrigins": [
+        "https://kubeshark.apps.ocp.lab.danielsson.us.com"
+      ],
+      "clientId": "kubeshark",
+      "secretKey": "kubeshark-client-secret"
+    },
+    {
+      "clientId": "quay",
+      "redirectUris": [
+        "https://quay-ephemeral-quay-ephemeral.apps.ocp.lab.danielsson.us.com/oauth2/lab_sso/callback"
+      ],
+      "webOrigins": [
+        "https://quay-ephemeral-quay-ephemeral.apps.ocp.lab.danielsson.us.com"
+      ],
+      "remoteSecret": {
+        "namespace": "quay-ephemeral",
+        "name": "quay-sso-client",
+        "key": "client-secret",
+        "optional": true
+      }
+    },
+    {
+      "clientId": "minio",
+      "redirectUris": [
+        "https://minio-console-loki.apps.ocp.lab.danielsson.us.com/oauth_callback"
+      ],
+      "webOrigins": [
+        "https://minio-console-loki.apps.ocp.lab.danielsson.us.com"
+      ],
+      "remoteSecret": {
+        "namespace": "loki",
+        "name": "minio-sso-client",
+        "key": "client-secret",
+        "optional": true
+      }
+    }
+  ],
+  "secretDestinations": [
+    {
+      "namespace": "openshift-config",
+      "keys": {
+        "clientSecret": "openshift-client-secret"
+      }
+    },
+    {
+      "namespace": "monitoring",
+      "keys": {
+        "client-secret": "grafana-client-secret"
+      }
+    },
+    {
+      "namespace": "x2a-devhub",
+      "keys": {
+        "client-secret": "devhub-client-secret"
+      }
+    },
+    {
+      "namespace": "ollama",
+      "keys": {
+        "client-secret": "open-webui-client-secret"
+      }
+    },
+    {
+      "namespace": "kubeshark",
+      "keys": {
+        "OIDC_CLIENT_SECRET": "kubeshark-client-secret"
+      },
+      "name": "kubeshark-secret-default",
+      "literals": {
+        "OIDC_CLIENT_ID": "kubeshark"
+      }
+    }
+  ],
+  "applications": {
+    "aap": {
+      "url": "https://aap.apps.ocp.lab.danielsson.us.com"
+    },
+    "orchestrator": {
+      "url": "https://orchestrator.apps.ocp.lab.danielsson.us.com"
+    }
+  }
+}

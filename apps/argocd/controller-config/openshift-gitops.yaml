@@ -4,6 +4,7 @@ metadata:
   name: openshift-gitops
   namespace: openshift-gitops
 spec:
+  kustomizeBuildOptions: --enable-helm
   controller:
     resources:
       requests:
@@ -12,3 +13,12 @@ spec:
       limits:
         cpu: "4"
         memory: 6Gi
+  sso:
+    provider: dex
+    dex:
+      openShiftOAuth: true
+  rbac:
+    defaultPolicy: role:readonly
+    policy: |
+      g, lab-admins, role:admin
+    scopes: '[groups]'

@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: minio-console
+  namespace: loki
+spec:
+  host: minio-console-loki.apps.ocp.lab.danielsson.us.com
+  to:
+    kind: Service
+    name: minio
+  port:
+    targetPort: console
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

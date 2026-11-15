@@ -41,7 +41,7 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
-            
+
         # --- REDIS SIDECAR ---
         - name: redis
           image: quay.io/sclorg/redis-6-c9s:latest
@@ -76,17 +76,55 @@ spec:
       # --- VOLUMES SECTION (Critical Fix) ---
       volumes:
         - name: config
-          secret:
-            secretName: quay-config
+          emptyDir: {}
         - name: db-init
           configMap:
             name: postgres-init
-            defaultMode: 0755
+            defaultMode: 493
         - name: storage
-          emptyDir: {} 
+          emptyDir: {}
         - name: db-data
           emptyDir: {}
+        - name: base-config
+          secret:
+            secretName: quay-config
+        - name: sso-script
+          configMap:
+            name: quay-sso
+        - name: sso-credentials
+          secret:
+            secretName: quay-sso-client
 
+      initContainers:
+        - name: configure-sso
+          image: registry.access.redhat.com/ubi9/python-312:latest@sha256:5b184c2acfe9e2eb9df1a243da8e4a82fedd96e5e7f6648ec5512656177fa326
+          command:
+            - python3
+            - /sso/configure-sso.py
+          volumeMounts:
+            - name: base-config
+              mountPath: /source
+              readOnly: true
+            - name: config
+              mountPath: /rendered
+            - name: sso-script
+              mountPath: /sso
+              readOnly: true
+            - name: sso-credentials
+              mountPath: /credentials
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
 ---
 apiVersion: v1
 kind: Service

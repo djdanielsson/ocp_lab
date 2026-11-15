@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+helmCharts:
+- name: kubeshark
+  repo: https://helm.kubeshark.com
+  version: 53.6.0
+  releaseName: kubeshark
+  namespace: kubeshark
+  valuesFile: values.yaml
+resources:
+- license.yaml
+patches:
+- target:
+    kind: Secret
+    name: kubeshark-secret-default
+  patch: "- op: remove\n  path: /stringData/OIDC_CLIENT_ID\n- op: remove\n  path:\
+    \ /stringData/OIDC_CLIENT_SECRET\n- op: remove\n  path: /stringData/LICENSE\n"
