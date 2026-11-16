@@ -114,10 +114,20 @@ curl -k -s -o /dev/null -w "Console: HTTP %{http_code}\n" \
 
 ### Why CSRs pile up
 
-On SNO, kubelet client certificates normally auto-approve via the
-`node-bootstrapper` service account. After an unclean shutdown or extended
-power-off, the approval loop can fall behind. Manual approval is safe and is
-the standard recovery step.
+This bare-metal cluster has no Machine API records. After an expired node
+certificate forces bootstrap or serving-certificate recovery, the built-in
+machine approver can fail with `unable to find machine for node`. Inspect its
+logs instead of assuming healthy-looking pod status proves current health.
+
+The external [node certificate recovery timer](scripts/node-csr-recovery/README.md)
+validates and approves requests for the pinned existing `ocp` node every minute
+while the recovery workstation and its user service manager are running. Its
+RBAC and policy are managed by the `cluster-config` GitOps application. This
+runs outside the cluster so an expired kubelet certificate cannot prevent it
+from starting. Certificate lifetimes remain at OpenShift defaults.
+
+Review request identity before any manual approval. Approving every pending
+request indiscriminately can grant an unexpected requester node credentials.
 
 ---
 

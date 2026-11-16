@@ -9,3 +9,4 @@ resources:
   - storageclass-default.yaml
   - image-registry.yaml
   - console-plugins.yaml
+  - node-csr-recovery.yaml

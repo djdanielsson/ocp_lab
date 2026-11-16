@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-csr-recovery
+  namespace: openshift-config
+---
+# An external recovery client must survive node downtime without asking kubelet
+# to renew a projected token. This credential stays in-cluster and off Git.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node-csr-recovery-token
+  namespace: openshift-config
+  annotations:
+    kubernetes.io/service-account.name: node-csr-recovery
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-csr-recovery-policy
+  namespace: openshift-config
+data:
+  policy.json: |
+    {
+      "node": "ocp",
+      "node_uid": "c9d89a4f-0238-4eff-8de6-3ebc4068f27d",
+      "dns": ["ocp"],
+      "ips": ["192.168.2.120"],
+      "max_request_age_seconds": 3600
+    }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: node-csr-recovery
+rules:
+  - apiGroups: [certificates.k8s.io]
+    resources: [certificatesigningrequests]
+    verbs: [get, list]
+  - apiGroups: [certificates.k8s.io]
+    resources: [certificatesigningrequests/approval]
+    verbs: [update]
+  - apiGroups: [certificates.k8s.io]
+    resources: [signers]
+    resourceNames:
+      - kubernetes.io/kube-apiserver-client-kubelet
+      - kubernetes.io/kubelet-serving
+    verbs: [approve]
+  - apiGroups: [""]
+    resources: [nodes]
+    resourceNames: [ocp]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-csr-recovery
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: node-csr-recovery
+subjects:
+  - kind: ServiceAccount
+    name: node-csr-recovery
+    namespace: openshift-config
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: node-csr-recovery-policy
+  namespace: openshift-config
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames: [node-csr-recovery-policy]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: node-csr-recovery-policy
+  namespace: openshift-config
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: node-csr-recovery-policy
+subjects:
+  - kind: ServiceAccount
+    name: node-csr-recovery
+    namespace: openshift-config

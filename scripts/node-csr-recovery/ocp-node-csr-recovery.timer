@@ -1,0 +1,10 @@
+[Unit]
+Description=Check OCP lab node certificate requests every minute
+
+[Timer]
+OnStartupSec=30s
+OnUnitInactiveSec=60s
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
