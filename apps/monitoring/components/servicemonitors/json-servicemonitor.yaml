@@ -17,6 +17,9 @@ spec:
       target: ["http://aap.aap.svc.cluster.local/api/gateway/v1/status/?format=json"]
       module:
       - default
+    relabelings:
+      - targetLabel: module
+        replacement: default
   # Detailed Hub status is no longer embedded in the gateway response.
   - interval: 15s
     port: http
@@ -25,6 +28,9 @@ spec:
       target: ["http://aap-hub-api-svc.aap.svc.cluster.local:8000/api/galaxy/pulp/api/v3/status/"]
       module:
       - hub
+    relabelings:
+      - targetLabel: module
+        replacement: hub
   namespaceSelector:
     matchNames:
       - aap
