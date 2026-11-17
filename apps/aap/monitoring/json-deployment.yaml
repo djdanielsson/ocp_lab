@@ -12,6 +12,8 @@ spec:
       app: json-exporter
   template:
     metadata:
+      annotations:
+        checksum/config: "d5166dd0f791c6839e833912144a78b395e0718900205076fbaeb36ba00b1037"
       labels:
         app: json-exporter
     spec:

@@ -1,0 +1,29 @@
+---
+# Keep the operator's default-deny policy; admit only the two metric collectors.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aap-hub-api-monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: automationhub-api-aap-hub
+      app.kubernetes.io/name: automationhub-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+              prometheus: prometheus
+        - podSelector:
+            matchLabels:
+              app: json-exporter
+      ports:
+        - port: 8000
+          protocol: TCP

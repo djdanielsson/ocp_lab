@@ -9,6 +9,8 @@ spec:
     FEATURE_DASHBOARD_COLLECTION_ENABLED: true
   metrics:
     disabled: false
+    # The AAP operator reads this field; MetricsService reads database.database_secret.
+    database_secret: aap-metrics-postgres-configuration
     database:
       database_secret: aap-metrics-postgres-configuration
       externally_managed: true
