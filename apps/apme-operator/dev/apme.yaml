@@ -21,8 +21,8 @@ spec:
     ui: true
   exposure:
     route:
-      enabled: true
-      host: apme-dev.apps.ocp.lab.danielsson.us.com
+      # The dev Backstage UI serves its own /api endpoints. See routes.yaml.
+      enabled: false
   storage:
     sessions:
       size: 5Gi

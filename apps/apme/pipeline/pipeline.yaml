@@ -11,7 +11,7 @@ spec:
       default: https://github.com/djdanielsson/apme.git
     - name: git-revision
       type: string
-      default: fix/860-bui-workflow
+      default: main
     - name: registry
       type: string
       default: image-registry.openshift-image-registry.svc:5000/apme-dev
@@ -539,7 +539,30 @@ spec:
           -l app.kubernetes.io/managed-by=apme-operator \
           -o name 2>/dev/null); do
           echo "Restarting $deploy"
-          oc rollout restart "$deploy" -n apme-dev
+          if [ "$deploy" = deployment.apps/apme-dev ]; then
+            # The RHDH Local image defaults to loopback URLs. Use the lab
+            # route for browser requests while its gateway stays on loopback.
+            UI_ORIGIN=https://apme-dev.apps.ocp.lab.danielsson.us.com
+            oc patch "$deploy" -n apme-dev --type=strategic --patch-file=/dev/stdin <<YAML
+        spec:
+          template:
+            metadata:
+              annotations:
+                kubectl.kubernetes.io/restartedAt: "$(date -u +%FT%TZ)"
+            spec:
+              containers:
+                - name: ui
+                  env:
+                    - name: APP_CONFIG_app_baseUrl
+                      value: "$UI_ORIGIN"
+                    - name: APP_CONFIG_backend_baseUrl
+                      value: "$UI_ORIGIN"
+                    - name: APP_CONFIG_backend_cors_origin
+                      value: "$UI_ORIGIN"
+        YAML
+          else
+            oc rollout restart "$deploy" -n apme-dev
+          fi
           oc rollout status "$deploy" -n apme-dev --timeout=10m
         done
         if oc get deployment apme-operator-controller-manager -n apme-dev >/dev/null 2>&1; then

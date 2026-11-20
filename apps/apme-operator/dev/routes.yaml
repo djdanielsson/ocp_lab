@@ -1,0 +1,34 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: apme-dev-ui
+  namespace: apme-dev
+spec:
+  host: apme-dev.apps.ocp.lab.danielsson.us.com
+  to:
+    kind: Service
+    name: apme-dev-ui
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: apme-dev-api
+  namespace: apme-dev
+spec:
+  host: apme-dev.apps.ocp.lab.danielsson.us.com
+  # Keep the Gateway API available to CLI clients on the same host.
+  path: /api/v1
+  to:
+    kind: Service
+    name: apme-dev-gateway
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
